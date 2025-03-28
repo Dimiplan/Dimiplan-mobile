@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512px" height="512px" viewBox="0 0 512 512" version="1.1">
+    <g id="surface1">
+        <rect x="0" y="0" width="512" height="512" style="fill:rgb(85.882354%,12.54902%,49.019608%);fill-opacity:1;stroke:none;"/>
+        <path style=" stroke:none;fill-rule:evenodd;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 475.429688 36.570312 L 36.570312 36.570312 L 36.570312 475.429688 L 475.429688 475.429688 Z M 402.285156 109.714844 L 109.714844 109.714844 L 109.714844 402.285156 L 402.285156 402.285156 Z M 402.285156 109.714844 "/>
+        <path style=" stroke:none;fill-rule:evenodd;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 248.6875 124.34375 L 124.34375 124.34375 L 124.34375 387.65625 L 248.6875 387.65625 Z M 248.6875 124.34375 "/>
+        <path style=" stroke:none;fill-rule:evenodd;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 248.6875 124.34375 L 124.34375 124.34375 L 124.34375 387.65625 L 248.6875 387.65625 Z M 248.6875 124.34375 "/>
+        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 263.3125 263.3125 L 387.65625 263.3125 L 387.65625 387.65625 L 263.3125 387.65625 Z M 263.3125 263.3125 "/>
+        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 263.3125 124.34375 L 387.65625 124.34375 L 387.65625 248.6875 L 263.3125 248.6875 Z M 263.3125 124.34375 "/>
+    </g>
+</svg>
