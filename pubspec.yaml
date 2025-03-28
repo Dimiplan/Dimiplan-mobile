@@ -1,0 +1,30 @@
+name: dimiplanner
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0-171.0.dev
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^2.0.17
+  google_fonts: ^6.2.1
+  in_app_update: ^4.2.3
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  table_calendar: ^3.2.0
+  xtyle: ^0.2.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
