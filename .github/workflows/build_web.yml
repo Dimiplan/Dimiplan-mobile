@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build:
-    name: build
+  Build:
+    name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - name: Checkout Repo 
         uses: actions/checkout@v4
@@ -28,5 +32,14 @@ jobs:
       - name: Archive Production artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release
+          name: web
           path: build/web
+
+      - name: Deploy on Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build/web --project-name=dimiplanner
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  
