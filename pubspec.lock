@@ -128,14 +128,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  google_fonts:
-    dependency: "direct main"
-    description:
-      name: google_fonts
-      sha256: b1ac0fe2832c9cc95e5e88b57d627c5e68c223b9657f4b96e1487aa9098c7b82
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.1"
   http:
     dependency: "direct main"
     description:
@@ -160,16 +152,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
-  in_app_update:
-    dependency: "direct main"
-    description:
-      name: in_app_update
-      sha256: "489572accaa55b51518b2d64676ca8c3c6d4c989fa53cf718001882237691a3c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.3"
   intl:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: intl
       sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
@@ -224,30 +208,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  path_provider:
-    dependency: transitive
-    description:
-      name: path_provider
-      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.5"
-  path_provider_android:
-    dependency: transitive
-    description:
-      name: path_provider_android
-      sha256: "0ca7359dad67fd7063cb2892ab0c0737b2daafd807cf1acecd62374c8fae6c12"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.16"
-  path_provider_foundation:
-    dependency: transitive
-    description:
-      name: path_provider_foundation
-      sha256: "4843174df4d288f5e29185bd6e72a6fbdf5a4a4602717eed565497429f179942"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -360,14 +320,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-  simple_gesture_detector:
-    dependency: transitive
-    description:
-      name: simple_gesture_detector
-      sha256: ba2cd5af24ff20a0b8d609cec3f40e5b0744d2a71804a2616ae086b9c19d19a3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -389,14 +341,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
-  table_calendar:
-    dependency: "direct main"
-    description:
-      name: table_calendar
-      sha256: "0c0c6219878b363a2d5f40c7afb159d845f253d061dc3c822aa0d5fe0f721982"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.0"
   term_glyph:
     dependency: transitive
     description:
