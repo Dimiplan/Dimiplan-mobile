@@ -1,11 +1,11 @@
 {
-    "name": "dimigo",
-    "short_name": "dimigo",
+    "name": "Dimiplan",
+    "short_name": "Dimiplan",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",
     "theme_color": "#hexcode",
-    "description": "A new Flutter project.",
+    "description": "Design Your Life, Dimiplan",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
