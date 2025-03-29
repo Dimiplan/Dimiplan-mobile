@@ -33,7 +33,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Color.fromRGBO(219, 32, 125, 1.0),
+        brightness: Brightness.light,
       ),
+      darkTheme: ThemeData.dark(),
       home: const Nav(),
       builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
