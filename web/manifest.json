@@ -3,8 +3,6 @@
     "short_name": "Dimiplan",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#hexcode",
-    "theme_color": "#hexcode",
     "description": "Design Your Life, Dimiplan",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
