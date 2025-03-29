@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dimiplanner/nav_bar.dart';
+import 'package:dimiplanner/views/nav_bar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:xtyle/xtyle.dart';
 
