@@ -1,4 +1,3 @@
-# flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
   image_path: "assets/icons/logo_square.png"
 
@@ -17,16 +16,5 @@ flutter_launcher_icons:
   # desaturate_tinted_to_grayscale_ios: true
 
   web:
-    generate: true
-    image_path: "assets/icons/logo_square.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
-
-  windows:
-    generate: true
-    image_path: "assets/icons/logo_square.png"
-    icon_size: 48 # min:48, max:256, default: 48
-
-  macos:
     generate: true
     image_path: "assets/icons/logo_square.png"
