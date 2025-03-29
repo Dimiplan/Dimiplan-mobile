@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "디미플래너",
+      title: "Dimiplan",
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -32,7 +32,10 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [Locale('ko')],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: Color.fromRGBO(219, 32, 125, 1.0),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromRGBO(219, 32, 125, 1.0),
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity
+        ),
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData.dark(),
