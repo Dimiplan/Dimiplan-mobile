@@ -22,6 +22,8 @@ jobs:
         with:
           channel: beta
           version: 3.31.0-0.1.pre
+          cache-sdk: true
+          cache: true
 
       - name : Build
         uses: cedvdb/action-flutter-build-web@v1
