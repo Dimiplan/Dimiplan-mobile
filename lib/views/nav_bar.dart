@@ -1,6 +1,6 @@
-import 'package:dimiplanner/home.dart';
-import 'package:dimiplanner/planner.dart';
-import 'package:dimiplanner/account.dart';
+import 'package:dimiplanner/views/home.dart';
+import 'package:dimiplanner/views/planner.dart';
+import 'package:dimiplanner/views/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
