@@ -1,5 +1,5 @@
 import 'package:dimiplanner/home.dart';
-import 'package:dimiplanner/calendar.dart';
+import 'package:dimiplanner/planner.dart';
 import 'package:dimiplanner/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +13,7 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int currentIndex = 0;
-  final screens = [const Homepage(), const Calendar(), const Account()];
+  final screens = [const Homepage(), const Planner(), const Account()];
   bool mark=false;
 
   @override
@@ -52,8 +52,8 @@ class _NavState extends State<Nav> {
                 label: '홈',
               ),
               NavigationDestination(
-                icon: Icon(Icons.calendar_month_rounded),
-                label: '캘린더',
+                icon: Icon(Icons.list_alt_rounded),
+                label: '플래너',
               ),
               NavigationDestination(
                 icon: Icon(Icons.account_circle_rounded),
