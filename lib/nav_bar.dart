@@ -25,7 +25,7 @@ class _NavState extends State<Nav> {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColorLight,
+        backgroundColor: Theme.of(context).primaryColor,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
@@ -38,8 +38,8 @@ class _NavState extends State<Nav> {
           topRight: Radius.circular(60),
         ),
         child: NavigationBar(
-            backgroundColor: Theme.of(context).primaryColorLight,
-            surfaceTintColor: Theme.of(context).primaryColor,
+            backgroundColor: Theme.of(context).primaryColor,
+            surfaceTintColor: Theme.of(context).highlightColor,
             selectedIndex: currentIndex,
             onDestinationSelected: (value) {
               setState(() {
