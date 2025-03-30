@@ -31,13 +31,13 @@ class _PlannerState extends State<Planner> {
       padding: EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
         children: <Widget>[
-          if (task.status == 0)
+          if (task.status == true)
             ListTile(
               title: Text(
                 task.title,
                 style: TextStyle(
                   fontSize: 18.0,
-                  decoration: task.status == 0
+                  decoration: task.status == true
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 ),
