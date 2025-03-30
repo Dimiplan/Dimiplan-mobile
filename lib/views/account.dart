@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:fetch_client/fetch_client.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
 
 class Account extends StatefulWidget{
@@ -12,6 +12,7 @@ class Account extends StatefulWidget{
 class _AccountState extends State<Account>{
   String? session;
   static const String backend = "dimigo.co.kr:3000";
+  var fetcher = FetchClient();
 
   void checkLogin() async{
     var prefs = await SharedPreferences.getInstance();
@@ -21,7 +22,7 @@ class _AccountState extends State<Account>{
     }
     else{
       var api = Uri.https(backend, '/api/user/registered');
-      var response = await http.get(api, headers: {'cookie' : "connect.sid=${session!}"});
+      var response = await fetcher.get(api, headers: {'cookie' : "connect.sid=${session!}"});
       if(response.statusCode == 200){
         return;
       }
