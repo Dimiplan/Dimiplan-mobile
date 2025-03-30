@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dimiplanner/internal/model.dart';
-import 'package:dimiplanner/internal/database.dart';
-import 'package:dimiplanner/views/add_task.dart';
+import 'package:dimiplan/internal/model.dart';
+import 'package:dimiplan/internal/database.dart';
+import 'package:dimiplan/views/add_task.dart';
 import 'package:intl/intl.dart';
 
 class Planner extends StatefulWidget {

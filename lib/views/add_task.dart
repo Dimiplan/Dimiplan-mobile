@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dimiplanner/internal/database.dart';
-import 'package:dimiplanner/internal/model.dart';
-import 'package:dimiplanner/views/planner.dart';
+import 'package:dimiplan/internal/database.dart';
+import 'package:dimiplan/internal/model.dart';
+import 'package:dimiplan/views/planner.dart';
 import 'package:intl/intl.dart';
 
 class AddTaskScreen extends StatefulWidget {

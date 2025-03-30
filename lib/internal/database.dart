@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dimiplanner/internal/model.dart';
+import 'package:dimiplan/internal/model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
