@@ -26,7 +26,7 @@ class _NavState extends State<Nav> {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor.shade100,
+        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.shade100: null,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
@@ -34,7 +34,7 @@ class _NavState extends State<Nav> {
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        backgroundColor: Theme.of(context).primaryColor.shade50,
+        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.shade50: null,
         selectedIndex: currentIndex,
         onDestinationSelected: (value) {
           setState(() {
