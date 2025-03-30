@@ -22,7 +22,7 @@ class _PlannerState extends State<Planner> {
 
   _updateTaskList() {
     setState(() {
-      // TODO DB_taskList = DatabaseHelper.instance.getTaskList();
+      _taskList = DatabaseHelper.instance.getTaskList();
     });
   }
 
@@ -54,7 +54,7 @@ class _PlannerState extends State<Planner> {
               trailing: Checkbox(
                 onChanged: (value) {
                   task.status = (value! ? 1 : 0) as bool;
-                  // TODO DB DatabaseHelper.instance.updateTask(task);
+                   DatabaseHelper.instance.updateTask(task);
                   _updateTaskList();
                 },
                 activeColor: Theme.of(context).primaryColor,
