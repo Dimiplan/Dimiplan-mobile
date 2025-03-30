@@ -17,7 +17,7 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
-  late String _priority;
+  late String? _priority;
   DateTime _date = DateTime.now();
   final TextEditingController _dateController = TextEditingController();
   final DateFormat _dateFormatter = DateFormat('MMM dd, yyyy');
@@ -59,7 +59,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   _delete() {
-    // TODO DB DatabaseHelper.instance.deleteTask(widget.task!.id!);
+    DatabaseHelper.instance.deleteTask(widget.task!.id!);
     Navigator.pop(context);
     widget.updateTaskList();
   }
@@ -67,16 +67,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   _submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print('$_title, $_date, $_priority');
 
-      Task task = Task(title: _title, date: _date, priority: _priority);
+      Task task = Task(title: _title, date: _date, priority: _priority!);
       if (widget.task == null) {
-        // TODO DB DatabaseHelper.instance.insertTask(task);
+        DatabaseHelper.instance.insertTask(task);
       } else {
         // Update the task
         task.id = widget.task!.id;
         task.status = widget.task!.status;
-        // TODO DB DatabaseHelper.instance.updateTask(task);
+        DatabaseHelper.instance.updateTask(task);
       }
       Navigator.push(context, MaterialPageRoute(builder: (_) => Planner()));
       widget.updateTaskList();
