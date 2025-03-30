@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dimiplanner/internal/model.dart';
 import 'package:dimiplanner/internal/database.dart';
 import 'package:dimiplanner/views/add_task.dart';

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'model.dart';
+import 'package:dimiplanner/internal/model.dart';
 
 // TODO DB
 /*
