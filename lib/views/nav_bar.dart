@@ -1,3 +1,4 @@
+import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 import 'package:dimiplan/views/account.dart';
@@ -25,41 +26,35 @@ class _NavState extends State<Nav> {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Theme.of(context).highlightColor,
+        backgroundColor: Theme.of(context).primaryColor.shade100,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
           fit: BoxFit.contain,
         ),
       ),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(60),
-          topRight: Radius.circular(60),
-        ),
-        child: NavigationBar(
-            backgroundColor: Theme.of(context).highlightColor,
-            surfaceTintColor: Theme.of(context).primaryColor,
-            selectedIndex: currentIndex,
-            onDestinationSelected: (value) {
-              setState(() {
-                currentIndex = value;
-              });
-            },
-            destinations: const <Widget>[
-              NavigationDestination(
-                icon: Icon(Icons.home_rounded),
-                label: '홈',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.list_alt_rounded),
-                label: '플래너',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.account_circle_rounded),
-                label: '계정관리',
-              )
-            ]),
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: Theme.of(context).primaryColor.shade50,
+        selectedIndex: currentIndex,
+        onDestinationSelected: (value) {
+          setState(() {
+            currentIndex = value;
+          });
+        },
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home_rounded),
+            label: '홈',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.list_alt_rounded),
+            label: '플래너',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_circle_rounded),
+            label: '계정관리',
+          )
+        ]
       ),
       body: screens[currentIndex],
     );
