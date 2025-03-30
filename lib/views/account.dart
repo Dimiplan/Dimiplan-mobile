@@ -10,23 +10,23 @@ class Account extends StatefulWidget{
 }
 
 class _AccountState extends State<Account>{
-  String? sessionId;
+  String? session;
   static const String backend = "dimigo.co.kr:3000";
 
   void checkLogin() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    sessionId = prefs.getString('session_id');
-    if(sessionId==null){
-      prefs.setString('session_id', login());
+    var prefs = await SharedPreferences.getInstance();
+    session = prefs.getString('session');
+    if(session==null || session == ''){
+      prefs.setString('session', login());
     }
     else{
       var api = Uri.https(backend, '/api/user/registered');
-      var response = await http.get(api, headers: {'cookie' : "session.id=${sessionId!}"});
+      var response = await http.get(api, headers: {'cookie' : "connect.sid=${session!}"});
       if(response.statusCode == 200){
         return;
       }
       else{
-        prefs.setString('session_id', login());
+        prefs.setString('session', login());
       }
     }
   }
@@ -38,6 +38,7 @@ class _AccountState extends State<Account>{
 
   @override
   Widget build(BuildContext context){
+    checkLogin();
     return MaterialApp();
   }
 }

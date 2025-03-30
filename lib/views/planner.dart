@@ -12,7 +12,7 @@ class Planner extends StatefulWidget {
 
 class _PlannerState extends State<Planner> {
   late Future<List<Task>> _taskList;
-  final DateFormat _dateFormatter = DateFormat('MMM dd, yyyy');
+  final DateFormat _dateFormatter = DateFormat.yMd('ko_KR');
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _PlannerState extends State<Planner> {
                 task.title,
                 style: TextStyle(
                   fontSize: 18.0,
-                  decoration: task.status == false
+                  decoration: task.status == true
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 ),
@@ -46,7 +46,7 @@ class _PlannerState extends State<Planner> {
                 '${_dateFormatter.format(task.date)} • ${task.priority}',
                 style: TextStyle(
                   fontSize: 15.0,
-                  decoration: task.status == false
+                  decoration: task.status == true
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 ),
@@ -90,7 +90,6 @@ class _PlannerState extends State<Planner> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: FutureBuilder(
         future: _taskList,
         builder: (context, snapshot) {
@@ -101,7 +100,7 @@ class _PlannerState extends State<Planner> {
           }
 
           final int completedTaskCount = snapshot.data
-          !.where((Task task) => task.status == 0)
+          !.where((Task task) => task.status == false)
               .toList()
               .length;
 
