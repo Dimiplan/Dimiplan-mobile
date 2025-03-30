@@ -37,7 +37,7 @@ class _PlannerState extends State<Planner> {
                 task.title,
                 style: TextStyle(
                   fontSize: 18.0,
-                  decoration: task.status == true
+                  decoration: task.status == false
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 ),
@@ -46,7 +46,7 @@ class _PlannerState extends State<Planner> {
                 '${_dateFormatter.format(task.date)} • ${task.priority}',
                 style: TextStyle(
                   fontSize: 15.0,
-                  decoration: task.status == 0
+                  decoration: task.status == false
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 ),
@@ -80,8 +80,6 @@ class _PlannerState extends State<Planner> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         child: Icon(Icons.add_outlined),
         onPressed: () => Navigator.push(
           context,
@@ -92,6 +90,7 @@ class _PlannerState extends State<Planner> {
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: FutureBuilder(
         future: _taskList,
         builder: (context, snapshot) {

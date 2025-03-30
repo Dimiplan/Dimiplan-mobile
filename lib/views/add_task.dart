@@ -17,7 +17,7 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
-  late String? _priority;
+  String? _priority;
   DateTime _date = DateTime.now();
   final TextEditingController _dateController = TextEditingController();
   final DateFormat _dateFormatter = DateFormat('MMM dd, yyyy');
@@ -86,18 +86,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
             ),
             onPressed: () => Navigator.pop(context)),
         title: Row(children: [
           Text(
-            widget.task == null ? 'Add Task' : 'Update Task',
-            style: const TextStyle(
-              color: Colors.redAccent,
+            widget.task == null ? '작업 추가' : '작업 수정',
+            style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.normal,
             ),
@@ -131,14 +128,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         child: TextFormField(
                           style: TextStyle(fontSize: 18.0),
                           decoration: InputDecoration(
-                            labelText: 'Title',
+                            labelText: '이름',
                             labelStyle: TextStyle(fontSize: 18.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
                           validator: (input) => input!.trim().isEmpty
-                              ? 'Please enter a task title'
+                              ? '이름을 입력해 주세요.'
                               : null,
                           onSaved: (input) => _title = input!,
                           initialValue: _title,
@@ -152,7 +149,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           style: TextStyle(fontSize: 18.0),
                           onTap: _handleDatePicker,
                           decoration: InputDecoration(
-                            labelText: 'Date',
+                            labelText: '날짜',
                             labelStyle: TextStyle(fontSize: 18.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -166,29 +163,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           isDense: true,
                           icon: Icon(Icons.arrow_drop_down_circle),
                           iconSize: 22.0,
-                          iconEnabledColor: Theme.of(context).primaryColor,
                           items: _priorities.map((String priority) {
                             return DropdownMenuItem(
                               value: priority,
                               child: Text(
                                 priority,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18.0,
-                                ),
                               ),
                             );
                           }).toList(),
                           style: TextStyle(fontSize: 18.0),
                           decoration: InputDecoration(
-                            labelText: 'Priority',
+                            labelText: '중요도',
                             labelStyle: TextStyle(fontSize: 18.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
                           validator: (input) => _priority == null
-                              ? 'Please select a priority level'
+                              ? '중요도를 선택해 주세요.'
                               : null,
                           onChanged: (value) {
                             setState(() {
@@ -210,7 +202,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         child: TextButton(
                           onPressed: _submit,
                           child: Text(
-                            widget.task == null ? 'Add' : 'Update',
+                            widget.task == null ? '추가' : '수정',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
@@ -231,7 +223,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         child: TextButton(
                           onPressed: _delete,
                           child: Text(
-                            'Delete',
+                            '삭제',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
