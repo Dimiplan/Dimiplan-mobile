@@ -38,7 +38,14 @@ class MyApp extends StatelessWidget {
         ),
         brightness: Brightness.light,
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromRGBO(219, 32, 125, 1.0),
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+          brightness: Brightness.dark
+        ),
+        brightness: Brightness.dark,
+      ),
       home: const Nav(),
       builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
