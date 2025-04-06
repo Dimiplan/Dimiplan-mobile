@@ -32,7 +32,10 @@ class _AccountState extends State<Account> {
   }
 
   Future<String?> login() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signInSilently();
+    if (googleUser == null) {
+      googleUser = await GoogleSignIn().signIn();
+    }
     var api = Uri.https(backend, '/auth/login');
     Map<String, dynamic> body = {'userId': googleUser?.id};
     String jsonBody = json.encode(body);
