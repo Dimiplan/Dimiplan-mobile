@@ -21,8 +21,8 @@ class _PlannerState extends State<Planner> {
   }
 
   _updateTaskList() {
-    setState(() {
-      _taskList = DatabaseHelper.instance.getTaskList();
+    setState((){
+      _taskList = db.getTaskList(DateTime.now());
     });
   }
 
@@ -34,7 +34,7 @@ class _PlannerState extends State<Planner> {
           if (task.status == true)
             ListTile(
               title: Text(
-                task.title,
+                task.content,
                 style: TextStyle(
                   fontSize: 18.0,
                   decoration: task.status == true
@@ -54,7 +54,7 @@ class _PlannerState extends State<Planner> {
               trailing: Checkbox(
                 onChanged: (value) {
                   task.status = (value! ? 1 : 0) as bool;
-                   DatabaseHelper.instance.updateTask(task);
+                   db.updateTask(task);
                   _updateTaskList();
                 },
                 activeColor: Theme.of(context).primaryColor,
@@ -98,11 +98,7 @@ class _PlannerState extends State<Planner> {
               child: CircularProgressIndicator(),
             );
           }
-
-          final int completedTaskCount = snapshot.data
-          !.where((Task task) => task.status == false)
-              .toList()
-              .length;
+          final int completedTaskCount = snapshot.data!.where((Task task) => task.status == false).toList().length;
 
           return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 0.0),
@@ -110,8 +106,7 @@ class _PlannerState extends State<Planner> {
             itemBuilder: (BuildContext context, int index) {
               if (index == 0) {
                 return Padding(
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -122,8 +117,7 @@ class _PlannerState extends State<Planner> {
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           color: Color.fromRGBO(240, 240, 240, 1.0),
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                         child: Center(
                           child: Text(

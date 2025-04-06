@@ -20,20 +20,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   String? _priority;
   DateTime _date = DateTime.now();
   final TextEditingController _dateController = TextEditingController();
-  final DateFormat _dateFormatter = DateFormat('MMM dd, yyyy');
+  final DateFormat _dateFormatter = DateFormat.yMd();
 
   final List<String> _priorities = ['Low', 'Medium', 'High'];
 
   @override
   void initState() {
     super.initState();
-
     if (widget.task != null) {
-      _title = widget.task!.title;
+      _title = widget.task!.content;
       _date = widget.task!.date;
-      _priority = widget.task!.priority;
+      _priority = _priorities[widget.task!.priority];
     }
-
     _dateController.text = _dateFormatter.format(_date);
   }
 
@@ -59,7 +57,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   _delete() {
-    DatabaseHelper.instance.deleteTask(widget.task!.id!);
+    db.deleteTask(widget.task!.seq!);
     Navigator.pop(context);
     widget.updateTaskList();
   }
@@ -68,14 +66,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Task task = Task(title: _title, date: _date, priority: _priority!);
+      Task task = Task(content: _title, date: _date, priority: _priorities.indexOf(_priority!));
       if (widget.task == null) {
-        DatabaseHelper.instance.insertTask(task);
+        db.insertTask(task);
       } else {
         // Update the task
-        task.id = widget.task!.id;
+        task.seq = widget.task!.seq;
         task.status = widget.task!.status;
-        DatabaseHelper.instance.updateTask(task);
+        db.updateTask(task);
       }
       Navigator.push(context, MaterialPageRoute(builder: (_) => Planner()));
       widget.updateTaskList();

@@ -1,91 +1,108 @@
-import 'dart:io';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/internal/model.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
+
+DatabaseHelper db = DatabaseHelper();
 
 class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._instance();
-  static Database? _db;
+  String? _session;
+  static const String backend = "dimigo.co.kr:3000";
+  final DateFormat _dateFormatter = DateFormat.yMd('ko_KR');
 
-  DatabaseHelper._instance();
-
-  String tasksTable = 'task_table';
-  String colId = 'id';
-  String colTitle = 'title';
-  String colDate = 'date';
-  String colPriority = 'priority';
-  String colStatus = 'status';
-
-  // Task Tables
-  // Id | Title | Date | Priority | Status
-  // 0     ''      ''      ''         0
-  // 1     ''      ''      ''         0
-  // 2     ''      ''      ''         0
-
-  Future<Database?> get db async {
-    _db ??= await _initDb();
-    return _db;
+  Future<String?> get session async {
+    var prefs = await SharedPreferences.getInstance();
+    _session ??= await prefs.getString('session');
+    return _session;
   }
 
-  Future<Database> _initDb() async {
-    String path = './todo_list.db';
-    final todoListDb =
-    await openDatabase(path, version: 1, onCreate: _createDb);
-    return todoListDb;
-  }
-
-  void _createDb(Database db, int version) async {
-    await db.execute(
-      'CREATE TABLE $tasksTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, $colDate TEXT, $colPriority TEXT, $colStatus INTEGER)',
+  Future<List<Task>> getTaskList(DateTime date) async {
+    var session = await this.session;
+    if (session == null) {
+      return [];
+    }
+    String cdate = _dateFormatter.format(date);
+    var url = Uri.https(backend, '/getTasks?date=${cdate}');
+    var response = await http.get(
+      url,
+      headers: {'cookie': "connect.sid=${session}"},
     );
+    print(response.body);
+    if (response.statusCode == 200) {
+      return [];
+    } else {
+      return [];
+    }
   }
 
-  Future<List<Map<String, dynamic>>?> getTaskMapList() async {
-    Database? db = await this.db;
-    final List<Map<String, Object?>>? result = await db?.query(tasksTable);
-    return result;
-  }
-
-  Future<List<Task>> getTaskList() async {
-    final List<Map<String, dynamic>>? taskMapList = await getTaskMapList();
-    final List<Task> taskList = [];
-    taskMapList?.forEach((taskMap) {
-      taskList.add(Task.fromMap(taskMap));
-    });
-    taskList.sort((taskA, taskB) => taskA.date.compareTo(taskB.date));
-    return taskList;
-  }
-
-  Future<int?> insertTask(Task task) async {
-    Database? db = await this.db;
-    final int? result = await db?.insert(tasksTable, task.toMap());
-    return result;
-  }
-
-  Future<int?> updateTask(Task task) async {
-    Database? db = await this.db;
-    final int? result = await db?.update(
-      tasksTable,
-      task.toMap(),
-      where: '$colId = ?',
-      whereArgs: [task.id],
+  Future<void> insertTask(Task task) async {
+    var session = await this.session;
+    if (session == null) {
+      return null;
+    }
+    var url = Uri.https(backend, '/addTask');
+    var data = {task.content, task.date, task.priority};
+    var response = await http.post(
+      url,
+      body: data,
+      headers: {'cookie': session},
     );
-    return result;
+    if (response.statusCode == 200) {
+      print(response.body);
+      return null;
+    } else {
+      return null;
+    }
   }
 
-  Future<int?> deleteTask(int id) async {
-    Database? db = await this.db;
-    final int? result = await db?.delete(
-      tasksTable,
-      where: '$colId = ?',
-      whereArgs: [id],
+  Future<void> updateTask(Task task) async {
+    var session = await this.session;
+    if (session == null) {
+      return null;
+    }
+    var url = Uri.https(backend, '/updateTask');
+    var data = {task.content, task.date, task.priority};
+    var response = await http.put(
+      url,
+      body: data,
+      headers: {'cookie': session},
     );
-    return result;
+    if (response.statusCode == 200) {
+      print(response.body);
+      return null;
+    } else {
+      return null;
+    }
   }
 
-  Future<int?> deleteAllTask() async {
-    Database? db = await this.db;
-    final int? result = await db?.delete(tasksTable);
-    return result;
+  Future<void> deleteTask(int id) async {
+    var session = await this.session;
+    if (session == null) {
+      return null;
+    }
+    var url = Uri.https(backend, '/deleteTask?id=${id}');
+    var response = await http.delete(url, headers: {'cookie': session});
+    if (response.statusCode == 200) {
+      print(response.body);
+      return null;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> deleteAllTask() async {
+    var session = await this.session;
+    if (session == null) {
+      return null;
+    }
+    var url = Uri.https(backend, '/deleteAllTask');
+    var response = await http.delete(url, headers: {'cookie': session});
+    if (response.statusCode == 200) {
+      print(response.body);
+      return null;
+    } else {
+      return null;
+    }
   }
 }
