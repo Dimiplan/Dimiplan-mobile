@@ -1,0 +1,91 @@
+name: Format and Build Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "assets/**"
+      - "web/**"
+      - "pubspec.yaml"
+      - ".github/workflows/format_and_build.yml"
+  workflow_dispatch:
+
+jobs:
+  Format:
+    name: Format and Analysis Code
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: beta
+          version: 3.31.0-0.1.pre
+          cache-sdk: true
+          cache: true
+
+      - name: Dart Analysis and Format
+        run: |
+          flutter pub get
+          dart analyze lib
+          dart fix
+          dart format lib
+
+      - name: Commit Back
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Dart Fix and Format
+          commit_options: "--no-verify --signoff"
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{yaml,md,yml,json,toml,lock.json,lock.toml}
+
+  Build:
+    needs: Format
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: beta
+          version: 3.31.0-0.1.pre
+          cache-sdk: true
+          cache: true
+
+      - name: Build
+        uses: cedvdb/action-flutter-build-web@v1
+        with:
+          build-cmd: flutter build web --release
+          working-directory: ./
+
+      - name: Archive Production artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: build/web
+
+      - name: Deploy on Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build/web --project-name=dimiplan
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

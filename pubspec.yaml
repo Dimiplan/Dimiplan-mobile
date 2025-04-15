@@ -1,6 +1,6 @@
 name: dimiplan
 
-publish_to: 'none'
+publish_to: "none"
 
 uses-material-design: true
 
