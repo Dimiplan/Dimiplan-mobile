@@ -27,6 +27,7 @@ jobs:
 
       - name: Dart Analysis and Format
         run: |
+          flutter pub get
           dart analyze lib
           dart fix
           dart format lib
