@@ -2,8 +2,13 @@ name: Build Web
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+     - 'lib/**'
+     - 'assets/**'
+     - 'web/**'
+     - 'pubspec.yaml'
+     - '.github/workflows/build_web.yml'
   workflow_dispatch:
 
 jobs:
