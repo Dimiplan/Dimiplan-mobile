@@ -21,7 +21,7 @@ class _PlannerState extends State<Planner> {
   }
 
   _updateTaskList() {
-    setState((){
+    setState(() {
       _taskList = db.getTaskList(DateTime.now());
     });
   }
@@ -37,38 +37,42 @@ class _PlannerState extends State<Planner> {
                 task.content,
                 style: TextStyle(
                   fontSize: 18.0,
-                  decoration: task.status == true
-                      ? TextDecoration.none
-                      : TextDecoration.lineThrough,
+                  decoration:
+                      task.status == true
+                          ? TextDecoration.none
+                          : TextDecoration.lineThrough,
                 ),
               ),
               subtitle: Text(
                 '${_dateFormatter.format(task.date)} • ${task.priority}',
                 style: TextStyle(
                   fontSize: 15.0,
-                  decoration: task.status == true
-                      ? TextDecoration.none
-                      : TextDecoration.lineThrough,
+                  decoration:
+                      task.status == true
+                          ? TextDecoration.none
+                          : TextDecoration.lineThrough,
                 ),
               ),
               trailing: Checkbox(
                 onChanged: (value) {
                   task.status = (value! ? 1 : 0) as bool;
-                   db.updateTask(task);
+                  db.updateTask(task);
                   _updateTaskList();
                 },
                 activeColor: Theme.of(context).primaryColor,
                 value: task.status == 1 ? true : false,
               ),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AddTaskScreen(
-                    updateTaskList: _updateTaskList,
-                    task: task,
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => AddTaskScreen(
+                            updateTaskList: _updateTaskList,
+                            task: task,
+                          ),
+                    ),
                   ),
-                ),
-              ),
             ),
           //Divider(),
         ],
@@ -81,24 +85,25 @@ class _PlannerState extends State<Planner> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add_outlined),
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AddTaskScreen(
-              updateTaskList: _updateTaskList,
+        onPressed:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AddTaskScreen(updateTaskList: _updateTaskList),
+              ),
             ),
-          ),
-        ),
       ),
       body: FutureBuilder(
         future: _taskList,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: CircularProgressIndicator());
           }
-          final int completedTaskCount = snapshot.data!.where((Task task) => task.status == false).toList().length;
+          final int completedTaskCount =
+              snapshot.data!
+                  .where((Task task) => task.status == false)
+                  .toList()
+                  .length;
 
           return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 0.0),
@@ -111,8 +116,7 @@ class _PlannerState extends State<Planner> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        margin:
-                        const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                        margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -129,7 +133,7 @@ class _PlannerState extends State<Planner> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );

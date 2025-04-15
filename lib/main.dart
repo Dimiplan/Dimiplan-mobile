@@ -6,9 +6,7 @@ import 'package:xtyle/xtyle.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp],
-  );
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   Xtyle.init(
     configuration: XtyleConfig.korean(
       fontFamilyKor: 'NotoSansKR',
@@ -34,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color.fromRGBO(219, 32, 125, 1.0),
-          dynamicSchemeVariant: DynamicSchemeVariant.fidelity
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
         ),
         brightness: Brightness.light,
       ),
@@ -42,17 +40,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color.fromRGBO(219, 32, 125, 1.0),
           dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-          brightness: Brightness.dark
+          brightness: Brightness.dark,
         ),
         brightness: Brightness.dark,
       ),
       home: const Nav(),
-      builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(1.0),
+      builder:
+          (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(1.0)),
+            child: child!,
           ),
-          child: child!
-      ),
     );
   }
 }
