@@ -1,0 +1,36 @@
+name: Format and Analysis Code
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  format-code:
+    name: Format and Analysis Code
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dart Analysis and Format
+        run: |
+          dart analyze lib
+          dart fix
+          dart format lib
+          
+      - name: Commit Back
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Dart Fix and Format
+          commit_options: '--no-verify --signoff'
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*
+       
