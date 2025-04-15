@@ -5,7 +5,13 @@ class Task {
   int priority;
   bool status; // true : processing, false : finished
 
-  Task({this.seq, required this.content, required this.date, required this.priority, this.status=true});
+  Task({
+    this.seq,
+    required this.content,
+    required this.date,
+    required this.priority,
+    this.status = true,
+  });
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};

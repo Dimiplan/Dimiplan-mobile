@@ -66,7 +66,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Task task = Task(content: _title, date: _date, priority: _priorities.indexOf(_priority!));
+      Task task = Task(
+        content: _title,
+        date: _date,
+        priority: _priorities.indexOf(_priority!),
+      );
       if (widget.task == null) {
         db.insertTask(task);
       } else {
@@ -85,19 +89,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            Text(
+              widget.task == null ? '작업 추가' : '작업 수정',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
             ),
-            onPressed: () => Navigator.pop(context)),
-        title: Row(children: [
-          Text(
-            widget.task == null ? '작업 추가' : '작업 수정',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ]),
+          ],
+        ),
         // actions: [
         //   IconButton(
         //       icon: Icon(
@@ -132,9 +134,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
-                          validator: (input) => input!.trim().isEmpty
-                              ? '이름을 입력해 주세요.'
-                              : null,
+                          validator:
+                              (input) =>
+                                  input!.trim().isEmpty ? '이름을 입력해 주세요.' : null,
                           onSaved: (input) => _title = input!,
                           initialValue: _title,
                         ),
@@ -161,14 +163,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           isDense: true,
                           icon: Icon(Icons.arrow_drop_down_circle),
                           iconSize: 22.0,
-                          items: _priorities.map((String priority) {
-                            return DropdownMenuItem(
-                              value: priority,
-                              child: Text(
-                                priority,
-                              ),
-                            );
-                          }).toList(),
+                          items:
+                              _priorities.map((String priority) {
+                                return DropdownMenuItem(
+                                  value: priority,
+                                  child: Text(priority),
+                                );
+                              }).toList(),
                           style: TextStyle(fontSize: 18.0),
                           decoration: InputDecoration(
                             labelText: '중요도',
@@ -177,9 +178,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
-                          validator: (input) => _priority == null
-                              ? '중요도를 선택해 주세요.'
-                              : null,
+                          validator:
+                              (input) =>
+                                  _priority == null ? '중요도를 선택해 주세요.' : null,
                           onChanged: (value) {
                             setState(() {
                               _priority = value!;
@@ -210,25 +211,25 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       ),
                       widget.task != null
                           ? Container(
-                        margin: EdgeInsets.symmetric(vertical: 0.0),
-                        height: 60.0,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        // ignore: deprecated_member_use
-                        child: TextButton(
-                          onPressed: _delete,
-                          child: Text(
-                            '삭제',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
+                            margin: EdgeInsets.symmetric(vertical: 0.0),
+                            height: 60.0,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
-                          ),
-                        ),
-                      )
+                            // ignore: deprecated_member_use
+                            child: TextButton(
+                              onPressed: _delete,
+                              child: Text(
+                                '삭제',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            ),
+                          )
                           : SizedBox.shrink(),
                     ],
                   ),

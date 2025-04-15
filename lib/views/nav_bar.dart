@@ -15,7 +15,7 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   int currentIndex = 0;
   final screens = [const Homepage(), const Planner(), const Account()];
-  bool mark=false;
+  bool mark = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,10 @@ class _NavState extends State<Nav> {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.shade100: null,
+        backgroundColor:
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? Theme.of(context).primaryColor.shade100
+                : null,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
@@ -34,7 +37,10 @@ class _NavState extends State<Nav> {
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.shade50: null,
+        backgroundColor:
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? Theme.of(context).primaryColor.shade50
+                : null,
         selectedIndex: currentIndex,
         onDestinationSelected: (value) {
           setState(() {
@@ -42,10 +48,7 @@ class _NavState extends State<Nav> {
           });
         },
         destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home_rounded),
-            label: '홈',
-          ),
+          NavigationDestination(icon: Icon(Icons.home_rounded), label: '홈'),
           NavigationDestination(
             icon: Icon(Icons.list_alt_rounded),
             label: '플래너',
@@ -53,8 +56,8 @@ class _NavState extends State<Nav> {
           NavigationDestination(
             icon: Icon(Icons.account_circle_rounded),
             label: '계정관리',
-          )
-        ]
+          ),
+        ],
       ),
       body: screens[currentIndex],
     );
