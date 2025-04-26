@@ -1,10 +1,22 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dimiplan/views/nav_bar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:xtyle/xtyle.dart';
 
+class CustomHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
+// Then in your main() function:
 void main() async {
+  HttpOverrides.global = CustomHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   Xtyle.init(

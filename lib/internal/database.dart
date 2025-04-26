@@ -1,14 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/internal/model.dart';
-import 'package:intl/intl.dart';
 
 DatabaseHelper db = DatabaseHelper();
 
 class DatabaseHelper {
   String? _session;
   static const String backend = "dimigo.co.kr:3000";
-  final DateFormat _dateFormatter = DateFormat.yMd('ko_KR');
 
   Future<String?> get session async {
     var prefs = await SharedPreferences.getInstance();
@@ -16,17 +14,26 @@ class DatabaseHelper {
     return _session;
   }
 
+  Future<void> setSession(String sessionValue) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('session', sessionValue);
+    _session = sessionValue;
+  }
+
   Future<List<Task>> getTaskList(DateTime date) async {
     var session = await this.session;
     if (session == null) {
       return [];
     }
-    String cdate = _dateFormatter.format(date);
-    var url = Uri.https(backend, '/getTasks?date=${cdate}');
+    var url = Uri.https(backend, '/api/plan/getEveryPlan');
     var response = await http.get(
       url,
-      headers: {'cookie': "connect.sid=${session}"},
+      headers: {
+        // Send the session ID in a custom header
+        'X-Session-ID': session,
+      },
     );
+    print(response.statusCode);
     print(response.body);
     if (response.statusCode == 200) {
       return [];
