@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/internal/model.dart';
+import 'dart:convert';
 
 DatabaseHelper db = DatabaseHelper();
 
@@ -36,7 +37,12 @@ class DatabaseHelper {
     print(response.statusCode);
     print(response.body);
     if (response.statusCode == 200) {
-      return [];
+      var j = json.decode(response.body);
+      var tasks = <Task>[];
+      for (var task in j) {
+        tasks.add(Task.fromMap(task));
+      }
+      return tasks;
     } else {
       return [];
     }
@@ -48,7 +54,7 @@ class DatabaseHelper {
       return null;
     }
     var url = Uri.https(backend, '/addTask');
-    var data = {task.content, task.date, task.priority};
+    var data = {task.contents, task.priority};
     var response = await http.post(
       url,
       body: data,
@@ -68,7 +74,7 @@ class DatabaseHelper {
       return null;
     }
     var url = Uri.https(backend, '/updateTask');
-    var data = {task.content, task.date, task.priority};
+    var data = {task.contents, task.priority};
     var response = await http.put(
       url,
       body: data,

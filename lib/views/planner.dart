@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dimiplan/internal/model.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/views/add_task.dart';
-import 'package:intl/intl.dart';
 
 class Planner extends StatefulWidget {
   const Planner({super.key});
@@ -12,7 +11,6 @@ class Planner extends StatefulWidget {
 
 class _PlannerState extends State<Planner> {
   late Future<List<Task>> _taskList;
-  final DateFormat _dateFormatter = DateFormat.yMd('ko_KR');
 
   @override
   void initState() {
@@ -31,36 +29,26 @@ class _PlannerState extends State<Planner> {
       padding: EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
         children: <Widget>[
-          if (task.status == true)
+          if (task.isCompleted == 0)
             ListTile(
               title: Text(
-                task.content,
+                task.contents,
                 style: TextStyle(
                   fontSize: 18.0,
                   decoration:
-                      task.status == true
-                          ? TextDecoration.none
-                          : TextDecoration.lineThrough,
-                ),
-              ),
-              subtitle: Text(
-                '${_dateFormatter.format(task.date)} • ${task.priority}',
-                style: TextStyle(
-                  fontSize: 15.0,
-                  decoration:
-                      task.status == true
+                      task.isCompleted == 0
                           ? TextDecoration.none
                           : TextDecoration.lineThrough,
                 ),
               ),
               trailing: Checkbox(
                 onChanged: (value) {
-                  task.status = (value! ? 1 : 0) as bool;
+                  task.isCompleted = value! ? 1 : 0;
                   db.updateTask(task);
                   _updateTaskList();
                 },
                 activeColor: Theme.of(context).primaryColor,
-                value: task.status == 1 ? true : false,
+                value: task.isCompleted == 1 ? true : false,
               ),
               onTap:
                   () => Navigator.push(
@@ -101,7 +89,7 @@ class _PlannerState extends State<Planner> {
           }
           final int completedTaskCount =
               snapshot.data!
-                  .where((Task task) => task.status == false)
+                  .where((Task task) => task.isCompleted == 1)
                   .toList()
                   .length;
 
