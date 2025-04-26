@@ -36,15 +36,41 @@ class _AccountState extends State<Account> {
     if (googleUser == null) {
       googleUser = await GoogleSignIn().signIn();
     }
+
+    if (googleUser == null) {
+      return null;
+    }
+
     var api = Uri.https(backend, '/auth/login');
-    Map<String, dynamic> body = {'userId': googleUser?.id};
+    Map<String, dynamic> body = {'userId': googleUser.id};
     String jsonBody = json.encode(body);
+
     var response = await http.post(
       api,
       body: jsonBody,
       headers: {'Content-Type': 'application/json'},
     );
-    return response.headers['set-cookie'];
+
+    print("Status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      try {
+        // Parse the response body to get the session ID
+        Map<String, dynamic> responseBody = json.decode(response.body);
+        String? sessionId = responseBody['sessionId'];
+
+        if (sessionId != null) {
+          return sessionId;
+        } else {
+          print("No sessionId in response");
+        }
+      } catch (e) {
+        print("Error parsing response: $e");
+      }
+    }
+
+    return null;
   }
 
   @override
