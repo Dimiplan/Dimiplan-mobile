@@ -36,7 +36,7 @@ jobs:
         run: |
           flutter pub get
           dart analyze lib
-          dart fix
+          dart fix --apply
           dart format lib
 
       - name: Commit Back
