@@ -21,7 +21,7 @@ class _AccountState extends State<Account> {
       prefs.setString('session', await login() ?? '');
     } else {
       var api = Uri.https(backend, '/api/user/registered');
-      var response = await http.get(api, headers: {'cookie': session!});
+      var response = await http.get(api, headers: {'X-Session-ID': session!});
       if (response.statusCode == 200) {
         return;
       } else {

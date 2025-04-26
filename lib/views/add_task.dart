@@ -28,8 +28,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   void initState() {
     super.initState();
     if (widget.task != null) {
-      _title = widget.task!.content;
-      _date = widget.task!.date;
+      _title = widget.task!.contents;
       _priority = _priorities[widget.task!.priority];
     }
     _dateController.text = _dateFormatter.format(_date);
@@ -57,7 +56,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   _delete() {
-    db.deleteTask(widget.task!.seq!);
+    db.deleteTask(widget.task!.id!);
     Navigator.pop(context);
     widget.updateTaskList();
   }
@@ -67,16 +66,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       _formKey.currentState!.save();
 
       Task task = Task(
-        content: _title,
-        date: _date,
+        contents: _title,
         priority: _priorities.indexOf(_priority!),
       );
       if (widget.task == null) {
         db.insertTask(task);
       } else {
         // Update the task
-        task.seq = widget.task!.seq;
-        task.status = widget.task!.status;
+        task.id = widget.task!.id;
+        task.isCompleted = widget.task!.isCompleted;
         db.updateTask(task);
       }
       Navigator.push(context, MaterialPageRoute(builder: (_) => Planner()));

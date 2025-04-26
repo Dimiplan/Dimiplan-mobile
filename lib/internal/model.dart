@@ -1,37 +1,33 @@
 class Task {
-  int? seq;
-  String content;
-  DateTime date;
+  int? id;
+  String contents;
   int priority;
-  bool status; // true : processing, false : finished
+  int isCompleted; // true : processing, false : finished
 
   Task({
-    this.seq,
-    required this.content,
-    required this.date,
+    this.id,
+    required this.contents,
     required this.priority,
-    this.status = true,
+    this.isCompleted = 0,
   });
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    if (seq != null) {
-      map['seq'] = seq;
+    if (id != null) {
+      map['id'] = id;
     }
-    map['content'] = content;
-    map['date'] = [date.year, date.month, date.day];
+    map['contents'] = contents;
     map['priority'] = priority;
-    map['status'] = status;
+    map['isCompleted'] = isCompleted;
     return map;
   }
 
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
-      seq: map['seq'],
-      content: map['content'],
-      date: DateTime(map['date'][0], map['date'][1], map['date'][2]),
+      id: map['id'],
+      contents: map['contents'],
       priority: map['priority'],
-      status: map['status'],
+      isCompleted: map['isCompleted'],
     );
   }
 }
