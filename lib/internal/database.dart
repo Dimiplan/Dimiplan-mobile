@@ -83,4 +83,19 @@ class DatabaseHelper {
     );
     return;
   }
+
+  Future<void> updateUser(User user) async {
+    var session = await this.session;
+    if (session == null) {
+      return null;
+    }
+    var url = Uri.https(backend, '/api/user/updateme');
+    var userMap = user.toMap();
+    await http.post(
+      url,
+      body: json.encode(userMap),
+      headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+    );
+    return;
+  }
 }
