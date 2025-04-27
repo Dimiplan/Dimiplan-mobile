@@ -16,171 +16,237 @@ class _AccountState extends State<Account> {
   String session = '';
   static const String backend = "dimigo.co.kr:3000";
   User? user;
+  bool userLogout = false;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     checkLogin();
-    getUser();
   }
 
-  void checkLogin() async {
-    var prefs = await SharedPreferences.getInstance();
+  Future<void> checkLogin() async {
+    if (userLogout) {
+      return;
+    }
+
     setState(() {
-      session = prefs.getString('session') ?? '';
+      isLoading = true;
     });
-    if (session == '') {
-      setState(() async {
-        session = await login() ?? '';
+
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      String storedSession = prefs.getString('session') ?? '';
+
+      setState(() {
+        session = storedSession;
       });
-      prefs.setString('session', session);
-    } else {
-      var api = Uri.https(backend, '/api/user/registered');
-      var response = await http.get(api, headers: {'X-Session-ID': session});
-      if (response.statusCode == 200) {
-        return;
+
+      if (session == '') {
+        // Need to perform login
+        String? newSession = await login();
+        if (newSession != null && newSession.isNotEmpty) {
+          setState(() {
+            session = newSession;
+          });
+          await prefs.setString('session', newSession);
+          await getUser(); // Fetch user data after getting session
+        }
       } else {
-        setState(() async {
-          session = await login() ?? '';
-        });
-        prefs.setString('session', session);
+        // Verify existing session
+        var api = Uri.https(backend, '/api/user/registered');
+        var response = await http.get(api, headers: {'X-Session-ID': session});
+        if (response.statusCode != 200) {
+          // Session invalid, need new login
+          String? newSession = await login();
+          if (newSession != null && newSession.isNotEmpty) {
+            setState(() {
+              session = newSession;
+            });
+            await prefs.setString('session', newSession);
+          }
+        }
+        await getUser(); // Fetch user data regardless
       }
+    } catch (e) {
+      print("Error during login check: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   Future<String?> login() async {
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signInSilently();
-    if (googleUser == null) {
-      googleUser = await GoogleSignIn().signIn();
-    }
+    try {
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    if (googleUser == null) {
-      return null;
-    }
-
-    var api = Uri.https(backend, '/auth/login');
-    Map<String, dynamic> body = {'userId': googleUser.id};
-    String jsonBody = json.encode(body);
-
-    var response = await http.post(
-      api,
-      body: jsonBody,
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      try {
-        // Parse the response body to get the session ID
-        Map<String, dynamic> responseBody = json.decode(response.body);
-        String? sessionId = responseBody['sessionId'];
-
-        if (sessionId != null) {
-          return sessionId;
-        } else {
-          print("No sessionId in response");
-        }
-      } catch (e) {
-        print("Error parsing response: $e");
+      if (googleUser == null) {
+        setState(() => userLogout = true);
+        return null;
       }
-    }
 
+      var api = Uri.https(backend, '/auth/login');
+      Map<String, dynamic> body = {'userId': googleUser.id};
+      String jsonBody = json.encode(body);
+
+      var response = await http.post(
+        api,
+        body: jsonBody,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        return responseData['sessionId'];
+      } else {
+        print("Login failed with status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error during login: $e");
+    }
     return null;
   }
 
   Future<void> getUser() async {
-    var api = Uri.https(backend, '/api/user/whoami');
-
-    var response = await http.get(api, headers: {'X-Session-ID': session});
-    if (response.statusCode == 200) {
-      try {
-        setState(() => user = User.fromMap(json.decode(response.body)));
-        return;
-      } catch (e) {
-        print("Error parsing response: $e");
-      }
+    if (session.isEmpty) {
+      print("Cannot fetch user: No session available");
+      return;
     }
-    print("No user data in response");
-    return null;
+
+    try {
+      var api = Uri.https(backend, '/api/user/whoami');
+      var response = await http.get(api, headers: {'X-Session-ID': session});
+
+      if (response.statusCode == 200) {
+        var userData = json.decode(response.body);
+        setState(() => user = User.fromMap(userData));
+      } else {
+        print("Failed to get user data. Status: ${response.statusCode}");
+        print("Response: ${response.body}");
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
   }
 
-  void logout() {
-    setState(() => session = '');
+  void logout() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove('session');
+    setState(() {
+      session = '';
+      user = null;
+      userLogout = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    checkLogin();
-    getUser();
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (!userLogout && user != null) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 40.0),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        user!.name,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      user!.grade != null && user!.classnum != null
+                          ? Text(
+                            "${user!.grade}학년 ${user!.classnum}반",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 15.0),
+                    ),
+                    onPressed: logout,
+                    child: Text(
+                      '로그아웃',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+              ),
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => EditProfileScreen(
+                            updateUserInfo: getUser,
+                            user: user!,
+                          ),
+                    ),
+                  ),
+              child: Text(
+                '회원정보 수정',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 40.0),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      user!.name,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    user!.grade != null && user!.classnum != null
-                        ? Text(
-                          "${user!.grade}학년 ${user!.classnum}반",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        )
-                        : SizedBox.shrink(),
-                  ],
-                ),
-                SizedBox(width: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15.0),
-                  ),
-                  onPressed: logout,
-                  child: Text(
-                    '로그아웃',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+      child: Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
             ),
+            padding: EdgeInsets.symmetric(vertical: 15.0),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              padding: EdgeInsets.symmetric(vertical: 15.0),
-            ),
-            onPressed:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (_) => EditProfileScreen(
-                          updateUserInfo: getUser,
-                          user: user!,
-                        ),
-                  ),
-                ),
-            child: Text(
-              '회원정보 수정',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
+          onPressed: () async {
+            setState(() {
+              userLogout = false;
+              isLoading = true;
+            });
+            await checkLogin();
+            setState(() {
+              isLoading = false;
+            });
+          },
+          child: Text(
+            '로그인',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
           ),
-        ],
+        ),
       ),
     );
   }
