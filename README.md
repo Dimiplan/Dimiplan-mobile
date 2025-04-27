@@ -24,16 +24,19 @@ Dimiplan - Mobile은 한국디지털미디어고등학교 학생들을 위한 �
 ## 시작하기
 
 1. 프로젝트 클론:
+
 ```
 git clone https://github.com/yourusername/dimiplan-mobile.git
 ```
 
 2. 의존성 설치:
+
 ```
 flutter pub get
 ```
 
 3. 앱 실행:
+
 ```
 flutter run
 ```
