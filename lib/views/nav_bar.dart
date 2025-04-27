@@ -42,9 +42,13 @@ class _NavState extends State<Nav> {
       floatingActionButton:
           currentIndex == 1
               ? FloatingActionButton(
-                backgroundColor: Theme.of(context).highlightColor,
+                backgroundColor:
+                    MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                        ? Theme.of(context).primaryColor.shade50
+                        : null,
                 elevation: 8.0,
-                child: Icon(Icons.add, color: Colors.white, size: 32),
+                child: Icon(Icons.add, size: 32),
                 onPressed: () {
                   Navigator.push(
                     context,
