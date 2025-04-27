@@ -2,12 +2,14 @@ class Task {
   int? id;
   String contents;
   int priority;
+  int from;
   int isCompleted; // true : processing, false : finished
 
   Task({
     this.id,
     required this.contents,
     required this.priority,
+    required this.from,
     this.isCompleted = 0,
   });
 
@@ -18,6 +20,7 @@ class Task {
     }
     map['contents'] = contents;
     map['priority'] = priority;
+    map['from'] = from;
     map['isCompleted'] = isCompleted;
     return map;
   }
@@ -27,6 +30,7 @@ class Task {
       id: map['id'],
       contents: map['contents'],
       priority: map['priority'],
+      from: map['from'],
       isCompleted: map['isCompleted'],
     );
   }

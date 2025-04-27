@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
-import 'package:dimiplan/views/planner.dart';
-import 'package:intl/intl.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final Function updateTaskList;
@@ -18,9 +16,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
   String? _priority;
-  DateTime _date = DateTime.now();
-  final TextEditingController _dateController = TextEditingController();
-  final DateFormat _dateFormatter = DateFormat.yMd();
+  int _from = 0;
 
   final List<String> _priorities = ['Low', 'Medium', 'High'];
 
@@ -30,29 +26,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (widget.task != null) {
       _title = widget.task!.contents;
       _priority = _priorities[widget.task!.priority];
+      _from = widget.task!.from;
     }
-    _dateController.text = _dateFormatter.format(_date);
   }
 
   @override
   void dispose() {
-    _dateController.dispose();
     super.dispose();
-  }
-
-  _handleDatePicker() async {
-    final DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (date != null && date != _date) {
-      setState(() {
-        _date = date;
-      });
-      _dateController.text = _dateFormatter.format(date);
-    }
   }
 
   _delete() {
@@ -68,6 +48,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       Task task = Task(
         contents: _title,
         priority: _priorities.indexOf(_priority!),
+        from: _from,
       );
       if (widget.task == null) {
         db.insertTask(task);
@@ -77,8 +58,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         task.isCompleted = widget.task!.isCompleted;
         db.updateTask(task);
       }
-      Navigator.push(context, MaterialPageRoute(builder: (_) => Planner()));
       widget.updateTaskList();
+      Navigator.pop(context);
     }
   }
 
@@ -98,14 +79,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             ),
           ],
         ),
-        // actions: [
-        //   IconButton(
-        //       icon: Icon(
-        //         Icons.info_outline,
-        //         color: Colors.black,
-        //       ),
-        //       onPressed: () {}),
-        // ],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline, color: Colors.black),
+            onPressed: () {},
+          ),
+        ],
         centerTitle: false,
         elevation: 0,
       ),
@@ -137,22 +116,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   input!.trim().isEmpty ? '이름을 입력해 주세요.' : null,
                           onSaved: (input) => _title = input!,
                           initialValue: _title,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: _dateController,
-                          style: TextStyle(fontSize: 18.0),
-                          onTap: _handleDatePicker,
-                          decoration: InputDecoration(
-                            labelText: '날짜',
-                            labelStyle: TextStyle(fontSize: 18.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
                         ),
                       ),
                       Padding(
@@ -194,15 +157,30 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(128),
+                              spreadRadius: 2,
+                              blurRadius: 4,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        // ignore: deprecated_member_use
-                        child: TextButton(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                          ),
                           onPressed: _submit,
                           child: Text(
                             widget.task == null ? '추가' : '수정',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
