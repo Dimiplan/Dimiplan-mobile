@@ -7,7 +7,7 @@ uses-material-design: true
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.0-171.0.dev
+  sdk: ^3.8.0-278.1.beta
 
 dependencies:
   color_shade: ^1.0.1
