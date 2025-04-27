@@ -20,7 +20,7 @@ class _PlannerState extends State<Planner> {
 
   _updateTaskList() {
     setState(() {
-      _taskList = db.getTaskList(DateTime.now());
+      _taskList = db.getTaskList();
     });
   }
 
@@ -50,17 +50,20 @@ class _PlannerState extends State<Planner> {
                 activeColor: Theme.of(context).primaryColor,
                 value: task.isCompleted == 1 ? true : false,
               ),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => AddTaskScreen(
-                            updateTaskList: _updateTaskList,
-                            task: task,
-                          ),
-                    ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => AddTaskScreen(
+                          updateTaskList: _updateTaskList,
+                          task: task,
+                        ),
                   ),
+                ).then(
+                  (_) => _updateTaskList(),
+                ); // Update task list when returning from edit screen
+              },
             ),
           //Divider(),
         ],
@@ -71,15 +74,21 @@ class _PlannerState extends State<Planner> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_outlined),
-        onPressed:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => AddTaskScreen(updateTaskList: _updateTaskList),
-              ),
+        backgroundColor: Colors.blue,
+        elevation: 8.0,
+        child: Icon(Icons.add, color: Colors.white, size: 32),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddTaskScreen(updateTaskList: _updateTaskList),
             ),
+          ).then(
+            (_) => _updateTaskList(),
+          ); // Update task list when returning from add screen
+        },
       ),
       body: FutureBuilder(
         future: _taskList,
@@ -87,47 +96,12 @@ class _PlannerState extends State<Planner> {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
-          final int completedTaskCount =
-              snapshot.data!
-                  .where((Task task) => task.isCompleted == 1)
-                  .toList()
-                  .length;
-
           return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 0.0),
-            itemCount: 1 + snapshot.data!.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: Color.fromRGBO(240, 240, 240, 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'You have [ $completedTaskCount ] pending task out of [ ${snapshot.data?.length} ]',
-                            style: TextStyle(
-                              color: Colors.blueGrey,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return _buildTask(snapshot.data![index - 1]);
-            },
+            itemCount: snapshot.data!.length,
+            itemBuilder:
+                (BuildContext context, int index) =>
+                    _buildTask(snapshot.data![index]),
           );
         },
       ),

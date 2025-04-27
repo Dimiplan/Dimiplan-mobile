@@ -21,21 +21,13 @@ class DatabaseHelper {
     _session = sessionValue;
   }
 
-  Future<List<Task>> getTaskList(DateTime date) async {
+  Future<List<Task>> getTaskList() async {
     var session = await this.session;
     if (session == null) {
       return [];
     }
     var url = Uri.https(backend, '/api/plan/getEveryPlan');
-    var response = await http.get(
-      url,
-      headers: {
-        // Send the session ID in a custom header
-        'X-Session-ID': session,
-      },
-    );
-    print(response.statusCode);
-    print(response.body);
+    var response = await http.get(url, headers: {'X-Session-ID': session});
     if (response.statusCode == 200) {
       var j = json.decode(response.body);
       var tasks = <Task>[];
@@ -53,15 +45,15 @@ class DatabaseHelper {
     if (session == null) {
       return null;
     }
-    var url = Uri.https(backend, '/addTask');
-    var data = {task.contents, task.priority};
+    var url = Uri.https(backend, '/api/plan/addPlan');
     var response = await http.post(
       url,
-      body: data,
-      headers: {'cookie': session},
+      body: json.encode(task.toMap()),
+      headers: {'X-Session-ID': session},
     );
+    print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
-      print(response.body);
       return null;
     } else {
       return null;
@@ -73,15 +65,17 @@ class DatabaseHelper {
     if (session == null) {
       return null;
     }
-    var url = Uri.https(backend, '/updateTask');
-    var data = {task.contents, task.priority};
-    var response = await http.put(
+    var url = Uri.https(backend, '/api/plan/updatePlan');
+    var taskMap = task.toMap();
+    print(json.encode(taskMap));
+    var response = await http.post(
       url,
-      body: data,
-      headers: {'cookie': session},
+      body: json.encode(taskMap),
+      headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
     );
+    print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
-      print(response.body);
       return null;
     } else {
       return null;
