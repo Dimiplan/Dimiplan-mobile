@@ -146,7 +146,7 @@ class _PlannerPageState extends State<PlannerPage>
                 await db.updateTask(task);
                 _loadTasksForCurrentPlanner();
               },
-              activeColor: Theme.of(context).primaryColor,
+              activeColor: Colors.green,
               value: task.isCompleted == 1,
             ),
           ],

@@ -52,6 +52,18 @@ class _AccountState extends State<Account> {
           await prefs.setString('session', newSession);
           await getUser(); // Fetch user data after getting session
         }
+        var api = Uri.https(backend, '/api/user/registered');
+        var response = await http.get(api, headers: {'X-Session-ID': session});
+        if (response.statusCode != 200) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (_) =>
+                      EditProfileScreen(updateUserInfo: getUser, user: user!),
+            ),
+          );
+        }
       } else {
         // Verify existing session
         var api = Uri.https(backend, '/api/user/registered');
@@ -64,6 +76,21 @@ class _AccountState extends State<Account> {
               session = newSession;
             });
             await prefs.setString('session', newSession);
+          }
+          var api = Uri.https(backend, '/api/user/registered');
+          var response = await http.get(
+            api,
+            headers: {'X-Session-ID': session},
+          );
+          if (response.statusCode != 200) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (_) =>
+                        EditProfileScreen(updateUserInfo: getUser, user: user!),
+              ),
+            );
           }
         }
         await getUser(); // Fetch user data regardless
@@ -87,7 +114,12 @@ class _AccountState extends State<Account> {
       }
 
       var api = Uri.https(backend, '/auth/login');
-      Map<String, dynamic> body = {'userId': googleUser.id};
+      Map<String, dynamic> body = {
+        'userId': googleUser.id,
+        'email': googleUser.email,
+        'photo': googleUser.photoUrl,
+        'name': googleUser.displayName,
+      };
       String jsonBody = json.encode(body);
 
       var response = await http.post(
@@ -121,10 +153,16 @@ class _AccountState extends State<Account> {
 
       if (response.statusCode == 200) {
         var userData = json.decode(response.body);
+        print(userData);
         setState(() => user = User.fromMap(userData));
       } else {
-        print("Failed to get user data. Status: ${response.statusCode}");
-        print("Response: ${response.body}");
+        var prefs = await SharedPreferences.getInstance();
+        await prefs.remove('session');
+        setState(() {
+          session = '';
+          user = null;
+          userLogout = true;
+        });
       }
     } catch (e) {
       print("Error fetching user data: $e");

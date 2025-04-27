@@ -4,13 +4,9 @@ import 'package:dimiplan/internal/model.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Function updateUserInfo;
-  final User user;
+  final User? user;
 
-  const EditProfileScreen({
-    super.key,
-    required this.updateUserInfo,
-    required this.user,
-  });
+  const EditProfileScreen({super.key, required this.updateUserInfo, this.user});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -18,11 +14,11 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  late String _name;
-  late String _email;
+  late String? _name;
+  late String? _email;
   late int? _grade;
   late int? _classnum;
-  late String _profileImage;
+  late String? _profileImage;
 
   final List<int> _grades = [1, 2, 3];
   final List<int> _classnums = List.generate(6, (index) => index + 1);
@@ -30,11 +26,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _name = widget.user.name;
-    _email = widget.user.email;
-    _grade = widget.user.grade;
-    _classnum = widget.user.classnum;
-    _profileImage = widget.user.profile_image;
+    _name = widget.user?.name;
+    _email = widget.user?.email;
+    _grade = widget.user?.grade;
+    _classnum = widget.user?.classnum;
+    _profileImage = widget.user?.profile_image;
   }
 
   _submit() {
@@ -42,12 +38,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _formKey.currentState!.save();
 
       User updatedUser = User(
-        id: widget.user.id,
-        email: _email,
-        name: _name,
+        id: widget.user!.id,
+        email: _email!,
+        name: _name!,
         grade: _grade,
         classnum: _classnum,
-        profile_image: _profileImage,
+        profile_image: _profileImage!,
       );
 
       // Update the user in database
