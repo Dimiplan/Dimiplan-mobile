@@ -3,7 +3,7 @@ class Task {
   String contents;
   int priority;
   int from;
-  int isCompleted; // true : processing, false : finished
+  int isCompleted; // 0: in progress, 1: completed
 
   Task({
     this.id,
@@ -32,6 +32,38 @@ class Task {
       priority: map['priority'],
       from: map['from'],
       isCompleted: map['isCompleted'],
+    );
+  }
+}
+
+class Planner {
+  int id;
+  String name;
+  int from;  // folder ID
+  int isDaily;
+
+  Planner({
+    required this.id,
+    required this.name,
+    required this.from,
+    this.isDaily = 0,
+  });
+
+  Map<String, dynamic> toMap() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['name'] = name;
+    map['from'] = from;
+    map['isDaily'] = isDaily;
+    return map;
+  }
+
+  factory Planner.fromMap(Map<String, dynamic> map) {
+    return Planner(
+      id: map['id'],
+      name: map['name'],
+      from: map['from'],
+      isDaily: map['isDaily'],
     );
   }
 }

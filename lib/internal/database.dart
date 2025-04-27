@@ -13,6 +13,47 @@ class DatabaseHelper {
     return prefs.getString('session') ?? '';
   }
 
+  Future<List<Planner>> getPlanners() async {
+    var session = await getSession();
+    if (session == '') {
+      return [];
+    }
+    // Get planners from root folder (id=0)
+    var url = Uri.https(backend, '/api/plan/getPlannersInFolder', {'id': '0'});
+    var response = await http.get(url, headers: {'X-Session-ID': session});
+    
+    if (response.statusCode == 200) {
+      var j = json.decode(response.body);
+      var planners = <Planner>[];
+      for (var planner in j) {
+        planners.add(Planner.fromMap(planner));
+      }
+      return planners;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<Task>> getTasksForPlanner(int plannerId) async {
+    var session = await getSession();
+    if (session == '') {
+      return [];
+    }
+    var url = Uri.https(backend, '/api/plan/getPlanInPlanner', {'id': plannerId.toString()});
+    var response = await http.get(url, headers: {'X-Session-ID': session});
+    
+    if (response.statusCode == 200) {
+      var j = json.decode(response.body);
+      var tasks = <Task>[];
+      for (var task in j) {
+        tasks.add(Task.fromMap(task));
+      }
+      return tasks;
+    } else {
+      return [];
+    }
+  }
+
   Future<List<Task>> getTaskList() async {
     var session = await getSession();
     if (session == '') {
@@ -88,6 +129,31 @@ class DatabaseHelper {
       body: json.encode(userMap),
       headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
     );
+    return;
+  }
+  
+  Future<void> addPlanner(String name, int isDaily, int folderId) async {
+    var session = await getSession();
+    if (session == '') {
+      return null;
+    }
+    var url = Uri.https(backend, '/api/plan/addPlanner');
+    var plannerData = {
+      'name': name,
+      'isDaily': isDaily,
+      'from': folderId
+    };
+    
+    var response = await http.post(
+      url,
+      body: json.encode(plannerData),
+      headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+    );
+    
+    if (response.statusCode != 201) {
+      throw Exception('Failed to add planner: ${response.statusCode}');
+    }
+    
     return;
   }
 }

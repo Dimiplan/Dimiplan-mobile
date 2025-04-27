@@ -193,13 +193,14 @@ class _AccountState extends State<Account> {
                 ],
               ),
             ),
+            SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
               ),
               onPressed:
                   () => Navigator.push(
@@ -224,28 +225,48 @@ class _AccountState extends State<Account> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 40.0),
       child: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.account_circle,
+              size: 100,
+              color: Colors.grey[400],
             ),
-            padding: EdgeInsets.symmetric(vertical: 15.0),
-          ),
-          onPressed: () async {
-            setState(() {
-              userLogout = false;
-              isLoading = true;
-            });
-            await checkLogin();
-            setState(() {
-              isLoading = false;
-            });
-          },
-          child: Text(
-            '로그인',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          ),
+            SizedBox(height: 20),
+            Text(
+              '로그인이 필요합니다',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
+              ),
+              onPressed: () async {
+                setState(() {
+                  userLogout = false;
+                  isLoading = true;
+                });
+                await checkLogin();
+                setState(() {
+                  isLoading = false;
+                });
+              },
+              child: Text(
+                '로그인',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
       ),
     );

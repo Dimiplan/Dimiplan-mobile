@@ -2,8 +2,9 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 import 'package:dimiplan/views/account.dart';
-import 'package:dimiplan/views/add_task.dart'; // 추가
-import 'package:dimiplan/internal/database.dart'; // 데이터베이스 서비스 추가
+import 'package:dimiplan/views/add_task.dart';
+import 'package:dimiplan/internal/database.dart';
+import 'package:dimiplan/internal/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -16,8 +17,27 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int currentIndex = 0;
-  final screens = [const Homepage(), const Planner(), const Account()];
+  late List<Widget> screens;
   bool mark = false;
+  List<Planner> planners = [];
+  bool isLoadingPlanners = false;
+
+  @override
+  void initState() {
+    super.initState();
+    screens = [
+      Homepage(
+        onTabChange: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+      ),
+      const PlannerPage(),
+      const Account(),
+    ];
+    checkSession();
+  }
 
   void checkSession() async {
     var value = await db.getSession();
@@ -29,7 +49,62 @@ class _NavState extends State<Nav> {
       setState(() {
         mark = false;
       });
+      if (currentIndex == 1) {
+        loadPlanners();
+      }
     }
+  }
+
+  Future<void> loadPlanners() async {
+    if (mark) return;
+
+    setState(() {
+      isLoadingPlanners = true;
+    });
+
+    try {
+      final loadedPlanners = await db.getPlanners();
+      setState(() {
+        planners = loadedPlanners;
+        isLoadingPlanners = false;
+      });
+    } catch (e) {
+      print('Error loading planners: $e');
+      setState(() {
+        isLoadingPlanners = false;
+      });
+    }
+  }
+
+  void _addNewTask() {
+    if (planners.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('플래너가 없습니다. 플래너를 먼저 생성해주세요.'),
+          action: SnackBarAction(label: '확인', onPressed: () {}),
+        ),
+      );
+      return;
+    }
+
+    // Launch the add task screen with the first planner selected
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => AddTaskScreen(
+              updateTaskList: () {
+                if (screens[1] is Planner) {
+                  setState(() {
+                    // Trigger planner refresh
+                    screens[1] = const PlannerPage();
+                  });
+                }
+              },
+              selectedPlannerId: planners.first.id,
+            ),
+      ),
+    );
   }
 
   @override
@@ -52,7 +127,7 @@ class _NavState extends State<Nav> {
         ),
       ),
       body: screens[currentIndex],
-      // 플래너 화면(인덱스 1)일 때와 세션이 null이 아닐 때만 FloatingActionButton 표시
+      // 플래너 화면(인덱스 1)일 때와 세션이 있을 때만 FloatingActionButton 표시
       floatingActionButton:
           (currentIndex == 1 && !mark)
               ? FloatingActionButton(
@@ -64,22 +139,13 @@ class _NavState extends State<Nav> {
                 elevation: 8.0,
                 child: Icon(Icons.add, size: 32),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => AddTaskScreen(
-                            updateTaskList: () {
-                              if (screens[1] is Planner) {
-                                setState(() {
-                                  // 플래너 화면 갱신 트리거
-                                  screens[1] = const Planner();
-                                });
-                              }
-                            },
-                          ),
-                    ),
-                  );
+                  if (isLoadingPlanners) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('플래너를 로딩 중입니다. 잠시 기다려주세요.')),
+                    );
+                    return;
+                  }
+                  _addNewTask();
                 },
               )
               : null,
@@ -95,6 +161,7 @@ class _NavState extends State<Nav> {
             currentIndex = value;
             if (value == 1) {
               checkSession();
+              loadPlanners();
             }
           });
         },
