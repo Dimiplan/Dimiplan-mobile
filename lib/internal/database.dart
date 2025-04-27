@@ -6,24 +6,16 @@ import 'dart:convert';
 DatabaseHelper db = DatabaseHelper();
 
 class DatabaseHelper {
-  String? _session;
   static const String backend = "dimigo.co.kr:3000";
 
-  Future<String?> get session async {
+  Future<String> getSession() async {
     var prefs = await SharedPreferences.getInstance();
-    _session ??= await prefs.getString('session');
-    return _session;
-  }
-
-  Future<void> setSession(String sessionValue) async {
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.setString('session', sessionValue);
-    _session = sessionValue;
+    return prefs.getString('session') ?? '';
   }
 
   Future<List<Task>> getTaskList() async {
-    var session = await this.session;
-    if (session == null) {
+    var session = await getSession();
+    if (session == '') {
       return [];
     }
     var url = Uri.https(backend, '/api/plan/getEveryPlan');
@@ -41,8 +33,8 @@ class DatabaseHelper {
   }
 
   Future<void> insertTask(Task task) async {
-    var session = await this.session;
-    if (session == null) {
+    var session = await getSession();
+    if (session == '') {
       return null;
     }
     var url = Uri.https(backend, '/api/plan/addPlan');
@@ -56,8 +48,8 @@ class DatabaseHelper {
   }
 
   Future<void> updateTask(Task task) async {
-    var session = await this.session;
-    if (session == null) {
+    var session = await getSession();
+    if (session == '') {
       return null;
     }
     var url = Uri.https(backend, '/api/plan/updatePlan');
@@ -71,8 +63,8 @@ class DatabaseHelper {
   }
 
   Future<void> deleteTask(int id) async {
-    var session = await this.session;
-    if (session == null) {
+    var session = await getSession();
+    if (session == '') {
       return null;
     }
     var url = Uri.https(backend, '/api/plan/deletePlan');
@@ -85,8 +77,8 @@ class DatabaseHelper {
   }
 
   Future<void> updateUser(User user) async {
-    var session = await this.session;
-    if (session == null) {
+    var session = await getSession();
+    if (session == '') {
       return null;
     }
     var url = Uri.https(backend, '/api/user/updateme');
