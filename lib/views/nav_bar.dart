@@ -3,6 +3,7 @@ import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 import 'package:dimiplan/views/account.dart';
 import 'package:dimiplan/views/add_task.dart'; // 추가
+import 'package:dimiplan/internal/database.dart'; // 데이터베이스 서비스 추가
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,6 +18,19 @@ class _NavState extends State<Nav> {
   int currentIndex = 0;
   final screens = [const Homepage(), const Planner(), const Account()];
   bool mark = false;
+
+  void checkSession() async {
+    var value = await db.getSession();
+    if (value == '') {
+      setState(() {
+        mark = true;
+      });
+    } else {
+      setState(() {
+        mark = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +52,9 @@ class _NavState extends State<Nav> {
         ),
       ),
       body: screens[currentIndex],
-      // 플래너 화면(인덱스 1)일 때만 FloatingActionButton 표시
+      // 플래너 화면(인덱스 1)일 때와 세션이 null이 아닐 때만 FloatingActionButton 표시
       floatingActionButton:
-          currentIndex == 1
+          (currentIndex == 1 && !mark)
               ? FloatingActionButton(
                 backgroundColor:
                     MediaQuery.of(context).platformBrightness ==
@@ -79,6 +93,9 @@ class _NavState extends State<Nav> {
         onDestinationSelected: (value) {
           setState(() {
             currentIndex = value;
+            if (value == 1) {
+              checkSession();
+            }
           });
         },
         destinations: [
