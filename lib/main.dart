@@ -14,7 +14,6 @@ class CustomHttpOverrides extends HttpOverrides {
   }
 }
 
-// Then in your main() function:
 void main() async {
   HttpOverrides.global = CustomHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();

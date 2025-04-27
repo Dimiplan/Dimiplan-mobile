@@ -11,11 +11,18 @@ class Planner extends StatefulWidget {
 
 class _PlannerState extends State<Planner> {
   late Future<List<Task>> _taskList;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _updateTaskList();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -32,7 +39,7 @@ class _PlannerState extends State<Planner> {
 
   Widget _buildTask(Task task) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
         children: <Widget>[
           if (task.isCompleted == 0)
@@ -48,16 +55,16 @@ class _PlannerState extends State<Planner> {
                 ),
               ),
               trailing: Checkbox(
-                onChanged: (value) {
+                onChanged: (value) async {
                   task.isCompleted = value! ? 1 : 0;
-                  db.updateTask(task);
+                  await db.updateTask(task);
                   _updateTaskList();
                 },
                 activeColor: Theme.of(context).primaryColor,
                 value: task.isCompleted == 1 ? true : false,
               ),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder:
@@ -66,9 +73,8 @@ class _PlannerState extends State<Planner> {
                           task: task,
                         ),
                   ),
-                ).then(
-                  (_) => _updateTaskList(),
-                ); // Update task list when returning from edit screen
+                );
+                _updateTaskList(); // Update task list when returning from edit screen
               },
             ),
           //Divider(),
@@ -79,38 +85,28 @@ class _PlannerState extends State<Planner> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        elevation: 8.0,
-        child: Icon(Icons.add, color: Colors.white, size: 32),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => AddTaskScreen(updateTaskList: _updateTaskList),
-            ),
-          ).then(
-            (_) => _updateTaskList(),
-          ); // Update task list when returning from add screen
-        },
-      ),
-      body: FutureBuilder(
-        future: _taskList,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return ListView.builder(
-            padding: EdgeInsets.symmetric(vertical: 0.0),
+    _updateTaskList();
+    return FutureBuilder(
+      future: _taskList,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return RefreshIndicator(
+          onRefresh: () async {
+            _updateTaskList();
+          },
+          child: ListView.builder(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 80.0),
             itemCount: snapshot.data!.length,
             itemBuilder:
                 (BuildContext context, int index) =>
                     _buildTask(snapshot.data![index]),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
