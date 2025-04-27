@@ -228,11 +228,7 @@ class _AccountState extends State<Account> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.account_circle,
-              size: 100,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.account_circle, size: 100, color: Colors.grey[400]),
             SizedBox(height: 20),
             Text(
               '로그인이 필요합니다',

@@ -39,7 +39,7 @@ class Task {
 class Planner {
   int id;
   String name;
-  int from;  // folder ID
+  int from; // folder ID
   int isDaily;
 
   Planner({

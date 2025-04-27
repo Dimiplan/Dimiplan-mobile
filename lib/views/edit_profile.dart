@@ -87,12 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline),
-            onPressed: () {},
-          ),
-        ],
+        actions: [IconButton(icon: Icon(Icons.info_outline), onPressed: () {})],
         centerTitle: false,
         elevation: 0,
       ),
@@ -162,7 +157,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         child: Text(
                                           '$grade학년',
                                           style: TextStyle(
-                                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge?.color,
                                           ),
                                         ),
                                       );
@@ -201,7 +199,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         child: Text(
                                           '$classnum반',
                                           style: TextStyle(
-                                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge?.color,
                                           ),
                                         ),
                                       );

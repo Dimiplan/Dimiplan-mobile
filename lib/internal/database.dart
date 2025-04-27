@@ -21,7 +21,7 @@ class DatabaseHelper {
     // Get planners from root folder (id=0)
     var url = Uri.https(backend, '/api/plan/getPlannersInFolder', {'id': '0'});
     var response = await http.get(url, headers: {'X-Session-ID': session});
-    
+
     if (response.statusCode == 200) {
       var j = json.decode(response.body);
       var planners = <Planner>[];
@@ -39,9 +39,11 @@ class DatabaseHelper {
     if (session == '') {
       return [];
     }
-    var url = Uri.https(backend, '/api/plan/getPlanInPlanner', {'id': plannerId.toString()});
+    var url = Uri.https(backend, '/api/plan/getPlanInPlanner', {
+      'id': plannerId.toString(),
+    });
     var response = await http.get(url, headers: {'X-Session-ID': session});
-    
+
     if (response.statusCode == 200) {
       var j = json.decode(response.body);
       var tasks = <Task>[];
@@ -131,29 +133,25 @@ class DatabaseHelper {
     );
     return;
   }
-  
+
   Future<void> addPlanner(String name, int isDaily, int folderId) async {
     var session = await getSession();
     if (session == '') {
       return null;
     }
     var url = Uri.https(backend, '/api/plan/addPlanner');
-    var plannerData = {
-      'name': name,
-      'isDaily': isDaily,
-      'from': folderId
-    };
-    
+    var plannerData = {'name': name, 'isDaily': isDaily, 'from': folderId};
+
     var response = await http.post(
       url,
       body: json.encode(plannerData),
       headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
     );
-    
+
     if (response.statusCode != 201) {
       throw Exception('Failed to add planner: ${response.statusCode}');
     }
-    
+
     return;
   }
 }
