@@ -146,7 +146,7 @@ class _PlannerPageState extends State<PlannerPage>
                 await db.updateTask(task);
                 _loadTasksForCurrentPlanner();
               },
-              activeColor: Colors.green,
+              activeColor: Theme.of(context).primaryColor.shade800,
               value: task.isCompleted == 1,
             ),
           ],
@@ -246,7 +246,7 @@ class _PlannerPageState extends State<PlannerPage>
       children: [
         Container(
           width: double.infinity,
-          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          color: Theme.of(context).primaryColor.withOpacity(0.3),
           alignment: Alignment.center,
           child: TabBar(
             controller: _tabController,
@@ -255,7 +255,7 @@ class _PlannerPageState extends State<PlannerPage>
                 _planners.map((planner) {
                   return Tab(text: planner.name);
                 }).toList(),
-            labelColor: Theme.of(context).primaryColor.shade100,
+            labelColor: Theme.of(context).primaryColor.shade300,
             unselectedLabelColor: Colors.grey.shade300,
             indicatorColor: Theme.of(context).primaryColor,
           ),

@@ -155,6 +155,14 @@ class _AccountState extends State<Account> {
         var userData = json.decode(response.body);
         print(userData);
         setState(() => user = User.fromMap(userData));
+        var api = Uri.https(backend, '/api/user/registered');
+        await http.post(
+          api,
+          headers: {
+            'X-Session-ID': session,
+            'Content-Type': 'application/json',
+          },
+        );
       } else {
         var prefs = await SharedPreferences.getInstance();
         await prefs.remove('session');
@@ -222,10 +230,9 @@ class _AccountState extends State<Account> {
                     onPressed: logout,
                     child: Text(
                       '로그아웃',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelMedium!.copyWith(color: Colors.white),
                     ),
                   ),
                 ],
@@ -253,7 +260,9 @@ class _AccountState extends State<Account> {
                   ),
               child: Text(
                 '회원정보 수정',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium!.copyWith(color: Colors.white),
               ),
             ),
           ],

@@ -134,7 +134,7 @@ class _NavState extends State<Nav> {
                 backgroundColor:
                     MediaQuery.of(context).platformBrightness ==
                             Brightness.light
-                        ? Theme.of(context).primaryColor.shade50
+                        ? Theme.of(context).primaryColor.shade200
                         : null,
                 elevation: 8.0,
                 child: Icon(Icons.add, size: 32),
@@ -153,7 +153,7 @@ class _NavState extends State<Nav> {
       bottomNavigationBar: NavigationBar(
         backgroundColor:
             MediaQuery.of(context).platformBrightness == Brightness.light
-                ? Theme.of(context).primaryColor.shade50
+                ? Theme.of(context).primaryColor.shade200
                 : null,
         selectedIndex: currentIndex,
         onDestinationSelected: (value) {
