@@ -46,18 +46,13 @@ class DatabaseHelper {
       return null;
     }
     var url = Uri.https(backend, '/api/plan/addPlan');
-    var response = await http.post(
+    var taskMap = task.toMap();
+    await http.post(
       url,
-      body: json.encode(task.toMap()),
-      headers: {'X-Session-ID': session},
+      body: json.encode(taskMap),
+      headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
     );
-    print(response.statusCode);
-    print(response.body);
-    if (response.statusCode == 200) {
-      return null;
-    } else {
-      return null;
-    }
+    return;
   }
 
   Future<void> updateTask(Task task) async {
@@ -67,19 +62,12 @@ class DatabaseHelper {
     }
     var url = Uri.https(backend, '/api/plan/updatePlan');
     var taskMap = task.toMap();
-    print(json.encode(taskMap));
-    var response = await http.post(
+    await http.post(
       url,
       body: json.encode(taskMap),
       headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
     );
-    print(response.statusCode);
-    print(response.body);
-    if (response.statusCode == 200) {
-      return null;
-    } else {
-      return null;
-    }
+    return;
   }
 
   Future<void> deleteTask(int id) async {
@@ -87,28 +75,12 @@ class DatabaseHelper {
     if (session == null) {
       return null;
     }
-    var url = Uri.https(backend, '/deleteTask?id=${id}');
-    var response = await http.delete(url, headers: {'cookie': session});
-    if (response.statusCode == 200) {
-      print(response.body);
-      return null;
-    } else {
-      return null;
-    }
-  }
-
-  Future<void> deleteAllTask() async {
-    var session = await this.session;
-    if (session == null) {
-      return null;
-    }
-    var url = Uri.https(backend, '/deleteAllTask');
-    var response = await http.delete(url, headers: {'cookie': session});
-    if (response.statusCode == 200) {
-      print(response.body);
-      return null;
-    } else {
-      return null;
-    }
+    var url = Uri.https(backend, '/api/plan/deletePlan');
+    await http.post(
+      url,
+      body: json.encode({'id': id}),
+      headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+    );
+    return;
   }
 }
