@@ -2,6 +2,7 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 import 'package:dimiplan/views/account.dart';
+import 'package:dimiplan/views/add_task.dart'; // 추가
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -36,6 +37,35 @@ class _NavState extends State<Nav> {
           fit: BoxFit.contain,
         ),
       ),
+      body: screens[currentIndex],
+      // 플래너 화면(인덱스 1)일 때만 FloatingActionButton 표시
+      floatingActionButton:
+          currentIndex == 1
+              ? FloatingActionButton(
+                backgroundColor: Theme.of(context).highlightColor,
+                elevation: 8.0,
+                child: Icon(Icons.add, color: Colors.white, size: 32),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => AddTaskScreen(
+                            updateTaskList: () {
+                              if (screens[1] is Planner) {
+                                setState(() {
+                                  // 플래너 화면 갱신 트리거
+                                  screens[1] = const Planner();
+                                });
+                              }
+                            },
+                          ),
+                    ),
+                  );
+                },
+              )
+              : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: NavigationBar(
         backgroundColor:
             MediaQuery.of(context).platformBrightness == Brightness.light
@@ -59,7 +89,6 @@ class _NavState extends State<Nav> {
           ),
         ],
       ),
-      body: screens[currentIndex],
     );
   }
 }

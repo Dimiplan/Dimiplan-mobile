@@ -15,10 +15,10 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
-  String? _priority;
-  int _from = 0;
+  String? _priority = '낮음';
+  int _from = 1;
 
-  final List<String> _priorities = ['Low', 'Medium', 'High'];
+  final List<String> _priorities = ['낮음', '중간', '높음'];
 
   @override
   void initState() {
@@ -128,7 +128,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               _priorities.map((String priority) {
                                 return DropdownMenuItem(
                                   value: priority,
-                                  child: Text(priority),
+                                  child: Text(
+                                    priority,
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).primaryTextTheme.bodyMedium,
+                                  ),
                                 );
                               }).toList(),
                           style: TextStyle(fontSize: 18.0),
@@ -178,7 +184,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           child: Text(
                             widget.task == null ? '추가' : '수정',
                             style: TextStyle(
-                              color: Colors.white,
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
                             ),
@@ -199,10 +204,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               onPressed: _delete,
                               child: Text(
                                 '삭제',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                ),
+                                style: TextStyle(fontSize: 20.0),
                               ),
                             ),
                           )

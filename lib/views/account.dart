@@ -76,6 +76,6 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     checkLogin();
-    return MaterialApp();
+    return Center();
   }
 }

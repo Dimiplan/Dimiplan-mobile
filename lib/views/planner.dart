@@ -18,6 +18,12 @@ class _PlannerState extends State<Planner> {
     _updateTaskList();
   }
 
+  @override
+  void didUpdateWidget(covariant Planner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateTaskList();
+  }
+
   _updateTaskList() {
     setState(() {
       _taskList = db.getTaskList();
