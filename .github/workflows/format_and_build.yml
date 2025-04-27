@@ -12,13 +12,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  Format:
-    name: Format and Analysis Code
+  Format_and_build:
+    name: Format and Build
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
       actions: write
+      deployments: write
 
     steps:
       - name: Checkout
@@ -49,26 +50,6 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{yaml,md,yml,json,toml,lock.json,lock.toml}
-
-  Build:
-    needs: Format
-    name: Build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter SDK
-        uses: flutter-actions/setup-flutter@v4
-        with:
-          channel: beta
-          version: 3.31.0-0.1.pre
-          cache-sdk: true
-          cache: true
 
       - name: Build
         uses: cedvdb/action-flutter-build-web@v1
