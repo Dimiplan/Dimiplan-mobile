@@ -412,10 +412,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   onPressed: _submit,
                                   child: Text(
                                     widget.task == null ? '추가' : '수정',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(color: Colors.white),
                                   ),
                                 ),
                               ),
