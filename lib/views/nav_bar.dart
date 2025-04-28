@@ -26,9 +26,6 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   // 애니메이션 컨트롤러
   late final AnimationController _animationController;
 
-  // 페이지 컨트롤러
-  final PageController _pageController = PageController();
-
   // 탭 목록
   final List<_NavTab> _tabs = [
     _NavTab(
@@ -71,7 +68,6 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -132,11 +128,6 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
     setState(() {
       _currentIndex = index;
     });
-    _pageController.animateToPage(
-      index,
-      duration: AppTheme.animationDuration,
-      curve: Curves.easeInOut,
-    );
     _saveLastTab(index);
 
     // 플래너 탭이 선택된 경우, 세션 및 플래너 확인
@@ -199,10 +190,9 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
           const SizedBox(width: 8),
         ],
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _setCurrentIndex,
-        physics: const NeverScrollableScrollPhysics(), // 스와이프로 페이지 변경 비활성화
+      // PageView 대신 현재 선택된 인덱스에 해당하는 화면만 표시
+      body: IndexedStack(
+        index: _currentIndex,
         children: _tabs.map(
           (tab) => tab.screen(_handleTabChange)
         ).toList(),
