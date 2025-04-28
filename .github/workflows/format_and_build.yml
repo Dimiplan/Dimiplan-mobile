@@ -54,7 +54,7 @@ jobs:
       - name: Build
         uses: cedvdb/action-flutter-build-web@v1
         with:
-          build-cmd: flutter build web --release
+          build-cmd: flutter build web --wasm --release
           working-directory: ./
 
       - name: Archive Production artifact
