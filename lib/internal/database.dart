@@ -18,6 +18,11 @@ class DatabaseHelper {
     if (session == '') {
       return [];
     }
+    await http.post(
+      Uri.https(backend, '/api/plan/createRootFolder'),
+      headers: {'X-Session-ID': session},
+    );
+
     // Get planners from root folder (id=0)
     var url = Uri.https(backend, '/api/plan/getPlannersInFolder', {'id': '0'});
     var response = await http.get(url, headers: {'X-Session-ID': session});
