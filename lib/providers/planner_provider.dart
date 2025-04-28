@@ -339,11 +339,22 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      // API 구현 필요 (백엔드에 해당 API가 없는 경우)
-      // 임시 방안: 플래너 삭제 후 새 이름으로 재생성
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.renamePlannerPath,
+      );
+      final response = await http.post(
+        url,
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        body: json.encode({'id': id, 'name': newName}),
+      );
 
-      // 현재는 새로고침만 수행
-      await loadPlanners();
+      if (response.statusCode == ApiConstants.success) {
+        // 플래너 목록 새로고침
+        await loadPlanners();
+      } else {
+        throw Exception('플래너 이름 변경 실패: ${response.statusCode}');
+      }
     } catch (e) {
       print('플래너 이름 변경 중 오류 발생: $e');
       rethrow;
@@ -359,9 +370,27 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      // API 구현 필요 (백엔드에 해당 API가 없는 경우)
-      // 현재는 새로고침만 수행
-      await loadPlanners();
+      final session = await _getSession();
+      if (session.isEmpty) {
+        throw Exception('로그인이 필요합니다.');
+      }
+
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.deletePlannerPath,
+      );
+      final response = await http.post(
+        url,
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        body: json.encode({'id': id}),
+      );
+
+      if (response.statusCode == ApiConstants.success) {
+        // 플래너 목록 새로고침
+        await loadPlanners();
+      } else {
+        throw Exception('플래너 삭제 실패: ${response.statusCode}');
+      }
     } catch (e) {
       print('플래너 삭제 중 오류 발생: $e');
       rethrow;

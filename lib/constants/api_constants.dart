@@ -35,6 +35,8 @@ class ApiConstants {
   static const String getPlanInPlannerPath = "$planPath/getPlanInPlanner";
   static const String getAllPlansPath = "$planPath/getEveryPlan";
   static const String addPlannerPath = "$planPath/addPlanner";
+  static const String renamePlannerPath = "$planPath/renamePlanner";
+  static const String deletePlannerPath = "$planPath/deletePlanner";
   static const String addFolderPath = "$planPath/addFolder";
   static const String addPlanPath = "$planPath/addPlan";
   static const String updatePlanPath = "$planPath/updatePlan";
