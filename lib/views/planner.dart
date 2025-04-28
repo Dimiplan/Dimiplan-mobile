@@ -25,6 +25,12 @@ class _PlannerPageState extends State<PlannerPage>
   }
 
   @override
+  void didUpdateWidget(covariant PlannerPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadPlanners();
+  }
+
+  @override
   void dispose() {
     if (_planners.isNotEmpty) {
       _tabController.dispose();
@@ -145,7 +151,7 @@ class _PlannerPageState extends State<PlannerPage>
                 await db.updateTask(task);
                 _loadTasksForCurrentPlanner();
               },
-              activeColor: Theme.of(context).primaryColor,
+              activeColor: Theme.of(context).primaryColor.shade200,
               value: task.isCompleted == 1,
             ),
           ],
@@ -190,9 +196,9 @@ class _PlannerPageState extends State<PlannerPage>
             ),
             const SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_planners.isNotEmpty) {
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
@@ -202,6 +208,7 @@ class _PlannerPageState extends State<PlannerPage>
                           ),
                     ),
                   );
+                  _loadTasksForCurrentPlanner();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -271,18 +278,6 @@ class _PlannerPageState extends State<PlannerPage>
         Container(
           width: double.infinity,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            border: Border(
-              bottom: BorderSide(
-                color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Theme.of(context).colorScheme.primary.shade100
-                        : Theme.of(context).colorScheme.primary.shade700,
-                width: 2.0,
-              ),
-            ),
-          ),
           child: TabBar(
             controller: _tabController,
             // Removed isScrollable to make tabs use full width

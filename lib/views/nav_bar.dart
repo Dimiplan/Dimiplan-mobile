@@ -6,6 +6,7 @@ import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
 import 'package:dimiplan/views/account.dart';
 import 'package:dimiplan/views/add_task.dart';
+import 'package:dimiplan/views/ai_screen.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 
@@ -35,6 +36,7 @@ class _NavState extends State<Nav> {
         },
       ),
       const PlannerPage(),
+      const AIScreen(),
       const Account(),
     ];
     checkSession();
@@ -84,11 +86,14 @@ class _NavState extends State<Nav> {
           content: Text('플래너가 없습니다. 플래너를 먼저 생성해주세요.'),
           action: SnackBarAction(
             label: '생성하기',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => CreatePlannerScreen()),
-              );
+            onPressed: () async {
+              final result = await showCreatePlannerDialog(context);
+
+              if (result == true) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('새 플래너가 추가되었습니다')));
+              }
             },
           ),
         ),
@@ -130,7 +135,7 @@ class _NavState extends State<Nav> {
           'assets/icons/logo_rectangular.svg',
           height: 50,
           fit: BoxFit.contain,
-        ),
+        )
       ),
       body: screens[currentIndex],
       // 플래너 화면(인덱스 1)일 때와 세션이 있을 때만 FloatingActionButton 표시
@@ -169,6 +174,10 @@ class _NavState extends State<Nav> {
           NavigationDestination(
             icon: Icon(Icons.list_alt_rounded),
             label: '플래너',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.chat_rounded),
+            label: 'AI 챗봇',
           ),
           NavigationDestination(
             icon: Icon(Icons.account_circle_rounded),
