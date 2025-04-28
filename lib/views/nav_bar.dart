@@ -135,7 +135,7 @@ class _NavState extends State<Nav> {
           'assets/icons/logo_rectangular.svg',
           height: 50,
           fit: BoxFit.contain,
-        )
+        ),
       ),
       body: screens[currentIndex],
       // 플래너 화면(인덱스 1)일 때와 세션이 있을 때만 FloatingActionButton 표시
@@ -175,10 +175,7 @@ class _NavState extends State<Nav> {
             icon: Icon(Icons.list_alt_rounded),
             label: '플래너',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.chat_rounded),
-            label: 'AI 챗봇',
-          ),
+          NavigationDestination(icon: Icon(Icons.chat_rounded), label: 'AI 챗봇'),
           NavigationDestination(
             icon: Icon(Icons.account_circle_rounded),
             label: '계정관리',

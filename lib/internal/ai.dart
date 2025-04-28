@@ -50,10 +50,7 @@ class AIService {
       var url = Uri.https(backend, '/api/ai/addRoom');
       var response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
         body: json.encode({'name': name}),
       );
 
@@ -72,11 +69,9 @@ class AIService {
     }
 
     try {
-      var url = Uri.https(
-        backend,
-        '/api/ai/getChatInRoom',
-        {'from': roomId.toString()},
-      );
+      var url = Uri.https(backend, '/api/ai/getChatInRoom', {
+        'from': roomId.toString(),
+      });
       var response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode == 200) {
@@ -107,14 +102,8 @@ class AIService {
       var url = Uri.https(backend, '/api/ai/gpt4o-mini');
       var response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'prompt': message,
-          'room': roomId,
-        }),
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        body: json.encode({'prompt': message, 'room': roomId}),
       );
 
       if (response.statusCode == 200) {
@@ -136,18 +125,10 @@ class ChatRoom {
   final String name;
   final String owner;
 
-  ChatRoom({
-    required this.id,
-    required this.name,
-    required this.owner,
-  });
+  ChatRoom({required this.id, required this.name, required this.owner});
 
   factory ChatRoom.fromMap(Map<String, dynamic> map) {
-    return ChatRoom(
-      id: map['id'],
-      name: map['name'],
-      owner: map['owner'],
-    );
+    return ChatRoom(id: map['id'], name: map['name'], owner: map['owner']);
   }
 }
 
