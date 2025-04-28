@@ -48,10 +48,11 @@ class Homepage extends StatelessWidget {
             },
             icon: Icon(Icons.list_alt_rounded),
             label: Text('플래너로 이동'),
-            style: theme.elevatedButtonTheme.style ??
-                  ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  ),
+            style:
+                theme.elevatedButtonTheme.style ??
+                ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
           ),
         ],
       ),
