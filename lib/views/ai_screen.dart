@@ -1,108 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:provider/provider.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:color_shade/color_shade.dart';
-import 'package:dimiplan/internal/ai.dart';
+import 'package:dimiplan/providers/ai_provider.dart';
+import 'package:dimiplan/providers/auth_provider.dart';
+import 'package:dimiplan/widgets/button.dart';
+import 'package:dimiplan/models/chat_models.dart';
+import 'package:dimiplan/utils/snackbar_util.dart';
 
 class AIScreen extends StatefulWidget {
-  const AIScreen({super.key});
+  const AIScreen({Key? key}) : super(key: key);
 
   @override
   State<AIScreen> createState() => _AIScreenState();
 }
 
 class _AIScreenState extends State<AIScreen> {
-  final AIService _aiService = AIService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocusNode = FocusNode();
 
-  List<ChatRoom> _rooms = [];
-  ChatRoom? _selectedRoom;
-  List<ChatMessage> _messages = [];
-  bool _isLoading = true;
-  bool _isSending = false;
+  bool _isComposing = false;
+  String _selectedModel = 'gpt4o-mini';
 
   @override
   void initState() {
     super.initState();
-    _loadChatRooms();
+
+    // AI 채팅방 로드
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final aiProvider = Provider.of<AIProvider>(context, listen: false);
+      aiProvider.loadChatRooms();
+    });
   }
 
-  Future<void> _loadChatRooms() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final rooms = await _aiService.getChatRooms();
-      setState(() {
-        _rooms = rooms;
-        _isLoading = false;
-
-        if (rooms.isNotEmpty) {
-          _selectedRoom = rooms.first;
-          _loadMessages();
-        }
-      });
-    } catch (e) {
-      print('Error loading chat rooms: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    _inputFocusNode.dispose();
+    super.dispose();
   }
 
-  Future<void> _loadMessages() async {
-    if (_selectedRoom == null) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final messages = await _aiService.getChatMessages(_selectedRoom!.id);
-      setState(() {
-        _messages = messages;
-        _isLoading = false;
-      });
-
-      // Scroll to bottom after messages load
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    } catch (e) {
-      print('Error loading messages: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    if (_messageController.text.trim().isEmpty || _selectedRoom == null) return;
-
-    final message = _messageController.text.trim();
-    _messageController.clear();
-
-    // Optimistically add the user's message
-    setState(() {
-      _messages.add(
-        ChatMessage(
-          id: DateTime.now().millisecondsSinceEpoch, // Temporary ID
-          message: message,
-          sender: 'user',
-          from: _selectedRoom!.id,
-          owner: '', // Will be filled by server
-        ),
-      );
-      _isSending = true;
-    });
-
-    // Scroll to bottom after adding the message
+  // 스크롤을 맨 아래로 이동
+  void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -112,238 +54,408 @@ class _AIScreenState extends State<AIScreen> {
         );
       }
     });
+  }
+
+  // 메시지 전송
+  Future<void> _sendMessage() async {
+    if (_messageController.text.trim().isEmpty) return;
+
+    final aiProvider = Provider.of<AIProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (!authProvider.isAuthenticated) {
+      showSnackBar(context, '로그인이 필요합니다.');
+      return;
+    }
+
+    final messageText = _messageController.text.trim();
+    _messageController.clear();
+    _inputFocusNode.requestFocus();
 
     try {
-      final response = await _aiService.sendMessage(message, _selectedRoom!.id);
-
-      if (response != null) {
-        // Add AI response
-        final aiMessage = ChatMessage(
-          id: DateTime.now().millisecondsSinceEpoch + 1, // Temporary ID
-          message:
-              response['response']['choices'][0]['text'] ??
-              "I don't know how to respond to that.",
-          sender: 'ai',
-          from: _selectedRoom!.id,
-          owner: '', // Will be filled by server
-        );
-
-        setState(() {
-          _messages.add(aiMessage);
-          _isSending = false;
-        });
-
-        // Scroll to bottom after AI response
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
-          }
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to get AI response')),
-        );
-        setState(() {
-          _isSending = false;
-        });
-      }
+      await aiProvider.sendMessage(
+        message: messageText,
+        model: _selectedModel,
+      );
+      _scrollToBottom();
     } catch (e) {
-      print('Error sending message: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      showSnackBar(context, '메시지 전송 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  // 새 채팅방 생성
+  Future<void> _createNewChatRoom() async {
+    final aiProvider = Provider.of<AIProvider>(context, listen: false);
+
+    // 다이얼로그 표시
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => _NewChatRoomDialog(),
+    );
+
+    if (result != null && result.isNotEmpty) {
+      try {
+        await aiProvider.createChatRoom(result);
+        showSnackBar(context, '새 채팅방이 생성되었습니다.');
+      } catch (e) {
+        showSnackBar(context, '채팅방 생성 중 오류가 발생했습니다: $e');
+      }
+    }
+  }
+
+  // 채팅방 선택
+  void _selectChatRoom(ChatRoom room) {
+    final aiProvider = Provider.of<AIProvider>(context, listen: false);
+    aiProvider.selectChatRoom(room);
+    _scrollToBottom();
+  }
+
+  // AI 모델 선택 모달
+  Future<void> _showModelSelectionModal() async {
+    final theme = Theme.of(context);
+
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: Text(
+                'AI 모델 선택',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+            const Divider(),
+            _buildModelOption(
+              'gpt4o-mini',
+              'GPT-4o mini',
+              '빠른 응답 속도, 기본 기능',
+              theme,
+            ),
+            _buildModelOption(
+              'gpt4o',
+              'GPT-4o',
+              '고급 이해력과 풍부한 답변',
+              theme,
+            ),
+            _buildModelOption(
+              'gpt41',
+              'GPT-4.1',
+              '최신 지식과 고급 기능',
+              theme,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (result != null) {
       setState(() {
-        _isSending = false;
+        _selectedModel = result;
       });
     }
   }
 
-  Future<void> _createNewRoom() async {
-    final TextEditingController controller = TextEditingController();
+  // 모델 옵션 UI
+  Widget _buildModelOption(String id, String name, String description, ThemeData theme) {
+    final isSelected = _selectedModel == id;
 
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('새 채팅방 만들기'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(hintText: "채팅방 이름을 입력하세요"),
+    return InkWell(
+      onTap: () => Navigator.pop(context, id),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primaryContainer.shade300
+              : Colors.transparent,
+          border: Border(
+            left: BorderSide(
+              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+              width: 4.0,
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('취소'),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (controller.text.trim().isEmpty) return;
-
-                Navigator.pop(context);
-                final success = await _aiService.createChatRoom(
-                  controller.text.trim(),
-                );
-
-                if (success) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('채팅방이 생성되었습니다')));
-                  _loadChatRooms();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('채팅방 생성에 실패했습니다')),
-                  );
-                }
-              },
-              child: const Text('생성'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_rooms.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        child: Row(
           children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 64,
-              color: Theme.of(context).disabledColor,
+            Radio<String>(
+              value: id,
+              groupValue: _selectedModel,
+              onChanged: (_) => Navigator.pop(context, id),
+              activeColor: theme.colorScheme.primary,
             ),
-            const SizedBox(height: 16),
-            Text(
-              '채팅방이 없습니다',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).hintColor,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _createNewRoom,
-              icon: const Icon(Icons.add),
-              label: const Text('새 채팅방 만들기'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
+            const SizedBox(width: 8.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    return Column(
+  // 모델 표시 이름 반환
+  String _getModelDisplayName() {
+    switch (_selectedModel) {
+      case 'gpt4o-mini':
+        return 'GPT-4o mini';
+      case 'gpt4o':
+        return 'GPT-4o';
+      case 'gpt41':
+        return 'GPT-4.1';
+      default:
+        return 'AI 모델';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final aiProvider = Provider.of<AIProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAuthenticated = authProvider.isAuthenticated;
+
+    return Scaffold(
+      body: isAuthenticated
+          ? _buildChatUI(theme, aiProvider)
+          : _buildLoginPrompt(theme),
+    );
+  }
+
+  // 로그인 필요 화면
+  Widget _buildLoginPrompt(ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lock_outline,
+              size: 80,
+              color: theme.colorScheme.primary.shade700,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'AI 챗봇 사용을 위해\n로그인이 필요합니다',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '로그인하고 AI 챗봇과 대화하여 학습에 도움을 받으세요.',
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            AppButton(
+              text: '로그인하기',
+              icon: Icons.login,
+              variant: ButtonVariant.primary,
+              size: ButtonSize.large,
+              rounded: true,
+              onPressed: () {
+                // 계정 페이지로 이동
+                DefaultTabController.of(context).animateTo(3);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 채팅 UI
+  Widget _buildChatUI(ThemeData theme, AIProvider aiProvider) {
+    final selectedRoom = aiProvider.selectedChatRoom;
+    final messages = aiProvider.messages;
+    final isLoading = aiProvider.isLoading;
+
+    return Row(
       children: [
-        // Room selector
+        // 사이드바 (채팅방 목록)
         Container(
-          padding: const EdgeInsets.all(16.0),
-          width: double.infinity,
-          color: Theme.of(context).colorScheme.surface,
-          child: Row(
+          width: 260,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border(
+              right: BorderSide(
+                color: theme.colorScheme.outlineVariant,
+                width: 1,
+              ),
+            ),
+          ),
+          child: Column(
             children: [
-              Expanded(
-                child: DropdownButton<ChatRoom>(
-                  isExpanded: true,
-                  value: _selectedRoom,
-                  hint: const Text('채팅방 선택'),
-                  onChanged: (ChatRoom? value) {
-                    if (value != null && value != _selectedRoom) {
-                      setState(() {
-                        _selectedRoom = value;
-                      });
-                      _loadMessages();
-                    }
-                  },
-                  items:
-                      _rooms.map<DropdownMenuItem<ChatRoom>>((ChatRoom room) {
-                        return DropdownMenuItem<ChatRoom>(
-                          value: room,
-                          child: Text(room.name),
-                        );
-                      }).toList(),
+              // 상단 버튼
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AppButton(
+                  text: '새 채팅',
+                  icon: Icons.add,
+                  variant: ButtonVariant.primary,
+                  isFullWidth: true,
+                  onPressed: _createNewChatRoom,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: _createNewRoom,
-                tooltip: '새 채팅방',
+
+              // 채팅방 목록
+              Expanded(
+                child: aiProvider.chatRooms.isEmpty
+                    ? _buildEmptyChatRoomsList(theme)
+                    : ListView.builder(
+                        itemCount: aiProvider.chatRooms.length,
+                        itemBuilder: (context, index) {
+                          final room = aiProvider.chatRooms[index];
+                          return _buildChatRoomItem(room, theme, selectedRoom);
+                        },
+                      ),
               ),
             ],
           ),
         ),
 
-        // Messages list
+        // 채팅 영역
         Expanded(
-          child:
-              _messages.isEmpty
-                  ? Center(
-                    child: Text(
-                      '메시지가 없습니다. 첫 메시지를 보내보세요!',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).hintColor,
+          child: Column(
+            children: [
+              // 모델 선택 헤더
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: theme.colorScheme.outlineVariant,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      selectedRoom?.name ?? '새 채팅',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      icon: const Icon(Icons.tune),
+                      label: Text(_getModelDisplayName()),
+                      onPressed: _showModelSelectionModal,
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.primary,
                       ),
                     ),
-                  )
-                  : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16.0),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      return _buildMessageBubble(message);
-                    },
-                  ),
-        ),
-
-        // Input field
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Theme.of(context).colorScheme.surface,
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: '메시지를 입력하세요...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface.shade200,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _sendMessage(),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8.0),
-              _isSending
-                  ? const CircularProgressIndicator()
-                  : IconButton(
-                    icon: Icon(
-                      Icons.send,
-                      color: Theme.of(context).primaryColor,
+
+              // 메시지 목록
+              Expanded(
+                child: messages.isEmpty
+                    ? _buildEmptyChat(theme)
+                    : _buildChatMessages(messages, theme, isLoading),
+              ),
+
+              // 메시지 입력 영역
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, -2),
                     ),
-                    onPressed: _sendMessage,
-                  ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // 텍스트 입력 필드
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(24.0),
+                          border: Border.all(
+                            color: theme.colorScheme.outline.shade500,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _messageController,
+                          focusNode: _inputFocusNode,
+                          decoration: InputDecoration(
+                            hintText: '메시지를 입력하세요...',
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 12.0,
+                            ),
+                            isDense: true,
+                          ),
+                          maxLines: 4,
+                          minLines: 1,
+                          textInputAction: TextInputAction.newline,
+                          style: theme.textTheme.bodyLarge,
+                          onChanged: (value) {
+                            setState(() {
+                              _isComposing = value.trim().isNotEmpty;
+                            });
+                          },
+                          onSubmitted: (value) {
+                            if (_isComposing) {
+                              _sendMessage();
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12.0),
+
+                    // 전송 버튼
+                    IconButton(
+                      onPressed: _isComposing ? _sendMessage : null,
+                      icon: isLoading
+                          ? const SizedBox(
+                              width: 24.0,
+                              height: 24.0,
+                              child: CircularProgressIndicator(strokeWidth: 2.0),
+                            )
+                          : Icon(
+                              Icons.send,
+                              color: _isComposing
+                                  ? theme.colorScheme.primary
+                                  : theme.disabledColor,
+                            ),
+                      tooltip: '메시지 전송',
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -351,37 +463,310 @@ class _AIScreenState extends State<AIScreen> {
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message) {
-    final isUser = message.isUser;
-    final bubbleColor =
-        isUser
-            ? Theme.of(context).primaryColor
-            : Theme.of(context).colorScheme.surface.shade300;
-    final textColor = isUser ? Colors.white : Colors.black;
-    final alignment = isUser ? Alignment.centerRight : Alignment.centerLeft;
-    final borderRadius = BorderRadius.only(
-      topLeft: const Radius.circular(16.0),
-      topRight: const Radius.circular(16.0),
-      bottomLeft:
-          isUser ? const Radius.circular(16.0) : const Radius.circular(4.0),
-      bottomRight:
-          isUser ? const Radius.circular(4.0) : const Radius.circular(16.0),
-    );
+  // 채팅방 아이템
+  Widget _buildChatRoomItem(ChatRoom room, ThemeData theme, ChatRoom? selectedRoom) {
+    final isSelected = selectedRoom?.id == room.id;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      alignment: alignment,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        decoration: BoxDecoration(
-          color: bubbleColor,
-          borderRadius: borderRadius,
+    return ListTile(
+      leading: const Icon(Icons.chat_bubble_outline),
+      title: Text(
+        room.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: Text(message.message, style: TextStyle(color: textColor)),
       ),
+      selected: isSelected,
+      selectedTileColor: theme.colorScheme.primaryContainer.shade300,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      onTap: () => _selectChatRoom(room),
+    );
+  }
+
+  // 빈 채팅방 목록
+  Widget _buildEmptyChatRoomsList(ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.chat_bubble_outline,
+              size: 48,
+              color: theme.colorScheme.primary.shade700,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '아직 채팅방이 없습니다',
+              style: theme.textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '새 채팅 버튼을 눌러 대화를 시작하세요',
+              style: theme.textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 빈 채팅 화면
+  Widget _buildEmptyChat(ThemeData theme) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.chat,
+              size: 64,
+              color: theme.colorScheme.primary.shade700,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'AI 챗봇과 대화를 시작해보세요',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 300,
+              child: Text(
+                '질문하거나, 학습 도움을 요청하거나, 아이디어를 공유해보세요.',
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 32),
+            _buildSuggestionChips(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 제안 질문 칩
+  Widget _buildSuggestionChips(ThemeData theme) {
+    final suggestions = [
+      '수학 문제 풀이를 도와줘',
+      '프로그래밍 개념을 설명해줘',
+      '영어 에세이 작성 팁',
+      '스트레스 관리 방법',
+      '공부 집중력 높이는 방법',
+    ];
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      alignment: WrapAlignment.center,
+      children: suggestions.map((suggestion) {
+        return ActionChip(
+          label: Text(suggestion),
+          backgroundColor: theme.colorScheme.surface,
+          side: BorderSide(color: theme.colorScheme.primary.shade500),
+          onPressed: () {
+            _messageController.text = suggestion;
+            setState(() {
+              _isComposing = true;
+            });
+            _inputFocusNode.requestFocus();
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  // 채팅 메시지 목록
+  Widget _buildChatMessages(List<ChatMessage> messages, ThemeData theme, bool isLoading) {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16.0),
+      itemCount: messages.length + (isLoading ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == messages.length) {
+          // 로딩 중인 AI 메시지
+          return _buildLoadingMessage(theme);
+        }
+
+        final message = messages[index];
+        return _buildChatBubble(message, theme);
+      },
+    );
+  }
+
+  // 로딩 중인 메시지
+  Widget _buildLoadingMessage(ThemeData theme) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        child: Card(
+          color: theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+              bottomRight: Radius.circular(16.0),
+              bottomLeft: Radius.circular(4.0),
+            ),
+            side: BorderSide(
+              color: theme.colorScheme.outlineVariant,
+              width: 1.0,
+            ),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: AnimatedTextKit(
+              animatedTexts: [
+                TyperAnimatedText(
+                  '생각 중...',
+                  speed: const Duration(milliseconds: 50),
+                ),
+              ],
+              isRepeatingAnimation: true,
+              repeatForever: true,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 채팅 버블
+  Widget _buildChatBubble(ChatMessage message, ThemeData theme) {
+    final isUser = message.sender == 'user';
+
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        child: Card(
+          color: isUser ? theme.colorScheme.primary : theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(16.0),
+              topRight: const Radius.circular(16.0),
+              bottomRight: isUser ? const Radius.circular(4.0) : const Radius.circular(16.0),
+              bottomLeft: isUser ? const Radius.circular(16.0) : const Radius.circular(4.0),
+            ),
+            side: isUser
+                ? BorderSide.none
+                : BorderSide(
+                    color: theme.colorScheme.outlineVariant,
+                    width: 1.0,
+                  ),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: isUser
+                ? Text(
+                    message.message,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                    ),
+                  )
+                : _buildMarkdownBody(message.message, theme),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 마크다운 형식 AI 메시지 표시
+  Widget _buildMarkdownBody(String message, ThemeData theme) {
+    return MarkdownBody(
+      data: message,
+      selectable: true,
+      styleSheet: MarkdownStyleSheet(
+        p: theme.textTheme.bodyMedium,
+        h1: theme.textTheme.titleLarge,
+        h2: theme.textTheme.titleMedium,
+        h3: theme.textTheme.titleSmall,
+        code: theme.textTheme.bodyMedium?.copyWith(
+          fontFamily: 'monospace',
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        codeblockDecoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+    );
+  }
+}
+
+// 새 채팅방 생성 다이얼로그
+class _NewChatRoomDialog extends StatefulWidget {
+  @override
+  _NewChatRoomDialogState createState() => _NewChatRoomDialogState();
+}
+
+class _NewChatRoomDialogState extends State<_NewChatRoomDialog> {
+  final TextEditingController _controller = TextEditingController();
+  bool _isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_validateInput);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _validateInput() {
+    setState(() {
+      _isValid = _controller.text.trim().isNotEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      title: Text('새 채팅방 만들기'),
+      content: TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+          hintText: "채팅방 이름을 입력하세요",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        autofocus: true,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('취소'),
+        ),
+        TextButton(
+          onPressed: _isValid
+              ? () => Navigator.pop(context, _controller.text.trim())
+              : null,
+          child: Text('생성'),
+          style: TextButton.styleFrom(
+            foregroundColor: _isValid
+                ? theme.colorScheme.primary
+                : theme.disabledColor,
+          ),
+        ),
+      ],
     );
   }
 }

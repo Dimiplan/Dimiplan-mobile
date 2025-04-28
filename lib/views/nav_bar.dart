@@ -1,187 +1,258 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:dimiplan/internal/database.dart';
-import 'package:dimiplan/internal/model.dart';
-import 'package:dimiplan/views/account.dart';
-import 'package:dimiplan/views/add_task.dart';
-import 'package:dimiplan/views/ai_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:color_shade/color_shade.dart';
+import 'package:dimiplan/theme/app_theme.dart';
+import 'package:dimiplan/providers/theme_provider.dart';
+import 'package:dimiplan/providers/auth_provider.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
+import 'package:dimiplan/views/ai_screen.dart';
+import 'package:dimiplan/views/account.dart';
+import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class Nav extends StatefulWidget {
-  const Nav({super.key});
+  const Nav({Key? key}) : super(key: key);
 
   @override
   State<Nav> createState() => _NavState();
 }
 
-class _NavState extends State<Nav> {
-  int currentIndex = 0;
-  late List<Widget> screens;
-  bool mark = false;
-  List<Planner> planners = [];
-  bool isLoadingPlanners = false;
+class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
+  int _currentIndex = 0;
+  bool _isLoading = false;
+
+  // 애니메이션 컨트롤러
+  late final AnimationController _animationController;
+
+  // 페이지 컨트롤러
+  final PageController _pageController = PageController();
+
+  // 탭 목록
+  final List<_NavTab> _tabs = [
+    _NavTab(
+      icon: Icons.home_rounded,
+      label: '홈',
+      screen: (onTabChange) => Homepage(onTabChange: onTabChange),
+    ),
+    _NavTab(
+      icon: Icons.list_alt_rounded,
+      label: '플래너',
+      screen: (_) => const PlannerPage(),
+    ),
+    _NavTab(
+      icon: Icons.chat_rounded,
+      label: 'AI 챗봇',
+      screen: (_) => const AIScreen(),
+    ),
+    _NavTab(
+      icon: Icons.account_circle_rounded,
+      label: '계정관리',
+      screen: (_) => const Account(),
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    screens = [
-      Homepage(
-        onTabChange: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-      ),
-      const PlannerPage(),
-      const AIScreen(),
-      const Account(),
-    ];
-    checkSession();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: AppTheme.animationDuration,
+    );
+
+    // 인증 상태 확인
+    _checkSession();
+
+    // 마지막으로 선택한 탭 가져오기
+    _loadLastTab();
   }
 
-  void checkSession() async {
-    var value = await db.getSession();
-    if (value == '') {
-      setState(() {
-        mark = true;
-      });
-    } else {
-      setState(() {
-        mark = false;
-      });
-      if (currentIndex == 1) {
-        loadPlanners();
-      }
-    }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _pageController.dispose();
+    super.dispose();
   }
 
-  Future<void> loadPlanners() async {
-    if (mark) return;
-
+  // 세션 확인
+  Future<void> _checkSession() async {
     setState(() {
-      isLoadingPlanners = true;
+      _isLoading = true;
     });
 
     try {
-      final loadedPlanners = await db.getPlanners();
-      setState(() {
-        planners = loadedPlanners;
-        isLoadingPlanners = false;
-      });
+      // 인증 프로바이더에서 세션 확인
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.checkAuth();
+
+      // 플래너 탭이 선택되어 있을 경우, 플래너 데이터 로드
+      if (_currentIndex == 1) {
+        await _loadPlanners();
+      }
     } catch (e) {
-      print('Error loading planners: $e');
+      print('Error during session check: $e');
+    } finally {
       setState(() {
-        isLoadingPlanners = false;
+        _isLoading = false;
       });
     }
   }
 
-  void _addNewTask() {
-    if (planners.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('플래너가 없습니다. 플래너를 먼저 생성해주세요.'),
-          action: SnackBarAction(
-            label: '생성하기',
-            onPressed: () async {
-              final result = await showCreatePlannerDialog(context);
+  // 플래너 데이터 로드
+  Future<void> _loadPlanners() async {
+    // 플래너 로직은 PlannerPage에서 처리
+  }
 
-              if (result == true) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('새 플래너가 추가되었습니다')));
-              }
-            },
-          ),
-        ),
-      );
-      return;
+  // 마지막으로 선택한 탭 로드
+  Future<void> _loadLastTab() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lastTab = prefs.getInt('last_tab');
+      if (lastTab != null) {
+        _setCurrentIndex(lastTab);
+      }
+    } catch (e) {
+      print('Error loading last tab: $e');
     }
+  }
 
-    // Launch the add task screen with the first planner selected
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (_) => AddTaskScreen(
-              updateTaskList: () {
-                if (screens[1] is Planner) {
-                  setState(() {
-                    // Trigger planner refresh
-                    screens[1] = const PlannerPage();
-                  });
-                }
-              },
-              selectedPlannerId: planners.first.id,
-            ),
-      ),
+  // 현재 탭 저장
+  Future<void> _saveLastTab(int index) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('last_tab', index);
+    } catch (e) {
+      print('Error saving last tab: $e');
+    }
+  }
+
+  // 탭 변경
+  void _setCurrentIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: AppTheme.animationDuration,
+      curve: Curves.easeInOut,
     );
+    _saveLastTab(index);
+
+    // 플래너 탭이 선택된 경우, 세션 및 플래너 확인
+    if (index == 1) {
+      _checkSession();
+    }
+  }
+
+  // 다른 탭에서 플래너 탭으로 이동 처리
+  void _handleTabChange(int index) {
+    if (index >= 0 && index < _tabs.length) {
+      _setCurrentIndex(index);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAuthenticated = authProvider.isAuthenticated;
+
+    // 로딩 중일 때는 로딩 인디케이터 표시
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: AppLoadingIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
-      extendBody: true,
+      extendBody: true, // 바텀 바 아래 영역까지 콘텐츠 확장
       appBar: AppBar(
         toolbarHeight: 70,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: theme.colorScheme.surface,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
           fit: BoxFit.contain,
         ),
-      ),
-      body: screens[currentIndex],
-      // 플래너 화면(인덱스 1)일 때와 세션이 있을 때만 FloatingActionButton 표시
-      floatingActionButton:
-          (currentIndex == 1 && !mark)
-              ? FloatingActionButton(
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                elevation: 8.0,
-                child: Icon(Icons.add, size: 32),
-                onPressed: () {
-                  if (isLoadingPlanners) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('플래너를 로딩 중입니다. 잠시 기다려주세요.')),
-                    );
-                    return;
-                  }
-                  _addNewTask();
-                },
-              )
-              : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedIndex: currentIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            currentIndex = value;
-            if (value == 1) {
-              checkSession();
-              loadPlanners();
-            }
-          });
-        },
-        destinations: [
-          NavigationDestination(icon: Icon(Icons.home_rounded), label: '홈'),
-          NavigationDestination(
-            icon: Icon(Icons.list_alt_rounded),
-            label: '플래너',
+        actions: [
+          // 다크모드 토글 버튼
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) => IconButton(
+              icon: Icon(
+                themeProvider.isDarkMode
+                    ? Icons.light_mode_outlined
+                    : Icons.dark_mode_outlined,
+                color: theme.colorScheme.primary,
+              ),
+              onPressed: () {
+                themeProvider.toggleTheme();
+              },
+              tooltip: themeProvider.isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환',
+            ),
           ),
-          NavigationDestination(icon: Icon(Icons.chat_rounded), label: 'AI 챗봇'),
-          NavigationDestination(
-            icon: Icon(Icons.account_circle_rounded),
-            label: '계정관리',
-          ),
+          const SizedBox(width: 8),
         ],
       ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _setCurrentIndex,
+        physics: const NeverScrollableScrollPhysics(), // 스와이프로 페이지 변경 비활성화
+        children: _tabs.map(
+          (tab) => tab.screen(_handleTabChange)
+        ).toList(),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.shade100,
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          backgroundColor: theme.colorScheme.surface,
+          selectedIndex: _currentIndex,
+          onDestinationSelected: _setCurrentIndex,
+          animationDuration: AppTheme.animationDuration,
+          destinations: _tabs.map((tab) => NavigationDestination(
+            icon: Icon(tab.icon),
+            label: tab.label,
+          )).toList(),
+        ),
+      ),
+      floatingActionButton: _currentIndex == 1 && isAuthenticated
+          ? FloatingActionButton(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              elevation: 8.0,
+              child: const Icon(Icons.add, size: 32),
+              onPressed: () {
+                // AddTaskScreen으로 이동
+                Navigator.pushNamed(context, '/add_task');
+              },
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+}
+
+/// 네비게이션 탭 데이터 클래스
+class _NavTab {
+  final IconData icon;
+  final String label;
+  final Widget Function(Function(int) onTabChange) screen;
+
+  _NavTab({
+    required this.icon,
+    required this.label,
+    required this.screen,
+  });
 }
