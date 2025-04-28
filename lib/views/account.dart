@@ -273,26 +273,6 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                       children: [
                         ListTile(
                           leading: Icon(
-                            Icons.info_outline,
-                            color: theme.colorScheme.primary,
-                          ),
-                          title: Text('앱 정보'),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () => _showAppInfo(context),
-                        ),
-                        Divider(),
-                        ListTile(
-                          leading: Icon(
-                            Icons.code,
-                            color: theme.colorScheme.primary,
-                          ),
-                          title: Text('개발자 정보'),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () => _showDeveloperInfo(context),
-                        ),
-                        Divider(),
-                        ListTile(
-                          leading: Icon(
                             theme.brightness == Brightness.dark
                                 ? Icons.light_mode
                                 : Icons.dark_mode,
@@ -305,6 +285,16 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                           ),
                           trailing: Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _toggleTheme(context),
+                        ),
+                        Divider(),
+                        ListTile(
+                          leading: Icon(
+                            Icons.info_outline,
+                            color: theme.colorScheme.primary,
+                          ),
+                          title: Text('앱 정보'),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () => _showAppInfo(context),
                         ),
                       ],
                     ),
@@ -467,35 +457,11 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                 SizedBox(height: 8),
                 Text('버전: 1.1.0'),
                 SizedBox(height: 8),
-                Text('한국디지털미디어고등학교 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('확인'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  // 개발자 정보 다이얼로그
-  void _showDeveloperInfo(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('개발자 정보'),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
                 Text('개발: 디미고 학생 개발팀'),
-                SizedBox(height: 16),
-                Text('문의: dimiplan@dimigo.hs.kr'),
-                SizedBox(height: 16),
-                Text('오픈소스 라이센스 정보는 앱 정보에서 확인하실 수 있습니다.'),
+                SizedBox(height: 8),
+                Text('라이센스 : AGPL'),
+                SizedBox(height: 8),
+                Text('디미플랜은 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
               ],
             ),
             actions: [
