@@ -71,7 +71,7 @@ class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).shadowColor.withOpacity(0.5),
+                      color: Theme.of(context).shadowColor.shade500,
                       spreadRadius: 2,
                       blurRadius: 4,
                       offset: Offset(0, 3),
@@ -418,7 +418,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   borderRadius: BorderRadius.circular(30.0),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Theme.of(context).shadowColor.withOpacity(0.5),
+                                      color: Theme.of(context).shadowColor.shade500,
                                       spreadRadius: 2,
                                       blurRadius: 4,
                                       offset: Offset(0, 3),

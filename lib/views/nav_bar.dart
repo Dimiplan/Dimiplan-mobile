@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:color_shade/color_shade.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:dimiplan/internal/database.dart';

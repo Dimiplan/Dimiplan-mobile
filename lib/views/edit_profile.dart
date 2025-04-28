@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
 
@@ -224,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(30.0),
                           boxShadow: [
                             BoxShadow(
-                              color: theme.shadowColor.withOpacity(0.5),
+                              color: theme.shadowColor.shade500,
                               spreadRadius: 2,
                               blurRadius: 4,
                               offset: Offset(0, 3),

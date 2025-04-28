@@ -292,14 +292,14 @@ class _AccountState extends State<Account> {
             Icon(
               Icons.account_circle,
               size: 100,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.secondary.shade400,
             ),
             SizedBox(height: 20),
             Text(
               '로그인이 필요합니다',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.secondary.shade600,
               ),
             ),
             SizedBox(height: 30),
