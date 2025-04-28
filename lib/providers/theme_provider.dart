@@ -26,7 +26,8 @@ class ThemeProvider extends ChangeNotifier {
         setTheme(savedTheme);
       } else {
         // 시스템 설정 확인
-        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        final brightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
         setTheme(brightness == Brightness.dark);
       }
     } catch (e) {

@@ -109,10 +109,7 @@ class _AppTextFieldState extends State<AppTextField> {
         if (widget.label.isNotEmpty && !isFloating)
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0, left: 2.0),
-            child: Text(
-              widget.label,
-              style: theme.textTheme.labelMedium,
-            ),
+            child: Text(widget.label, style: theme.textTheme.labelMedium),
           ),
 
         // 입력 필드
@@ -142,10 +139,9 @@ class _AppTextFieldState extends State<AppTextField> {
               hintStyle: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.hintColor,
               ),
-              contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(
-                vertical: 15.0,
-                horizontal: 12.0,
-              ),
+              contentPadding:
+                  widget.contentPadding ??
+                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(
@@ -162,10 +158,7 @@ class _AppTextFieldState extends State<AppTextField> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  color: theme.primaryColor,
-                  width: 2.0,
-                ),
+                borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -188,9 +181,10 @@ class _AppTextFieldState extends State<AppTextField> {
               prefixIcon: widget.prefixIcon,
               suffixIcon: widget.suffixIcon,
               filled: true,
-              fillColor: widget.enabled
-                  ? theme.colorScheme.surface
-                  : theme.disabledColor.shade100,
+              fillColor:
+                  widget.enabled
+                      ? theme.colorScheme.surface
+                      : theme.disabledColor.shade100,
             ),
           ),
         ),
@@ -232,10 +226,7 @@ class AppDropdownField<T> extends StatelessWidget {
         if (label.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0, left: 2.0),
-            child: Text(
-              label,
-              style: theme.textTheme.labelMedium,
-            ),
+            child: Text(label, style: theme.textTheme.labelMedium),
           ),
 
         // 드롭다운 필드
@@ -255,9 +246,10 @@ class AppDropdownField<T> extends StatelessWidget {
                 color: theme.colorScheme.error,
               ),
               filled: true,
-              fillColor: enabled
-                  ? theme.colorScheme.surface
-                  : theme.disabledColor.shade100,
+              fillColor:
+                  enabled
+                      ? theme.colorScheme.surface
+                      : theme.disabledColor.shade100,
               contentPadding: const EdgeInsets.symmetric(
                 vertical: 15.0,
                 horizontal: 12.0,
@@ -278,10 +270,7 @@ class AppDropdownField<T> extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  color: theme.primaryColor,
-                  width: 2.0,
-                ),
+                borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -301,9 +290,7 @@ class AppDropdownField<T> extends StatelessWidget {
             style: theme.textTheme.bodyLarge,
             icon: Icon(
               Icons.arrow_drop_down_circle,
-              color: enabled
-                  ? theme.colorScheme.primary
-                  : theme.disabledColor,
+              color: enabled ? theme.colorScheme.primary : theme.disabledColor,
             ),
             isDense: true,
             isExpanded: true,
@@ -349,18 +336,9 @@ class GradeClassDropdown extends StatelessWidget {
             label: '학년',
             value: grade,
             items: [
-              DropdownMenuItem<String>(
-                value: '1',
-                child: Text('1학년'),
-              ),
-              DropdownMenuItem<String>(
-                value: '2',
-                child: Text('2학년'),
-              ),
-              DropdownMenuItem<String>(
-                value: '3',
-                child: Text('3학년'),
-              ),
+              DropdownMenuItem<String>(value: '1', child: Text('1학년')),
+              DropdownMenuItem<String>(value: '2', child: Text('2학년')),
+              DropdownMenuItem<String>(value: '3', child: Text('3학년')),
             ],
             onChanged: onGradeChanged,
             errorText: gradeError,
@@ -375,30 +353,12 @@ class GradeClassDropdown extends StatelessWidget {
             label: '반',
             value: classValue,
             items: [
-              DropdownMenuItem<String>(
-                value: '1',
-                child: Text('1반'),
-              ),
-              DropdownMenuItem<String>(
-                value: '2',
-                child: Text('2반'),
-              ),
-              DropdownMenuItem<String>(
-                value: '3',
-                child: Text('3반'),
-              ),
-              DropdownMenuItem<String>(
-                value: '4',
-                child: Text('4반'),
-              ),
-              DropdownMenuItem<String>(
-                value: '5',
-                child: Text('5반'),
-              ),
-              DropdownMenuItem<String>(
-                value: '6',
-                child: Text('6반'),
-              ),
+              DropdownMenuItem<String>(value: '1', child: Text('1반')),
+              DropdownMenuItem<String>(value: '2', child: Text('2반')),
+              DropdownMenuItem<String>(value: '3', child: Text('3반')),
+              DropdownMenuItem<String>(value: '4', child: Text('4반')),
+              DropdownMenuItem<String>(value: '5', child: Text('5반')),
+              DropdownMenuItem<String>(value: '6', child: Text('6반')),
             ],
             onChanged: onClassChanged,
             errorText: classError,

@@ -73,10 +73,7 @@ class _AIScreenState extends State<AIScreen> {
     _inputFocusNode.requestFocus();
 
     try {
-      await aiProvider.sendMessage(
-        message: messageText,
-        model: _selectedModel,
-      );
+      await aiProvider.sendMessage(message: messageText, model: _selectedModel);
       _scrollToBottom();
     } catch (e) {
       showSnackBar(context, '메시지 전송 중 오류가 발생했습니다: $e');
@@ -120,40 +117,31 @@ class _AIScreenState extends State<AIScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Text(
-                'AI 모델 선택',
-                style: theme.textTheme.titleLarge,
-              ),
+      builder:
+          (context) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
+                  child: Text('AI 모델 선택', style: theme.textTheme.titleLarge),
+                ),
+                const Divider(),
+                _buildModelOption(
+                  'gpt4o-mini',
+                  'GPT-4o mini',
+                  '빠른 응답 속도, 기본 기능',
+                  theme,
+                ),
+                _buildModelOption('gpt4o', 'GPT-4o', '고급 이해력과 풍부한 답변', theme),
+                _buildModelOption('gpt41', 'GPT-4.1', '최신 지식과 고급 기능', theme),
+              ],
             ),
-            const Divider(),
-            _buildModelOption(
-              'gpt4o-mini',
-              'GPT-4o mini',
-              '빠른 응답 속도, 기본 기능',
-              theme,
-            ),
-            _buildModelOption(
-              'gpt4o',
-              'GPT-4o',
-              '고급 이해력과 풍부한 답변',
-              theme,
-            ),
-            _buildModelOption(
-              'gpt41',
-              'GPT-4.1',
-              '최신 지식과 고급 기능',
-              theme,
-            ),
-          ],
-        ),
-      ),
+          ),
     );
 
     if (result != null) {
@@ -164,7 +152,12 @@ class _AIScreenState extends State<AIScreen> {
   }
 
   // 모델 옵션 UI
-  Widget _buildModelOption(String id, String name, String description, ThemeData theme) {
+  Widget _buildModelOption(
+    String id,
+    String name,
+    String description,
+    ThemeData theme,
+  ) {
     final isSelected = _selectedModel == id;
 
     return InkWell(
@@ -172,12 +165,14 @@ class _AIScreenState extends State<AIScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primaryContainer.shade300
-              : Colors.transparent,
+          color:
+              isSelected
+                  ? theme.colorScheme.primaryContainer.shade300
+                  : Colors.transparent,
           border: Border(
             left: BorderSide(
-              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+              color:
+                  isSelected ? theme.colorScheme.primary : Colors.transparent,
               width: 4.0,
             ),
           ),
@@ -198,13 +193,11 @@ class _AIScreenState extends State<AIScreen> {
                   Text(
                     name,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
-                  Text(
-                    description,
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(description, style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
@@ -236,9 +229,10 @@ class _AIScreenState extends State<AIScreen> {
     final isAuthenticated = authProvider.isAuthenticated;
 
     return Scaffold(
-      body: isAuthenticated
-          ? _buildChatUI(theme, aiProvider)
-          : _buildLoginPrompt(theme),
+      body:
+          isAuthenticated
+              ? _buildChatUI(theme, aiProvider)
+              : _buildLoginPrompt(theme),
     );
   }
 
@@ -321,15 +315,20 @@ class _AIScreenState extends State<AIScreen> {
 
               // 채팅방 목록
               Expanded(
-                child: aiProvider.chatRooms.isEmpty
-                    ? _buildEmptyChatRoomsList(theme)
-                    : ListView.builder(
-                        itemCount: aiProvider.chatRooms.length,
-                        itemBuilder: (context, index) {
-                          final room = aiProvider.chatRooms[index];
-                          return _buildChatRoomItem(room, theme, selectedRoom);
-                        },
-                      ),
+                child:
+                    aiProvider.chatRooms.isEmpty
+                        ? _buildEmptyChatRoomsList(theme)
+                        : ListView.builder(
+                          itemCount: aiProvider.chatRooms.length,
+                          itemBuilder: (context, index) {
+                            final room = aiProvider.chatRooms[index];
+                            return _buildChatRoomItem(
+                              room,
+                              theme,
+                              selectedRoom,
+                            );
+                          },
+                        ),
               ),
             ],
           ),
@@ -341,7 +340,10 @@ class _AIScreenState extends State<AIScreen> {
             children: [
               // 모델 선택 헤더
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12.0,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   border: Border(
@@ -372,9 +374,10 @@ class _AIScreenState extends State<AIScreen> {
 
               // 메시지 목록
               Expanded(
-                child: messages.isEmpty
-                    ? _buildEmptyChat(theme)
-                    : _buildChatMessages(messages, theme, isLoading),
+                child:
+                    messages.isEmpty
+                        ? _buildEmptyChat(theme)
+                        : _buildChatMessages(messages, theme, isLoading),
               ),
 
               // 메시지 입력 영역
@@ -439,18 +442,22 @@ class _AIScreenState extends State<AIScreen> {
                     // 전송 버튼
                     IconButton(
                       onPressed: _isComposing ? _sendMessage : null,
-                      icon: isLoading
-                          ? const SizedBox(
-                              width: 24.0,
-                              height: 24.0,
-                              child: CircularProgressIndicator(strokeWidth: 2.0),
-                            )
-                          : Icon(
-                              Icons.send,
-                              color: _isComposing
-                                  ? theme.colorScheme.primary
-                                  : theme.disabledColor,
-                            ),
+                      icon:
+                          isLoading
+                              ? const SizedBox(
+                                width: 24.0,
+                                height: 24.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                ),
+                              )
+                              : Icon(
+                                Icons.send,
+                                color:
+                                    _isComposing
+                                        ? theme.colorScheme.primary
+                                        : theme.disabledColor,
+                              ),
                       tooltip: '메시지 전송',
                     ),
                   ],
@@ -464,7 +471,11 @@ class _AIScreenState extends State<AIScreen> {
   }
 
   // 채팅방 아이템
-  Widget _buildChatRoomItem(ChatRoom room, ThemeData theme, ChatRoom? selectedRoom) {
+  Widget _buildChatRoomItem(
+    ChatRoom room,
+    ThemeData theme,
+    ChatRoom? selectedRoom,
+  ) {
     final isSelected = selectedRoom?.id == room.id;
 
     return ListTile(
@@ -479,9 +490,7 @@ class _AIScreenState extends State<AIScreen> {
       ),
       selected: isSelected,
       selectedTileColor: theme.colorScheme.primaryContainer.shade300,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       onTap: () => _selectChatRoom(room),
     );
   }
@@ -567,25 +576,30 @@ class _AIScreenState extends State<AIScreen> {
       spacing: 8.0,
       runSpacing: 8.0,
       alignment: WrapAlignment.center,
-      children: suggestions.map((suggestion) {
-        return ActionChip(
-          label: Text(suggestion),
-          backgroundColor: theme.colorScheme.surface,
-          side: BorderSide(color: theme.colorScheme.primary.shade500),
-          onPressed: () {
-            _messageController.text = suggestion;
-            setState(() {
-              _isComposing = true;
-            });
-            _inputFocusNode.requestFocus();
-          },
-        );
-      }).toList(),
+      children:
+          suggestions.map((suggestion) {
+            return ActionChip(
+              label: Text(suggestion),
+              backgroundColor: theme.colorScheme.surface,
+              side: BorderSide(color: theme.colorScheme.primary.shade500),
+              onPressed: () {
+                _messageController.text = suggestion;
+                setState(() {
+                  _isComposing = true;
+                });
+                _inputFocusNode.requestFocus();
+              },
+            );
+          }).toList(),
     );
   }
 
   // 채팅 메시지 목록
-  Widget _buildChatMessages(List<ChatMessage> messages, ThemeData theme, bool isLoading) {
+  Widget _buildChatMessages(
+    List<ChatMessage> messages,
+    ThemeData theme,
+    bool isLoading,
+  ) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16.0),
@@ -607,7 +621,9 @@ class _AIScreenState extends State<AIScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
         child: Card(
           color: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
@@ -648,34 +664,44 @@ class _AIScreenState extends State<AIScreen> {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
         child: Card(
           color: isUser ? theme.colorScheme.primary : theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16.0),
               topRight: const Radius.circular(16.0),
-              bottomRight: isUser ? const Radius.circular(4.0) : const Radius.circular(16.0),
-              bottomLeft: isUser ? const Radius.circular(16.0) : const Radius.circular(4.0),
+              bottomRight:
+                  isUser
+                      ? const Radius.circular(4.0)
+                      : const Radius.circular(16.0),
+              bottomLeft:
+                  isUser
+                      ? const Radius.circular(16.0)
+                      : const Radius.circular(4.0),
             ),
-            side: isUser
-                ? BorderSide.none
-                : BorderSide(
-                    color: theme.colorScheme.outlineVariant,
-                    width: 1.0,
-                  ),
+            side:
+                isUser
+                    ? BorderSide.none
+                    : BorderSide(
+                      color: theme.colorScheme.outlineVariant,
+                      width: 1.0,
+                    ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: isUser
-                ? Text(
-                    message.message,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                    ),
-                  )
-                : _buildMarkdownBody(message.message, theme),
+            child:
+                isUser
+                    ? Text(
+                      message.message,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white,
+                      ),
+                    )
+                    : _buildMarkdownBody(message.message, theme),
           ),
         ),
       ),
@@ -744,26 +770,21 @@ class _NewChatRoomDialogState extends State<_NewChatRoomDialog> {
         controller: _controller,
         decoration: InputDecoration(
           hintText: "채팅방 이름을 입력하세요",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         ),
         autofocus: true,
       ),
       actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text('취소')),
         TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('취소'),
-        ),
-        TextButton(
-          onPressed: _isValid
-              ? () => Navigator.pop(context, _controller.text.trim())
-              : null,
+          onPressed:
+              _isValid
+                  ? () => Navigator.pop(context, _controller.text.trim())
+                  : null,
           child: Text('생성'),
           style: TextButton.styleFrom(
-            foregroundColor: _isValid
-                ? theme.colorScheme.primary
-                : theme.disabledColor,
+            foregroundColor:
+                _isValid ? theme.colorScheme.primary : theme.disabledColor,
           ),
         ),
       ],

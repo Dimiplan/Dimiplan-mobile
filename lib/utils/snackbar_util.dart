@@ -13,18 +13,13 @@ void showSnackBar(
   final snackBar = SnackBar(
     content: Text(
       message,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        color: Colors.white,
-      ),
+      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
     ),
-    backgroundColor: isError
-        ? theme.colorScheme.error
-        : theme.colorScheme.primary,
+    backgroundColor:
+        isError ? theme.colorScheme.error : theme.colorScheme.primary,
     duration: duration,
     behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     margin: const EdgeInsets.all(16.0),
     action: action,
   );

@@ -50,10 +50,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': '0'},
       );
 
-      final response = await http.get(
-        url,
-        headers: {'X-Session-ID': session},
-      );
+      final response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -85,17 +82,17 @@ class PlannerProvider extends ChangeNotifier {
   }
 
   Future<void> selectPlanner(Planner planner) async {
-      // 이미 같은 플래너가 선택된 경우 중복 처리 방지
-      if (_selectedPlanner?.id == planner.id) return;
+    // 이미 같은 플래너가 선택된 경우 중복 처리 방지
+    if (_selectedPlanner?.id == planner.id) return;
 
-      _selectedPlanner = planner;
+    _selectedPlanner = planner;
 
-      // 상태 업데이트 후 작업 로드 (별도 함수로 분리)
-      notifyListeners();
+    // 상태 업데이트 후 작업 로드 (별도 함수로 분리)
+    notifyListeners();
 
-      // 작업 로드는 별도로 실행
-      await _loadTasksForPlanner(planner.id);
-    }
+    // 작업 로드는 별도로 실행
+    await _loadTasksForPlanner(planner.id);
+  }
 
   // 작업 로드 메서드 (내부용)
   Future<void> _loadTasksForPlanner(int plannerId) async {
@@ -117,10 +114,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': _selectedPlanner!.id.toString()},
       );
 
-      final response = await http.get(
-        url,
-        headers: {'X-Session-ID': session},
-      );
+      final response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -140,7 +134,7 @@ class PlannerProvider extends ChangeNotifier {
     } catch (e) {
       print('작업 목록 로드 중 오류 발생: $e');
       _tasks = [];
-      notifyListeners();  // 에러 발생 시에도 갱신
+      notifyListeners(); // 에러 발생 시에도 갱신
     } finally {
       _setLoading(false);
     }
@@ -153,7 +147,11 @@ class PlannerProvider extends ChangeNotifier {
   }
 
   /// 플래너 생성
-  Future<void> createPlanner(String name, {int isDaily = 0, int folderId = 0}) async {
+  Future<void> createPlanner(
+    String name, {
+    int isDaily = 0,
+    int folderId = 0,
+  }) async {
     if (_isLoading) return;
 
     _setLoading(true);
@@ -164,18 +162,14 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlannerPath);
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.addPlannerPath,
+      );
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'name': name,
-          'isDaily': isDaily,
-          'from': folderId,
-        }),
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        body: json.encode({'name': name, 'isDaily': isDaily, 'from': folderId}),
       );
 
       if (response.statusCode == ApiConstants.created) {
@@ -204,17 +198,14 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addFolderPath);
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.addFolderPath,
+      );
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'name': name,
-          'from': parentFolderId,
-        }),
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        body: json.encode({'name': name, 'from': parentFolderId}),
       );
 
       if (response.statusCode == ApiConstants.created) {
@@ -246,10 +237,7 @@ class PlannerProvider extends ChangeNotifier {
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlanPath);
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
       );
 
@@ -279,13 +267,13 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.updatePlanPath);
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.updatePlanPath,
+      );
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
       );
 
@@ -315,13 +303,13 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.deletePlanPath);
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.deletePlanPath,
+      );
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
         body: json.encode({'id': id}),
       );
 

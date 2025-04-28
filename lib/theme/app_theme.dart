@@ -184,10 +184,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(
-            vertical: 15.0,
-            horizontal: 24.0,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 24.0),
           textStyle: const TextStyle(
             fontFamily: 'NotoSansKR',
             fontWeight: FontWeight.w600,
@@ -342,10 +339,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryLight,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(
-            vertical: 15.0,
-            horizontal: 24.0,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 24.0),
           textStyle: const TextStyle(
             fontFamily: 'NotoSansKR',
             fontWeight: FontWeight.w600,

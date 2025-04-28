@@ -85,19 +85,11 @@ class Planner {
 
   /// Planner 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'from': from,
-      'isDaily': isDaily,
-    };
+    return {'id': id, 'name': name, 'from': from, 'isDaily': isDaily};
   }
 
   /// 업데이트된 정보로 새 객체 생성
-  Planner copyWith({
-    String? name,
-    int? isDaily,
-  }) {
+  Planner copyWith({String? name, int? isDaily}) {
     return Planner(
       id: id,
       name: name ?? this.name,
@@ -113,11 +105,7 @@ class Folder {
   final String name;
   final int from; // 상위 폴더 ID (0: 루트)
 
-  const Folder({
-    required this.id,
-    required this.name,
-    required this.from,
-  });
+  const Folder({required this.id, required this.name, required this.from});
 
   /// Map에서 Folder 객체 생성
   factory Folder.fromMap(Map<String, dynamic> map) {
@@ -130,10 +118,6 @@ class Folder {
 
   /// Folder 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'from': from,
-    };
+    return {'id': id, 'name': name, 'from': from};
   }
 }

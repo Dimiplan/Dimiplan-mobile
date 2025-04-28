@@ -9,16 +9,14 @@ import 'package:dimiplan/widgets/button.dart';
 class Homepage extends StatefulWidget {
   final Function(int)? onTabChange;
 
-  const Homepage({
-    Key? key,
-    this.onTabChange,
-  }) : super(key: key);
+  const Homepage({Key? key, this.onTabChange}) : super(key: key);
 
   @override
   State<Homepage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin {
+class _HomepageState extends State<Homepage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
   late Animation<Offset> _slideAnimation;
@@ -43,10 +41,9 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
     // 애니메이션 시작
     _animationController.forward();
@@ -200,11 +197,13 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeIn,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
                             child: Text(
                               isAuthenticated
-                                ? '현재 ${authProvider.taskCount}개의 일정이 있습니다'
-                                : '플래너와 AI 챗봇을 사용하려면 로그인하세요',
+                                  ? '현재 ${authProvider.taskCount}개의 일정이 있습니다'
+                                  : '플래너와 AI 챗봇을 사용하려면 로그인하세요',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurface.shade700,
                               ),

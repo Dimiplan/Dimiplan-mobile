@@ -58,7 +58,6 @@ class AuthProvider extends ChangeNotifier {
       // 세션 유효성 및 사용자 정보 확인
       await _fetchUserInfo();
       await _fetchTaskCount();
-
     } catch (e) {
       print('인증 확인 중 오류 발생: $e');
       _setAuthenticated(false);
@@ -77,10 +76,7 @@ class AuthProvider extends ChangeNotifier {
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/whoami');
-      final response = await http.get(
-        url,
-        headers: {'X-Session-ID': session},
-      );
+      final response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -107,10 +103,7 @@ class AuthProvider extends ChangeNotifier {
       if (session.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/registered');
-      final response = await http.get(
-        url,
-        headers: {'X-Session-ID': session},
-      );
+      final response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode != 200) {
         // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
@@ -128,10 +121,7 @@ class AuthProvider extends ChangeNotifier {
       if (session.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/plan/getEveryPlan');
-      final response = await http.get(
-        url,
-        headers: {'X-Session-ID': session},
-      );
+      final response = await http.get(url, headers: {'X-Session-ID': session});
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -245,10 +235,7 @@ class AuthProvider extends ChangeNotifier {
       final url = Uri.https(ApiConstants.backendHost, '/api/user/updateme');
       final response = await http.post(
         url,
-        headers: {
-          'X-Session-ID': session,
-          'Content-Type': 'application/json',
-        },
+        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
         body: json.encode(userData),
       );
 

@@ -16,7 +16,8 @@ class PlannerPage extends StatefulWidget {
   State<PlannerPage> createState() => _PlannerPageState();
 }
 
-class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin {
+class _PlannerPageState extends State<PlannerPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   bool _isInitialized = false;
 
@@ -26,7 +27,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
 
     // 초기 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+      final plannerProvider = Provider.of<PlannerProvider>(
+        context,
+        listen: false,
+      );
       plannerProvider.loadPlanners();
     });
   }
@@ -40,10 +44,7 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
     final planners = plannerProvider.planners;
 
     if (planners.isNotEmpty && !_isInitialized) {
-      _tabController = TabController(
-        length: planners.length,
-        vsync: this,
-      );
+      _tabController = TabController(length: planners.length, vsync: this);
 
       _tabController.addListener(() {
         if (!_tabController.indexIsChanging) {
@@ -98,13 +99,14 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
 
   // 로딩 상태 UI
   Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   // 인증 필요 상태 UI
-  Widget _buildUnauthenticatedState(AuthProvider authProvider, ThemeData theme) {
+  Widget _buildUnauthenticatedState(
+    AuthProvider authProvider,
+    ThemeData theme,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -147,7 +149,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 빈 플래너 상태 UI
-  Widget _buildEmptyPlannerState(PlannerProvider plannerProvider, ThemeData theme) {
+  Widget _buildEmptyPlannerState(
+    PlannerProvider plannerProvider,
+    ThemeData theme,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -178,7 +183,8 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
               variant: ButtonVariant.primary,
               size: ButtonSize.large,
               rounded: true,
-              onPressed: () => _showCreatePlannerDialog(context, plannerProvider),
+              onPressed:
+                  () => _showCreatePlannerDialog(context, plannerProvider),
             ),
             const SizedBox(height: 16),
             TextButton.icon(
@@ -193,7 +199,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 플래너 컨텐츠 UI
-  Widget _buildPlannerContent(PlannerProvider plannerProvider, ThemeData theme) {
+  Widget _buildPlannerContent(
+    PlannerProvider plannerProvider,
+    ThemeData theme,
+  ) {
     final planners = plannerProvider.planners;
     final selectedPlanner = plannerProvider.selectedPlanner;
     final tasks = plannerProvider.tasks;
@@ -214,9 +223,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
           ),
           child: TabBar(
             controller: _tabController,
-            tabs: planners.map((planner) {
-              return Tab(text: planner.name);
-            }).toList(),
+            tabs:
+                planners.map((planner) {
+                  return Tab(text: planner.name);
+                }).toList(),
             indicatorColor: theme.colorScheme.primary,
             indicatorWeight: 3.0,
             labelColor: theme.colorScheme.primary,
@@ -250,7 +260,12 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
                 ),
                 IconButton(
                   icon: const Icon(Icons.more_vert),
-                  onPressed: () => _showPlannerOptions(context, selectedPlanner, plannerProvider),
+                  onPressed:
+                      () => _showPlannerOptions(
+                        context,
+                        selectedPlanner,
+                        plannerProvider,
+                      ),
                 ),
               ],
             ),
@@ -258,9 +273,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
 
         // 작업 목록
         Expanded(
-          child: tasks.isEmpty
-              ? _buildEmptyTaskState(selectedPlanner, theme)
-              : _buildTaskList(tasks, plannerProvider, theme),
+          child:
+              tasks.isEmpty
+                  ? _buildEmptyTaskState(selectedPlanner, theme)
+                  : _buildTaskList(tasks, plannerProvider, theme),
         ),
       ],
     );
@@ -305,7 +321,11 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 작업 목록 UI
-  Widget _buildTaskList(List<Task> tasks, PlannerProvider plannerProvider, ThemeData theme) {
+  Widget _buildTaskList(
+    List<Task> tasks,
+    PlannerProvider plannerProvider,
+    ThemeData theme,
+  ) {
     return RefreshIndicator(
       onRefresh: () => plannerProvider.loadTasks(),
       child: ListView.builder(
@@ -320,7 +340,11 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 작업 아이템 UI
-  Widget _buildTaskItem(Task task, PlannerProvider plannerProvider, ThemeData theme) {
+  Widget _buildTaskItem(
+    Task task,
+    PlannerProvider plannerProvider,
+    ThemeData theme,
+  ) {
     final isCompleted = task.isCompleted == 1;
 
     return Slidable(
@@ -340,9 +364,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
         elevation: isCompleted ? 0 : 2,
-        color: isCompleted
-            ? theme.colorScheme.surface.shade700
-            : theme.colorScheme.surface,
+        color:
+            isCompleted
+                ? theme.colorScheme.surface.shade700
+                : theme.colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
           side: BorderSide(
@@ -359,9 +384,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
             task.contents,
             style: theme.textTheme.bodyLarge?.copyWith(
               decoration: isCompleted ? TextDecoration.lineThrough : null,
-              color: isCompleted
-                  ? theme.colorScheme.onSurface.shade500
-                  : theme.colorScheme.onSurface,
+              color:
+                  isCompleted
+                      ? theme.colorScheme.onSurface.shade500
+                      : theme.colorScheme.onSurface,
             ),
           ),
           trailing: Row(
@@ -379,7 +405,8 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
               Checkbox(
                 value: isCompleted,
                 activeColor: theme.colorScheme.primary,
-                onChanged: (value) => _toggleTaskCompletion(task, plannerProvider),
+                onChanged:
+                    (value) => _toggleTaskCompletion(task, plannerProvider),
               ),
             ],
           ),
@@ -404,7 +431,10 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 작업 완료 상태 토글
-  Future<void> _toggleTaskCompletion(Task task, PlannerProvider plannerProvider) async {
+  Future<void> _toggleTaskCompletion(
+    Task task,
+    PlannerProvider plannerProvider,
+  ) async {
     try {
       // 상태 반전
       final newState = task.isCompleted == 0 ? 1 : 0;
@@ -429,20 +459,21 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
     // 확인 다이얼로그
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('작업 삭제'),
-        content: Text('정말 "${task.contents}" 작업을 삭제하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('작업 삭제'),
+            content: Text('정말 "${task.contents}" 작업을 삭제하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('삭제'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('삭제'),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {
@@ -463,15 +494,19 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   Future<void> _navigateToAddTask(Planner? planner) async {
     if (planner == null) return;
 
-    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    final plannerProvider = Provider.of<PlannerProvider>(
+      context,
+      listen: false,
+    );
 
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTaskScreen(
-          updateTaskList: plannerProvider.loadTasks,
-          selectedPlannerId: planner.id,
-        ),
+        builder:
+            (_) => AddTaskScreen(
+              updateTaskList: plannerProvider.loadTasks,
+              selectedPlannerId: planner.id,
+            ),
       ),
     );
 
@@ -481,15 +516,19 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 작업 수정 화면으로 이동
-  Future<void> _navigateToEditTask(Task task, PlannerProvider plannerProvider) async {
+  Future<void> _navigateToEditTask(
+    Task task,
+    PlannerProvider plannerProvider,
+  ) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTaskScreen(
-          updateTaskList: plannerProvider.loadTasks,
-          task: task,
-          selectedPlannerId: task.from,
-        ),
+        builder:
+            (_) => AddTaskScreen(
+              updateTaskList: plannerProvider.loadTasks,
+              task: task,
+              selectedPlannerId: task.from,
+            ),
       ),
     );
 
@@ -499,7 +538,11 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 플래너 옵션 팝업 메뉴
-  void _showPlannerOptions(BuildContext context, Planner planner, PlannerProvider plannerProvider) {
+  void _showPlannerOptions(
+    BuildContext context,
+    Planner planner,
+    PlannerProvider plannerProvider,
+  ) {
     final theme = Theme.of(context);
 
     showModalBottomSheet(
@@ -507,79 +550,87 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.playlist_add),
-              title: const Text('새 작업 추가'),
-              onTap: () {
-                Navigator.pop(context);
-                _navigateToAddTask(planner);
-              },
+      builder:
+          (context) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.playlist_add),
+                  title: const Text('새 작업 추가'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _navigateToAddTask(planner);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.refresh),
+                  title: const Text('새로고침'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    plannerProvider.loadTasks();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text('플래너 이름 변경'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showRenamePlannerDialog(context, planner, plannerProvider);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete, color: theme.colorScheme.error),
+                  title: Text(
+                    '플래너 삭제',
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showDeletePlannerDialog(context, planner, plannerProvider);
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.refresh),
-              title: const Text('새로고침'),
-              onTap: () {
-                Navigator.pop(context);
-                plannerProvider.loadTasks();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('플래너 이름 변경'),
-              onTap: () {
-                Navigator.pop(context);
-                _showRenamePlannerDialog(context, planner, plannerProvider);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.delete, color: theme.colorScheme.error),
-              title: Text('플래너 삭제', style: TextStyle(color: theme.colorScheme.error)),
-              onTap: () {
-                Navigator.pop(context);
-                _showDeletePlannerDialog(context, planner, plannerProvider);
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
   // 플래너 생성 다이얼로그
-  Future<void> _showCreatePlannerDialog(BuildContext context, PlannerProvider plannerProvider) async {
+  Future<void> _showCreatePlannerDialog(
+    BuildContext context,
+    PlannerProvider plannerProvider,
+  ) async {
     final controller = TextEditingController();
 
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('새 플래너 추가'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: '플래너 이름',
-            border: OutlineInputBorder(),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('새 플래너 추가'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: '플래너 이름',
+                border: OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (controller.text.trim().isNotEmpty) {
+                    Navigator.pop(context, controller.text.trim());
+                  }
+                },
+                child: const Text('추가'),
+              ),
+            ],
           ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                Navigator.pop(context, controller.text.trim());
-              }
-            },
-            child: const Text('추가'),
-          ),
-        ],
-      ),
     );
 
     if (result != null && result.isNotEmpty) {
@@ -597,36 +648,41 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 플래너 이름 변경 다이얼로그
-  Future<void> _showRenamePlannerDialog(BuildContext context, Planner planner, PlannerProvider plannerProvider) async {
+  Future<void> _showRenamePlannerDialog(
+    BuildContext context,
+    Planner planner,
+    PlannerProvider plannerProvider,
+  ) async {
     final controller = TextEditingController(text: planner.name);
 
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('플래너 이름 변경'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: '새 플래너 이름',
-            border: OutlineInputBorder(),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('플래너 이름 변경'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: '새 플래너 이름',
+                border: OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (controller.text.trim().isNotEmpty) {
+                    Navigator.pop(context, controller.text.trim());
+                  }
+                },
+                child: const Text('변경'),
+              ),
+            ],
           ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                Navigator.pop(context, controller.text.trim());
-              }
-            },
-            child: const Text('변경'),
-          ),
-        ],
-      ),
     );
 
     if (result != null && result.isNotEmpty) {
@@ -644,26 +700,31 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
   }
 
   // 플래너 삭제 확인 다이얼로그
-  Future<void> _showDeletePlannerDialog(BuildContext context, Planner planner, PlannerProvider plannerProvider) async {
+  Future<void> _showDeletePlannerDialog(
+    BuildContext context,
+    Planner planner,
+    PlannerProvider plannerProvider,
+  ) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('플래너 삭제'),
-        content: Text(
-          '정말 "${planner.name}" 플래너를 삭제하시겠습니까?\n'
-          '이 플래너의 모든 작업도 함께 삭제됩니다.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('플래너 삭제'),
+            content: Text(
+              '정말 "${planner.name}" 플래너를 삭제하시겠습니까?\n'
+              '이 플래너의 모든 작업도 함께 삭제됩니다.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('삭제'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('삭제'),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {

@@ -56,9 +56,10 @@ class AppButton extends StatelessWidget {
           padding: padding,
           textStyle: textStyle,
           elevation: variant == ButtonVariant.text ? 0 : 2,
-          shadowColor: variant == ButtonVariant.primary
-              ? AppTheme.primaryColor.shade300
-              : Colors.black.shade100,
+          shadowColor:
+              variant == ButtonVariant.primary
+                  ? AppTheme.primaryColor.shade300
+                  : Colors.black.shade100,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(rounded ? 30.0 : 8.0),
             side: borderSide,
@@ -66,23 +67,24 @@ class AppButton extends StatelessWidget {
           disabledBackgroundColor: backgroundColor.shade700,
           disabledForegroundColor: foregroundColor.shade500,
         ),
-        child: isLoading
-            ? _buildLoadingIndicator(foregroundColor)
-            : _buildButtonContent(foregroundColor),
+        child:
+            isLoading
+                ? _buildLoadingIndicator(foregroundColor)
+                : _buildButtonContent(foregroundColor),
       ),
     );
   }
 
   Widget _buildLoadingIndicator(Color color) {
-    final double spinnerSize = size == ButtonSize.large ? 24.0 : (size == ButtonSize.medium ? 20.0 : 16.0);
+    final double spinnerSize =
+        size == ButtonSize.large
+            ? 24.0
+            : (size == ButtonSize.medium ? 20.0 : 16.0);
 
     return SizedBox(
       height: spinnerSize,
       width: spinnerSize,
-      child: CircularProgressIndicator(
-        strokeWidth: 2.0,
-        color: color,
-      ),
+      child: CircularProgressIndicator(strokeWidth: 2.0, color: color),
     );
   }
 
@@ -93,7 +95,10 @@ class AppButton extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: size == ButtonSize.large ? 24.0 : (size == ButtonSize.medium ? 20.0 : 16.0),
+            size:
+                size == ButtonSize.large
+                    ? 24.0
+                    : (size == ButtonSize.medium ? 20.0 : 16.0),
             color: color,
           ),
           const SizedBox(width: 8.0),
@@ -192,17 +197,7 @@ class AppButton extends StatelessWidget {
 }
 
 /// 버튼 크기 정의
-enum ButtonSize {
-  small,
-  medium,
-  large,
-}
+enum ButtonSize { small, medium, large }
 
 /// 버튼 종류 정의
-enum ButtonVariant {
-  primary,
-  secondary,
-  danger,
-  success,
-  text,
-}
+enum ButtonVariant { primary, secondary, danger, success, text }

@@ -177,23 +177,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         backgroundImage: NetworkImage(widget.user.profileImage),
                         backgroundColor: theme.colorScheme.primaryContainer,
                         onBackgroundImageError: (_, __) {},
-                        child: widget.user.profileImage.isEmpty
-                            ? Icon(
-                                Icons.person,
-                                size: 60,
-                                color: theme.colorScheme.onPrimaryContainer,
-                              )
-                            : null,
+                        child:
+                            widget.user.profileImage.isEmpty
+                                ? Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                )
+                                : null,
                       ),
                     ),
                   ),
                   const SizedBox(height: 32),
 
                   // 이메일 표시 (변경 불가)
-                  Text(
-                    '이메일',
-                    style: theme.textTheme.titleSmall,
-                  ),
+                  Text('이메일', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   Container(
                     width: double.infinity,
@@ -218,10 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 24),
 
                   // 이름 입력 필드
-                  Text(
-                    '이름',
-                    style: theme.textTheme.titleSmall,
-                  ),
+                  Text('이름', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   AppTextField(
                     label: '',
@@ -235,10 +230,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   // 디미고 학생인 경우 학년/반 선택 필드
                   if (_isDimigoStudent) ...[
-                    Text(
-                      '학년 및 반',
-                      style: theme.textTheme.titleSmall,
-                    ),
+                    Text('학년 및 반', style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -255,9 +247,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: _gradeError != null
-                                        ? theme.colorScheme.error
-                                        : theme.colorScheme.outline,
+                                    color:
+                                        _gradeError != null
+                                            ? theme.colorScheme.error
+                                            : theme.colorScheme.outline,
                                     width: 2.0,
                                   ),
                                 ),
@@ -269,18 +262,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     items: [
                                       DropdownMenuItem(
                                         value: '1',
-                                        child: Text('1학년',
-                                          style: theme.textTheme.bodyLarge),
+                                        child: Text(
+                                          '1학년',
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
                                       ),
                                       DropdownMenuItem(
                                         value: '2',
-                                        child: Text('2학년',
-                                          style: theme.textTheme.bodyLarge),
+                                        child: Text(
+                                          '2학년',
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
                                       ),
                                       DropdownMenuItem(
                                         value: '3',
-                                        child: Text('3학년',
-                                          style: theme.textTheme.bodyLarge),
+                                        child: Text(
+                                          '3학년',
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
                                       ),
                                     ],
                                     onChanged: (value) {
@@ -322,9 +321,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: _classError != null
-                                        ? theme.colorScheme.error
-                                        : theme.colorScheme.outline,
+                                    color:
+                                        _classError != null
+                                            ? theme.colorScheme.error
+                                            : theme.colorScheme.outline,
                                     width: 2.0,
                                   ),
                                 ),
@@ -337,8 +337,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       6,
                                       (index) => DropdownMenuItem(
                                         value: '${index + 1}',
-                                        child: Text('${index + 1}반',
-                                          style: theme.textTheme.bodyLarge),
+                                        child: Text(
+                                          '${index + 1}반',
+                                          style: theme.textTheme.bodyLarge,
+                                        ),
                                       ),
                                     ),
                                     onChanged: (value) {

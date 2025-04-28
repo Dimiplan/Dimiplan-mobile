@@ -63,21 +63,24 @@ class SkeletonLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final baseColor = theme.brightness == Brightness.light
-        ? Colors.grey[300]!
-        : Colors.grey[700]!;
-    final highlightColor = theme.brightness == Brightness.light
-        ? Colors.grey[100]!
-        : Colors.grey[600]!;
+    final baseColor =
+        theme.brightness == Brightness.light
+            ? Colors.grey[300]!
+            : Colors.grey[700]!;
+    final highlightColor =
+        theme.brightness == Brightness.light
+            ? Colors.grey[100]!
+            : Colors.grey[600]!;
 
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         color: baseColor,
-        borderRadius: isCircle
-            ? BorderRadius.circular(height / 2)
-            : BorderRadius.circular(borderRadius),
+        borderRadius:
+            isCircle
+                ? BorderRadius.circular(height / 2)
+                : BorderRadius.circular(borderRadius),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

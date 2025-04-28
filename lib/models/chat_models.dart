@@ -4,11 +4,7 @@ class ChatRoom {
   final String name;
   final String owner;
 
-  const ChatRoom({
-    required this.id,
-    required this.name,
-    required this.owner,
-  });
+  const ChatRoom({required this.id, required this.name, required this.owner});
 
   /// Map에서 ChatRoom 객체 생성
   factory ChatRoom.fromMap(Map<String, dynamic> map) {
@@ -21,22 +17,12 @@ class ChatRoom {
 
   /// ChatRoom 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'owner': owner,
-    };
+    return {'id': id, 'name': name, 'owner': owner};
   }
 
   /// 이름이 변경된 새 객체 생성
-  ChatRoom copyWith({
-    String? name,
-  }) {
-    return ChatRoom(
-      id: id,
-      name: name ?? this.name,
-      owner: owner,
-    );
+  ChatRoom copyWith({String? name}) {
+    return ChatRoom(id: id, name: name ?? this.name, owner: owner);
   }
 }
 

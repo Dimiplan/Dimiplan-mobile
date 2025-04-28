@@ -52,39 +52,42 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // 테마 프로바이더 사용
     return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, _) => MaterialApp(
-        title: "디미플랜",
+      builder:
+          (context, themeProvider, _) => MaterialApp(
+            title: "디미플랜",
 
-        // 다국어 지원 설정
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('ko')],
+            // 다국어 지원 설정
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('ko')],
 
-        // 디버그 배너 숨기기
-        debugShowCheckedModeBanner: false,
+            // 디버그 배너 숨기기
+            debugShowCheckedModeBanner: false,
 
-        // 테마 설정
-        theme: themeProvider.themeData,
-        darkTheme: AppTheme.darkTheme(),
-        themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            // 테마 설정
+            theme: themeProvider.themeData,
+            darkTheme: AppTheme.darkTheme(),
+            themeMode:
+                themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
-        // 홈 화면
-        home: const Nav(),
+            // 홈 화면
+            home: const Nav(),
 
-        // 텍스트 스케일링 제한 (폰트 크기 일관성 유지)
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
-          child: child!,
-        ),
+            // 텍스트 스케일링 제한 (폰트 크기 일관성 유지)
+            builder:
+                (context, child) => MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                  child: child!,
+                ),
 
-        // 루트
-        routes: {
-          '/nav': (context) => const Nav(),
-        },
-      ),
+            // 루트
+            routes: {'/nav': (context) => const Nav()},
+          ),
     );
   }
 }

@@ -40,10 +40,9 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
     // 애니메이션 시작
     _animationController.forward();
@@ -159,7 +158,10 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
         position: _slideAnimation,
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 40.0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -182,13 +184,15 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                             backgroundImage: NetworkImage(user.profileImage),
                             backgroundColor: theme.colorScheme.primaryContainer,
                             onBackgroundImageError: (_, __) {},
-                            child: user.profileImage.isEmpty
-                                ? Icon(
-                                    Icons.person,
-                                    size: 60,
-                                    color: theme.colorScheme.onPrimaryContainer,
-                                  )
-                                : null,
+                            child:
+                                user.profileImage.isEmpty
+                                    ? Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
+                                    )
+                                    : null,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -202,7 +206,9 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                         ),
 
                         // 학년/반 (디미고 학생인 경우)
-                        if (isDimigoStudent && user.grade != null && user.classnum != null)
+                        if (isDimigoStudent &&
+                            user.grade != null &&
+                            user.classnum != null)
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
@@ -266,14 +272,20 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Icon(Icons.info_outline, color: theme.colorScheme.primary),
+                          leading: Icon(
+                            Icons.info_outline,
+                            color: theme.colorScheme.primary,
+                          ),
                           title: Text('앱 정보'),
                           trailing: Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _showAppInfo(context),
                         ),
                         Divider(),
                         ListTile(
-                          leading: Icon(Icons.code, color: theme.colorScheme.primary),
+                          leading: Icon(
+                            Icons.code,
+                            color: theme.colorScheme.primary,
+                          ),
                           title: Text('개발자 정보'),
                           trailing: Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _showDeveloperInfo(context),
@@ -289,7 +301,7 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                           title: Text(
                             theme.brightness == Brightness.dark
                                 ? '라이트 모드로 전환'
-                                : '다크 모드로 전환'
+                                : '다크 모드로 전환',
                           ),
                           trailing: Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () => _toggleTheme(context),
@@ -307,14 +319,20 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
   }
 
   // 로그인 필요 상태 UI
-  Widget _buildUnauthenticatedState(AuthProvider authProvider, ThemeData theme) {
+  Widget _buildUnauthenticatedState(
+    AuthProvider authProvider,
+    ThemeData theme,
+  ) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 40.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40.0,
+              vertical: 40.0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -389,20 +407,21 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     // 확인 다이얼로그
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃 하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('로그아웃'),
+            content: const Text('정말 로그아웃 하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('로그아웃'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('로그아웃'),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {
@@ -424,10 +443,11 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => EditProfileScreen(
-          user: authProvider.user!,
-          updateUserInfo: authProvider.refreshUserInfo,
-        ),
+        builder:
+            (_) => EditProfileScreen(
+              user: authProvider.user!,
+              updateUserInfo: authProvider.refreshUserInfo,
+            ),
       ),
     );
   }
@@ -436,26 +456,27 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
   void _showAppInfo(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('앱 정보'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('디미플랜 (Dimiplan)'),
-            SizedBox(height: 8),
-            Text('버전: 1.1.0'),
-            SizedBox(height: 8),
-            Text('한국디지털미디어고등학교 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('앱 정보'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('디미플랜 (Dimiplan)'),
+                SizedBox(height: 8),
+                Text('버전: 1.1.0'),
+                SizedBox(height: 8),
+                Text('한국디지털미디어고등학교 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('확인'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -463,26 +484,27 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
   void _showDeveloperInfo(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('개발자 정보'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('개발: 디미고 학생 개발팀'),
-            SizedBox(height: 16),
-            Text('문의: dimiplan@dimigo.hs.kr'),
-            SizedBox(height: 16),
-            Text('오픈소스 라이센스 정보는 앱 정보에서 확인하실 수 있습니다.'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('개발자 정보'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('개발: 디미고 학생 개발팀'),
+                SizedBox(height: 16),
+                Text('문의: dimiplan@dimigo.hs.kr'),
+                SizedBox(height: 16),
+                Text('오픈소스 라이센스 정보는 앱 정보에서 확인하실 수 있습니다.'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('확인'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 

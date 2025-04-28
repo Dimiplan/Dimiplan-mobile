@@ -151,11 +151,7 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
 
     // 로딩 중일 때는 로딩 인디케이터 표시
     if (_isLoading) {
-      return Scaffold(
-        body: Center(
-          child: AppLoadingIndicator(),
-        ),
-      );
+      return Scaffold(body: Center(child: AppLoadingIndicator()));
     }
 
     return Scaffold(
@@ -174,18 +170,20 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
         actions: [
           // 다크모드 토글 버튼
           Consumer<ThemeProvider>(
-            builder: (context, themeProvider, _) => IconButton(
-              icon: Icon(
-                themeProvider.isDarkMode
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
-                color: theme.colorScheme.primary,
-              ),
-              onPressed: () {
-                themeProvider.toggleTheme();
-              },
-              tooltip: themeProvider.isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환',
-            ),
+            builder:
+                (context, themeProvider, _) => IconButton(
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: theme.colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    themeProvider.toggleTheme();
+                  },
+                  tooltip:
+                      themeProvider.isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환',
+                ),
           ),
           const SizedBox(width: 8),
         ],
@@ -193,9 +191,7 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
       // PageView 대신 현재 선택된 인덱스에 해당하는 화면만 표시
       body: IndexedStack(
         index: _currentIndex,
-        children: _tabs.map(
-          (tab) => tab.screen(_handleTabChange)
-        ).toList(),
+        children: _tabs.map((tab) => tab.screen(_handleTabChange)).toList(),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -212,23 +208,29 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
           selectedIndex: _currentIndex,
           onDestinationSelected: _setCurrentIndex,
           animationDuration: AppTheme.animationDuration,
-          destinations: _tabs.map((tab) => NavigationDestination(
-            icon: Icon(tab.icon),
-            label: tab.label,
-          )).toList(),
+          destinations:
+              _tabs
+                  .map(
+                    (tab) => NavigationDestination(
+                      icon: Icon(tab.icon),
+                      label: tab.label,
+                    ),
+                  )
+                  .toList(),
         ),
       ),
-      floatingActionButton: _currentIndex == 1 && isAuthenticated
-          ? FloatingActionButton(
-              backgroundColor: theme.colorScheme.primaryContainer,
-              elevation: 8.0,
-              child: const Icon(Icons.add, size: 32),
-              onPressed: () {
-                // AddTaskScreen으로 이동
-                Navigator.pushNamed(context, '/add_task');
-              },
-            )
-          : null,
+      floatingActionButton:
+          _currentIndex == 1 && isAuthenticated
+              ? FloatingActionButton(
+                backgroundColor: theme.colorScheme.primaryContainer,
+                elevation: 8.0,
+                child: const Icon(Icons.add, size: 32),
+                onPressed: () {
+                  // AddTaskScreen으로 이동
+                  Navigator.pushNamed(context, '/add_task');
+                },
+              )
+              : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
@@ -240,9 +242,5 @@ class _NavTab {
   final String label;
   final Widget Function(Function(int) onTabChange) screen;
 
-  _NavTab({
-    required this.icon,
-    required this.label,
-    required this.screen,
-  });
+  _NavTab({required this.icon, required this.label, required this.screen});
 }
