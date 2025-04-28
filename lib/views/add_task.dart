@@ -1,127 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
 
-class CreatePlannerScreen extends StatefulWidget {
-  const CreatePlannerScreen({super.key});
+Future<bool?> showCreatePlannerDialog(BuildContext context) {
+  final TextEditingController plannerNameController = TextEditingController();
+  bool isAddingPlanner = false;
 
-  @override
-  State<CreatePlannerScreen> createState() => _CreatePlannerScreenState();
-}
-
-class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
-  final TextEditingController _plannerNameController = TextEditingController();
-  bool _isAddingPlanner = false;
-
-  @override
-  void dispose() {
-    _plannerNameController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _addNewPlanner(String name) async {
+  Future<void> addNewPlanner(String name, BuildContext dialogContext) async {
     // Root folder (ID: 0)
     const int rootFolderId = 0;
 
-    // Add planner to the root folder
-    await db.addPlanner(name, 0, rootFolderId);
+    try {
+      // Add planner to the root folder
+      await db.addPlanner(name, 0, rootFolderId);
+      Navigator.pop(dialogContext, true);
+    } catch (e) {
+      print('Error adding planner: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')),
+      );
+      Navigator.pop(dialogContext, false);
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('새 플래너 추가', style: Theme.of(context).textTheme.titleLarge),
-        centerTitle: false,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _plannerNameController,
+  return showDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('새 플래너 추가'),
+            content: TextField(
+              controller: plannerNameController,
               decoration: InputDecoration(
-                labelText: '플래너 이름',
                 hintText: '새 플래너 이름을 입력하세요',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
               ),
             ),
-            SizedBox(height: 24),
-            if (_isAddingPlanner)
-              Center(child: CircularProgressIndicator())
-            else
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 20.0),
-                height: 60.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(30.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).shadowColor.shade500,
-                      spreadRadius: 2,
-                      blurRadius: 4,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15.0),
-                  ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('취소'),
+              ),
+              if (isAddingPlanner)
+                const CircularProgressIndicator()
+              else
+                TextButton(
                   onPressed: () async {
-                    if (_plannerNameController.text.trim().isEmpty) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('플래너 이름을 입력해주세요')));
+                    if (plannerNameController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('플래너 이름을 입력해주세요')),
+                      );
                       return;
                     }
 
                     setState(() {
-                      _isAddingPlanner = true;
+                      isAddingPlanner = true;
                     });
 
-                    try {
-                      await _addNewPlanner(_plannerNameController.text);
-                      Navigator.pop(context, true);
-                    } catch (e) {
-                      print('Error adding planner: $e');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')),
-                      );
-                    } finally {
-                      setState(() {
-                        _isAddingPlanner = false;
-                      });
-                    }
+                    await addNewPlanner(plannerNameController.text, dialogContext);
                   },
-                  child: Text(
-                    '추가',
-                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
+                  child: const Text('추가'),
                 ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+            ],
+          );
+        },
+      );
+    },
+  );
 }
 
 class AddTaskScreen extends StatefulWidget {
@@ -222,11 +167,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
+  // Updated to use dialog instead of navigating to a screen
   Future<void> _navigateToCreatePlannerScreen() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreatePlannerScreen()),
-    );
+    final result = await showCreatePlannerDialog(context);
 
     if (result == true) {
       // Reload planners if a new one was added
@@ -418,37 +361,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.symmetric(vertical: 20.0),
+                                margin: EdgeInsets.symmetric(vertical: 0.0),
                                 height: 60.0,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
                                   borderRadius: BorderRadius.circular(30.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).shadowColor.shade500,
-                                      spreadRadius: 2,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 2.0,
+                                  ),
                                 ),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30.0),
-                                      side: BorderSide(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).primaryColor.shade100,
-                                        width: 2.0,
-                                      ),
                                     ),
                                     padding: EdgeInsets.symmetric(
                                       vertical: 15.0,
@@ -457,16 +383,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   onPressed: _submit,
                                   child: Text(
                                     widget.task == null ? '추가' : '수정',
-                                    style:
-                                        Theme.of(
-                                          context,
-                                        ).textTheme.displaySmall,
+                                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                      color: Colors.grey.shade300,
+                                    ),
                                   ),
                                 ),
                               ),
                               widget.task != null
                                   ? Container(
-                                    margin: EdgeInsets.symmetric(vertical: 0.0),
+                                    margin: EdgeInsets.symmetric(vertical: 20.0),
                                     height: 60.0,
                                     width: double.infinity,
                                     decoration: BoxDecoration(
