@@ -124,10 +124,7 @@ class _NavState extends State<Nav> {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        backgroundColor:
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? Theme.of(context).primaryColor.shade100
-                : null,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
@@ -139,11 +136,7 @@ class _NavState extends State<Nav> {
       floatingActionButton:
           (currentIndex == 1 && !mark)
               ? FloatingActionButton(
-                backgroundColor:
-                    MediaQuery.of(context).platformBrightness ==
-                            Brightness.light
-                        ? Theme.of(context).primaryColor.shade200
-                        : null,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 elevation: 8.0,
                 child: Icon(Icons.add, size: 32),
                 onPressed: () {
@@ -159,10 +152,7 @@ class _NavState extends State<Nav> {
               : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: NavigationBar(
-        backgroundColor:
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? Theme.of(context).primaryColor.shade200
-                : null,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         selectedIndex: currentIndex,
         onDestinationSelected: (value) {
           setState(() {

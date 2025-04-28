@@ -5,6 +5,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'package:dimiplan/internal/model.dart';
 import 'package:dimiplan/views/edit_profile.dart';
+import 'package:color_shade/color_shade.dart';
+
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -222,17 +224,22 @@ class _AccountState extends State<Account> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
+                        side: BorderSide(
+                          color: Theme.of(context).primaryColor.shade200,
+                          width: 2.0,
+                        ),
                       ),
                       padding: EdgeInsets.symmetric(vertical: 15.0),
                     ),
                     onPressed: logout,
                     child: Text(
                       '로그아웃',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelMedium!.copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -242,8 +249,13 @@ class _AccountState extends State<Account> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
+                  side: BorderSide(
+                    color: Theme.of(context).primaryColor.shade200,
+                    width: 2.0,
+                  ),
                 ),
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
               ),
@@ -260,9 +272,9 @@ class _AccountState extends State<Account> {
                   ),
               child: Text(
                 '회원정보 수정',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium!.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
@@ -275,20 +287,24 @@ class _AccountState extends State<Account> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.account_circle, size: 100, color: Colors.grey[400]),
+            Icon(
+              Icons.account_circle,
+              size: 100,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+            ),
             SizedBox(height: 20),
             Text(
               '로그인이 필요합니다',
-              style: TextStyle(
-                fontSize: 20,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
               ),
             ),
             SizedBox(height: 30),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -306,7 +322,10 @@ class _AccountState extends State<Account> {
               },
               child: Text(
                 '로그인',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],

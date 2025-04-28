@@ -69,6 +69,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -79,7 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             Text(
               '회원정보 수정',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
+              style: textTheme.titleLarge,
             ),
           ],
         ),
@@ -102,10 +105,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
                         child: TextFormField(
-                          style: TextStyle(fontSize: 18.0),
+                          style: textTheme.bodyLarge,
                           decoration: InputDecoration(
                             labelText: '이름',
-                            labelStyle: TextStyle(fontSize: 18.0),
+                            labelStyle: textTheme.bodyLarge,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -120,10 +123,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
                         child: TextFormField(
-                          style: TextStyle(fontSize: 18.0),
+                          style: textTheme.bodyLarge,
                           decoration: InputDecoration(
                             labelText: '이메일',
-                            labelStyle: TextStyle(fontSize: 18.0),
+                            labelStyle: textTheme.bodyLarge,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -152,19 +155,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         value: grade,
                                         child: Text(
                                           '$grade학년',
-                                          style: TextStyle(
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).textTheme.bodyLarge?.color,
-                                          ),
+                                          style: textTheme.bodyMedium,
                                         ),
                                       );
                                     }).toList(),
-                                style: TextStyle(fontSize: 18.0),
+                                style: textTheme.bodyLarge,
                                 decoration: InputDecoration(
                                   labelText: '학년',
-                                  labelStyle: TextStyle(fontSize: 18.0),
+                                  labelStyle: textTheme.bodyLarge,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -194,19 +192,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         value: classnum,
                                         child: Text(
                                           '$classnum반',
-                                          style: TextStyle(
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).textTheme.bodyLarge?.color,
-                                          ),
+                                          style: textTheme.bodyMedium,
                                         ),
                                       );
                                     }).toList(),
-                                style: TextStyle(fontSize: 18.0),
+                                style: textTheme.bodyLarge,
                                 decoration: InputDecoration(
                                   labelText: '반',
-                                  labelStyle: TextStyle(fontSize: 18.0),
+                                  labelStyle: textTheme.bodyLarge,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -227,11 +220,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         height: 60.0,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                          color: theme.primaryColor,
                           borderRadius: BorderRadius.circular(30.0),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withAlpha(128),
+                              color: theme.shadowColor.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 4,
                               offset: Offset(0, 3),
@@ -240,7 +233,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
+                            backgroundColor: theme.primaryColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
@@ -249,8 +242,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           onPressed: _submit,
                           child: Text(
                             '수정 완료',
-                            style: TextStyle(
-                              fontSize: 20.0,
+                            style: textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),

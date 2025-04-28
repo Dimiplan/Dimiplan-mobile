@@ -7,6 +7,8 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -14,23 +16,21 @@ class Homepage extends StatelessWidget {
           Icon(
             Icons.calendar_today_rounded,
             size: 100,
-            color: Theme.of(context).primaryColor.shade100,
+            color: theme.primaryColor.shade100,
           ),
           SizedBox(height: 20),
           Text(
             '디미플랜',
-            style: TextStyle(
-              fontSize: 30,
+            style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor.shade100,
+              color: theme.primaryColor.shade100,
             ),
           ),
           SizedBox(height: 10),
           Text(
             '당신의 계획을 관리하세요',
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).primaryColor.shade100,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.primaryColor.shade100,
             ),
           ),
           SizedBox(height: 30),
@@ -48,9 +48,10 @@ class Homepage extends StatelessWidget {
             },
             icon: Icon(Icons.list_alt_rounded),
             label: Text('플래너로 이동'),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
+            style: theme.elevatedButtonTheme.style ??
+                  ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
           ),
         ],
       ),
