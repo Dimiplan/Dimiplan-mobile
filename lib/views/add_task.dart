@@ -2,6 +2,131 @@ import 'package:flutter/material.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
 
+class CreatePlannerScreen extends StatefulWidget {
+  const CreatePlannerScreen({super.key});
+
+  @override
+  State<CreatePlannerScreen> createState() => _CreatePlannerScreenState();
+}
+
+class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
+  final TextEditingController _plannerNameController = TextEditingController();
+  bool _isAddingPlanner = false;
+
+  @override
+  void dispose() {
+    _plannerNameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addNewPlanner(String name) async {
+    // Root folder (ID: 0)
+    const int rootFolderId = 0;
+
+    // Add planner to the root folder
+    await db.addPlanner(name, 0, rootFolderId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          '새 플래너 추가',
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
+        ),
+        centerTitle: false,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _plannerNameController,
+              decoration: InputDecoration(
+                labelText: '플래너 이름',
+                hintText: '새 플래너 이름을 입력하세요',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            if (_isAddingPlanner)
+              Center(child: CircularProgressIndicator())
+            else
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 20.0),
+                height: 60.0,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(30.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withAlpha(128),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15.0),
+                  ),
+                  onPressed: () async {
+                    if (_plannerNameController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('플래너 이름을 입력해주세요')),
+                      );
+                      return;
+                    }
+
+                    setState(() {
+                      _isAddingPlanner = true;
+                    });
+
+                    try {
+                      await _addNewPlanner(_plannerNameController.text);
+                      Navigator.pop(context, true);
+                    } catch (e) {
+                      print('Error adding planner: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')),
+                      );
+                    } finally {
+                      setState(() {
+                        _isAddingPlanner = false;
+                      });
+                    }
+                  },
+                  child: Text(
+                    '추가',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall!
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class AddTaskScreen extends StatefulWidget {
   final Function updateTaskList;
   final Task? task;
@@ -25,9 +150,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   int _from = 1;
   List<Planner> _planners = [];
   bool _isLoadingPlanners = false;
-  final TextEditingController _newPlannerNameController =
-      TextEditingController();
-  bool _isAddingPlanner = false;
 
   final List<String> _priorities = ['낮음', '중간', '높음'];
 
@@ -103,103 +225,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _newPlannerNameController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _showAddPlannerDialog() async {
-    _newPlannerNameController.clear();
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('새 플래너 추가'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    TextField(
-                      controller: _newPlannerNameController,
-                      decoration: InputDecoration(
-                        labelText: '플래너 이름',
-                        hintText: '새 플래너 이름을 입력하세요',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                    ),
-                    if (_isAddingPlanner)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('추가'),
-              onPressed:
-                  _isAddingPlanner
-                      ? null
-                      : () async {
-                        if (_newPlannerNameController.text.trim().isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('플래너 이름을 입력해주세요')),
-                          );
-                          return;
-                        }
-
-                        setState(() {
-                          _isAddingPlanner = true;
-                        });
-
-                        try {
-                          // Call the backend API to add a new planner
-                          await _addNewPlanner(_newPlannerNameController.text);
-                          // Reload planners list
-                          await _loadPlanners();
-                          Navigator.of(context).pop();
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('새 플래너가 추가되었습니다')),
-                          );
-                        } catch (e) {
-                          print('Error adding planner: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')),
-                          );
-                        } finally {
-                          setState(() {
-                            _isAddingPlanner = false;
-                          });
-                        }
-                      },
-            ),
-          ],
-        );
-      },
+  Future<void> _navigateToCreatePlannerScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreatePlannerScreen()),
     );
-  }
 
-  Future<void> _addNewPlanner(String name) async {
-    // Root folder (ID: 0)
-    const int rootFolderId = 0;
-
-    // Add planner to the root folder
-    await db.addPlanner(name, 0, rootFolderId);
+    if (result == true) {
+      // Reload planners if a new one was added
+      await _loadPlanners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('새 플래너가 추가되었습니다')),
+      );
+    }
   }
 
   @override
@@ -374,7 +412,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                     SizedBox(height: 8),
                                     TextButton.icon(
                                       onPressed: () {
-                                        _showAddPlannerDialog();
+                                        _navigateToCreatePlannerScreen();
                                       },
                                       icon: Icon(Icons.add),
                                       label: Text('새 플래너 추가'),
