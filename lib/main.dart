@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:dimiplan/views/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dimiplan/views/nav_bar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:xtyle/xtyle.dart';
 
