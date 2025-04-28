@@ -16,9 +16,9 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) {
       Navigator.pop(dialogContext, true);
     } catch (e) {
       print('Error adding planner: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('플래너 추가 중 오류가 발생했습니다')));
       Navigator.pop(dialogContext, false);
     }
   }
@@ -32,9 +32,7 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) {
             title: const Text('새 플래너 추가'),
             content: TextField(
               controller: plannerNameController,
-              decoration: InputDecoration(
-                hintText: '새 플래너 이름을 입력하세요',
-              ),
+              decoration: InputDecoration(hintText: '새 플래너 이름을 입력하세요'),
             ),
             actions: [
               TextButton(
@@ -47,9 +45,9 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) {
                 TextButton(
                   onPressed: () async {
                     if (plannerNameController.text.trim().isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('플래너 이름을 입력해주세요')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('플래너 이름을 입력해주세요')));
                       return;
                     }
 
@@ -57,7 +55,10 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) {
                       isAddingPlanner = true;
                     });
 
-                    await addNewPlanner(plannerNameController.text, dialogContext);
+                    await addNewPlanner(
+                      plannerNameController.text,
+                      dialogContext,
+                    );
                   },
                   child: const Text('추가'),
                 ),
@@ -383,15 +384,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   onPressed: _submit,
                                   child: Text(
                                     widget.task == null ? '추가' : '수정',
-                                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                      color: Colors.grey.shade300,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(color: Colors.grey.shade300),
                                   ),
                                 ),
                               ),
                               widget.task != null
                                   ? Container(
-                                    margin: EdgeInsets.symmetric(vertical: 20.0),
+                                    margin: EdgeInsets.symmetric(
+                                      vertical: 20.0,
+                                    ),
                                     height: 60.0,
                                     width: double.infinity,
                                     decoration: BoxDecoration(

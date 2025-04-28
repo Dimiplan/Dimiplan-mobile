@@ -120,7 +120,9 @@ class _AIScreenState extends State<AIScreen> {
         // Add AI response
         final aiMessage = ChatMessage(
           id: DateTime.now().millisecondsSinceEpoch + 1, // Temporary ID
-          message: response['response']['choices'][0]['text'] ?? "I don't know how to respond to that.",
+          message:
+              response['response']['choices'][0]['text'] ??
+              "I don't know how to respond to that.",
           sender: 'ai',
           from: _selectedRoom!.id,
           owner: '', // Will be filled by server
@@ -151,9 +153,9 @@ class _AIScreenState extends State<AIScreen> {
       }
     } catch (e) {
       print('Error sending message: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
       setState(() {
         _isSending = false;
       });
@@ -170,9 +172,7 @@ class _AIScreenState extends State<AIScreen> {
           title: const Text('새 채팅방 만들기'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              hintText: "채팅방 이름을 입력하세요",
-            ),
+            decoration: const InputDecoration(hintText: "채팅방 이름을 입력하세요"),
           ),
           actions: [
             TextButton(
@@ -184,12 +184,14 @@ class _AIScreenState extends State<AIScreen> {
                 if (controller.text.trim().isEmpty) return;
 
                 Navigator.pop(context);
-                final success = await _aiService.createChatRoom(controller.text.trim());
+                final success = await _aiService.createChatRoom(
+                  controller.text.trim(),
+                );
 
                 if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('채팅방이 생성되었습니다')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('채팅방이 생성되었습니다')));
                   _loadChatRooms();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -265,12 +267,13 @@ class _AIScreenState extends State<AIScreen> {
                       _loadMessages();
                     }
                   },
-                  items: _rooms.map<DropdownMenuItem<ChatRoom>>((ChatRoom room) {
-                    return DropdownMenuItem<ChatRoom>(
-                      value: room,
-                      child: Text(room.name),
-                    );
-                  }).toList(),
+                  items:
+                      _rooms.map<DropdownMenuItem<ChatRoom>>((ChatRoom room) {
+                        return DropdownMenuItem<ChatRoom>(
+                          value: room,
+                          child: Text(room.name),
+                        );
+                      }).toList(),
                 ),
               ),
               IconButton(
@@ -284,24 +287,25 @@ class _AIScreenState extends State<AIScreen> {
 
         // Messages list
         Expanded(
-          child: _messages.isEmpty
-              ? Center(
-                  child: Text(
-                    '메시지가 없습니다. 첫 메시지를 보내보세요!',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).hintColor,
+          child:
+              _messages.isEmpty
+                  ? Center(
+                    child: Text(
+                      '메시지가 없습니다. 첫 메시지를 보내보세요!',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).hintColor,
+                      ),
                     ),
+                  )
+                  : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final message = _messages[index];
+                      return _buildMessageBubble(message);
+                    },
                   ),
-                )
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    final message = _messages[index];
-                    return _buildMessageBubble(message);
-                  },
-                ),
         ),
 
         // Input field
@@ -334,12 +338,12 @@ class _AIScreenState extends State<AIScreen> {
               _isSending
                   ? const CircularProgressIndicator()
                   : IconButton(
-                      icon: Icon(
-                        Icons.send,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      onPressed: _sendMessage,
+                    icon: Icon(
+                      Icons.send,
+                      color: Theme.of(context).primaryColor,
                     ),
+                    onPressed: _sendMessage,
+                  ),
             ],
           ),
         ),
@@ -349,9 +353,10 @@ class _AIScreenState extends State<AIScreen> {
 
   Widget _buildMessageBubble(ChatMessage message) {
     final isUser = message.isUser;
-    final bubbleColor = isUser
-        ? Theme.of(context).primaryColor
-        : Theme.of(context).colorScheme.surface.shade300;
+    final bubbleColor =
+        isUser
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).colorScheme.surface.shade300;
     final textColor = isUser ? Colors.white : Colors.black;
     final alignment = isUser ? Alignment.centerRight : Alignment.centerLeft;
     final borderRadius = BorderRadius.only(
@@ -375,10 +380,7 @@ class _AIScreenState extends State<AIScreen> {
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-        child: Text(
-          message.message,
-          style: TextStyle(color: textColor),
-        ),
+        child: Text(message.message, style: TextStyle(color: textColor)),
       ),
     );
   }
