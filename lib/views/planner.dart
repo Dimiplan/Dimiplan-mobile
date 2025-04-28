@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:color_shade/color_shade.dart';
-import 'package:dimiplan/theme/app_theme.dart';
 import 'package:dimiplan/providers/planner_provider.dart';
 import 'package:dimiplan/providers/auth_provider.dart';
 import 'package:dimiplan/models/planner_models.dart';
@@ -138,7 +137,7 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
               rounded: true,
               onPressed: () {
                 // 계정 페이지로 이동
-                DefaultTabController.of(context)?.animateTo(3);
+                DefaultTabController.of(context).animateTo(3);
               },
             ),
           ],
@@ -244,7 +243,7 @@ class _PlannerPageState extends State<PlannerPage> with TickerProviderStateMixin
                     Text(
                       '${tasks.where((task) => task.isCompleted == 1).length}/${tasks.length} 완료됨',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onBackground.shade700,
+                        color: theme.colorScheme.onSurface.shade700,
                       ),
                     ),
                   ],
