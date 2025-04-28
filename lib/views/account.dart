@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
+import 'package:color_shade/color_shade.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:dimiplan/internal/model.dart';
 import 'package:dimiplan/views/edit_profile.dart';
-import 'package:color_shade/color_shade.dart';
-
 
 class Account extends StatefulWidget {
   const Account({super.key});

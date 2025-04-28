@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dimiplan/internal/model.dart';
-import 'package:dimiplan/internal/database.dart';
-import 'package:dimiplan/views/add_task.dart';
 import 'package:color_shade/color_shade.dart';
-
+import 'package:dimiplan/internal/database.dart';
+import 'package:dimiplan/internal/model.dart';
+import 'package:dimiplan/views/add_task.dart';
 
 class PlannerPage extends StatefulWidget {
   const PlannerPage({super.key});
