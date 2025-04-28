@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dimiplan/internal/database.dart';
 import 'package:dimiplan/internal/model.dart';
+import 'package:color_shade/color_shade.dart';
+
 
 class CreatePlannerScreen extends StatefulWidget {
   const CreatePlannerScreen({super.key});
@@ -37,7 +39,7 @@ class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
         ),
         title: Text(
           '새 플래너 추가',
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
         elevation: 0,
@@ -70,7 +72,7 @@ class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withAlpha(128),
+                      color: Theme.of(context).shadowColor.withOpacity(0.5),
                       spreadRadius: 2,
                       blurRadius: 4,
                       offset: Offset(0, 3),
@@ -116,7 +118,7 @@ class _CreatePlannerScreenState extends State<CreatePlannerScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall!
-                        .copyWith(color: Colors.white),
+                        .copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
@@ -252,7 +254,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           children: [
             Text(
               widget.task == null ? '작업 추가' : '작업 수정',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ],
         ),
@@ -281,10 +283,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 20.0),
                                 child: TextFormField(
-                                  style: TextStyle(fontSize: 18.0),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                   decoration: InputDecoration(
                                     labelText: '이름',
-                                    labelStyle: TextStyle(fontSize: 18.0),
+                                    labelStyle: Theme.of(context).textTheme.bodyLarge,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
@@ -328,22 +330,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                               SizedBox(width: 8),
                                               Text(
                                                 priority,
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge
-                                                          ?.color,
-                                                ),
+                                                style: Theme.of(context).textTheme.bodyMedium,
                                               ),
                                             ],
                                           ),
                                         );
                                       }).toList(),
-                                  style: TextStyle(fontSize: 18.0),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                   decoration: InputDecoration(
                                     labelText: '중요도',
-                                    labelStyle: TextStyle(fontSize: 18.0),
+                                    labelStyle: Theme.of(context).textTheme.bodyLarge,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
@@ -375,20 +371,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                               value: planner.id,
                                               child: Text(
                                                 planner.name,
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge
-                                                          ?.color,
-                                                ),
+                                                style: Theme.of(context).textTheme.bodyMedium,
                                               ),
                                             );
                                           }).toList(),
-                                      style: TextStyle(fontSize: 18.0),
+                                      style: Theme.of(context).textTheme.bodyLarge,
                                       decoration: InputDecoration(
                                         labelText: '플래너',
-                                        labelStyle: TextStyle(fontSize: 18.0),
+                                        labelStyle: Theme.of(context).textTheme.bodyLarge,
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(
                                             10.0,
@@ -429,7 +419,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   borderRadius: BorderRadius.circular(30.0),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.grey.withAlpha(128),
+                                      color: Theme.of(context).shadowColor.withOpacity(0.5),
                                       spreadRadius: 2,
                                       blurRadius: 4,
                                       offset: Offset(0, 3),
@@ -442,6 +432,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                         Theme.of(context).primaryColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30.0),
+                                      side: BorderSide(
+                                        color: Theme.of(context).primaryColor.shade100,
+                                        width: 2.0,
+                                      ),
                                     ),
                                     padding: EdgeInsets.symmetric(
                                       vertical: 15.0,
@@ -450,10 +444,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   onPressed: _submit,
                                   child: Text(
                                     widget.task == null ? '추가' : '수정',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall!
-                                        .copyWith(color: Colors.white),
+                                    style: Theme.of(context).textTheme.displaySmall,
                                   ),
                                 ),
                               ),
@@ -465,7 +456,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30.0),
                                       border: Border.all(
-                                        color: Colors.red,
+                                        color: Theme.of(context).colorScheme.error,
                                         width: 2.0,
                                       ),
                                     ),
@@ -473,9 +464,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                       onPressed: _delete,
                                       child: Text(
                                         '삭제',
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          color: Colors.red,
+                                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.error,
                                         ),
                                       ),
                                     ),
