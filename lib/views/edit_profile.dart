@@ -79,14 +79,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
-          children: [
-            Text(
-              '회원정보 수정',
-              style: textTheme.titleLarge,
-            ),
-          ],
-        ),
+        title: Row(children: [Text('회원정보 수정', style: textTheme.titleLarge)]),
         actions: [IconButton(icon: Icon(Icons.info_outline), onPressed: () {})],
         centerTitle: false,
         elevation: 0,

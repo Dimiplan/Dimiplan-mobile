@@ -239,9 +239,9 @@ class _AccountState extends State<Account> {
                     onPressed: logout,
                     child: Text(
                       '로그아웃',
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelMedium!.copyWith(color: Colors.white),
                     ),
                   ),
                 ],
@@ -274,9 +274,9 @@ class _AccountState extends State<Account> {
                   ),
               child: Text(
                 '회원정보 수정',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.white,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium!.copyWith(color: Colors.white),
               ),
             ),
           ],

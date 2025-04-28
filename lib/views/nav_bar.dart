@@ -82,15 +82,15 @@ class _NavState extends State<Nav> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('플래너가 없습니다. 플래너를 먼저 생성해주세요.'),
-          action: SnackBarAction(label: '생성하기', onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => CreatePlannerScreen(
-                ),
-              ),
-            );
-          }),
+          action: SnackBarAction(
+            label: '생성하기',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CreatePlannerScreen()),
+              );
+            },
+          ),
         ),
       );
       return;

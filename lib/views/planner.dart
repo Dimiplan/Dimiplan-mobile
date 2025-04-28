@@ -121,10 +121,11 @@ class _PlannerPageState extends State<PlannerPage>
         title: Text(
           task.contents,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                decoration: task.isCompleted == 0
+            decoration:
+                task.isCompleted == 0
                     ? TextDecoration.none
                     : TextDecoration.lineThrough,
-              ),
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -153,11 +154,12 @@ class _PlannerPageState extends State<PlannerPage>
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => AddTaskScreen(
-                updateTaskList: _loadTasksForCurrentPlanner,
-                task: task,
-                selectedPlannerId: task.from,
-              ),
+              builder:
+                  (_) => AddTaskScreen(
+                    updateTaskList: _loadTasksForCurrentPlanner,
+                    task: task,
+                    selectedPlannerId: task.from,
+                  ),
             ),
           );
           _loadTasksForCurrentPlanner();
@@ -174,7 +176,8 @@ class _PlannerPageState extends State<PlannerPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.task_alt,
+            Icon(
+              Icons.task_alt,
               size: 64,
               color: Theme.of(context).disabledColor,
             ),
@@ -192,16 +195,19 @@ class _PlannerPageState extends State<PlannerPage>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AddTaskScreen(
-                        updateTaskList: _loadTasksForCurrentPlanner,
-                        selectedPlannerId: plannerId,
-                      ),
+                      builder:
+                          (_) => AddTaskScreen(
+                            updateTaskList: _loadTasksForCurrentPlanner,
+                            selectedPlannerId: plannerId,
+                          ),
                     ),
                   );
                 }
               },
               style: ElevatedButton.styleFrom(
-                side: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               child: const Text('새 작업 추가'),
             ),
@@ -216,7 +222,8 @@ class _PlannerPageState extends State<PlannerPage>
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 80.0),
         itemCount: tasks.length,
-        itemBuilder: (BuildContext context, int index) => _buildTask(tasks[index]),
+        itemBuilder:
+            (BuildContext context, int index) => _buildTask(tasks[index]),
       ),
     );
   }
@@ -232,7 +239,8 @@ class _PlannerPageState extends State<PlannerPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.folder_open,
+            Icon(
+              Icons.folder_open,
               size: 64,
               color: Theme.of(context).disabledColor,
             ),
@@ -247,9 +255,11 @@ class _PlannerPageState extends State<PlannerPage>
             ElevatedButton(
               onPressed: _loadPlanners,
               style: ElevatedButton.styleFrom(
-                side: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              child: const Text('새로고침')
+              child: const Text('새로고침'),
             ),
           ],
         ),
@@ -265,9 +275,10 @@ class _PlannerPageState extends State<PlannerPage>
             color: Theme.of(context).colorScheme.surface,
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.primary.shade100
-                    : Theme.of(context).colorScheme.primary.shade700,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).colorScheme.primary.shade100
+                        : Theme.of(context).colorScheme.primary.shade700,
                 width: 2.0,
               ),
             ),
@@ -275,9 +286,10 @@ class _PlannerPageState extends State<PlannerPage>
           child: TabBar(
             controller: _tabController,
             // Removed isScrollable to make tabs use full width
-            tabs: _planners.map((planner) {
-              return Tab(text: planner.name);
-            }).toList(),
+            tabs:
+                _planners.map((planner) {
+                  return Tab(text: planner.name);
+                }).toList(),
             unselectedLabelColor: Theme.of(context).disabledColor,
             indicatorColor: Theme.of(context).primaryColor,
           ),
@@ -285,9 +297,10 @@ class _PlannerPageState extends State<PlannerPage>
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            children: _planners.map((planner) {
-              return _buildTabContent(planner.id);
-            }).toList(),
+            children:
+                _planners.map((planner) {
+                  return _buildTabContent(planner.id);
+                }).toList(),
           ),
         ),
       ],
