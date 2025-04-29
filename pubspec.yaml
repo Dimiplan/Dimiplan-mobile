@@ -4,7 +4,7 @@ publish_to: "none"
 
 uses-material-design: true
 
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ^3.8.0-278.1.beta
@@ -30,8 +30,7 @@ dependencies:
   xtyle: ^0.2.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
