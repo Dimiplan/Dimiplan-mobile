@@ -9,6 +9,7 @@ import 'package:dimiplan/providers/planner_provider.dart';
 import 'package:dimiplan/providers/ai_provider.dart';
 import 'package:dimiplan/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:dimiplan/views/add_task.dart';
 
 // SSL 인증서 오류 처리
 class CustomHttpOverrides extends HttpOverrides {
@@ -85,8 +86,35 @@ class MyApp extends StatelessWidget {
                   child: child!,
                 ),
 
-            // 루트
-            routes: {'/nav': (context) => const Nav()},
+            // 라우트
+            onGenerateRoute: (settings) {
+              if (settings.name == '/nav') {
+                // 네비게이션 라우트 - 탭 인덱스 인자 처리
+                final args = settings.arguments;
+                return MaterialPageRoute(
+                  builder:
+                      (context) => Nav(initialTab: args is int ? args : null),
+                );
+              }
+
+              if (settings.name == '/add_task') {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    final plannerProvider = Provider.of<PlannerProvider>(
+                      context,
+                      listen: false,
+                    );
+                    return AddTaskScreen(
+                      updateTaskList: () => plannerProvider.loadTasks(),
+                      selectedPlannerId: plannerProvider.selectedPlanner?.id,
+                    );
+                  },
+                );
+              }
+
+              // 기본 라우트에 대한 처리
+              return null;
+            },
           ),
     );
   }

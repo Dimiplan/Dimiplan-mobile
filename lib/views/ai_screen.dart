@@ -305,64 +305,70 @@ class _AIScreenState extends State<AIScreen> {
     }
 
     // 선택된 채팅방이 있고 채팅 화면이 표시 중이면 채팅 UI 표시
-    return Column(
-      children: [
-        // 헤더
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.shade50,
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // 뒤로 가기 버튼 (채팅 목록으로)
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  setState(() {
-                    _isMobileChatListVisible = true;
-                  });
-                },
-              ),
-              // 채팅방 이름
-              Expanded(
-                child: Text(
-                  selectedRoom.name,
-                  style: theme.textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
+    return SafeArea(
+      bottom: false, // 하단 SafeArea는 비활성화 (메시지 입력 영역에서 별도 처리)
+      child: Column(
+        children: [
+          // 헤더
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.shade50,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              // 모델 선택 버튼
-              TextButton.icon(
-                icon: const Icon(Icons.tune, size: 18),
-                label: Text(_getModelDisplayName()),
-                onPressed: _showModelSelectionModal,
-                style: TextButton.styleFrom(
-                  foregroundColor: theme.colorScheme.primary,
+              ],
+            ),
+            child: Row(
+              children: [
+                // 뒤로 가기 버튼 (채팅 목록으로)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      _isMobileChatListVisible = true;
+                    });
+                  },
                 ),
-              ),
-            ],
+                // 채팅방 이름
+                Expanded(
+                  child: Text(
+                    selectedRoom.name,
+                    style: theme.textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                // 모델 선택 버튼
+                TextButton.icon(
+                  icon: const Icon(Icons.tune, size: 18),
+                  label: Text(_getModelDisplayName()),
+                  onPressed: _showModelSelectionModal,
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        // 메시지 목록
-        Expanded(
-          child:
-              messages.isEmpty
-                  ? _buildEmptyChat(theme)
-                  : _buildChatMessages(messages, theme, isLoading),
-        ),
+          // 메시지 목록
+          Expanded(
+            child:
+                messages.isEmpty
+                    ? _buildEmptyChat(theme)
+                    : _buildChatMessages(messages, theme, isLoading),
+          ),
 
-        // 메시지 입력 영역
-        _buildMessageInputArea(theme, isLoading),
-      ],
+          // 메시지 입력 영역
+          _buildMessageInputArea(theme, isLoading),
+        ],
+      ),
     );
   }
 
@@ -513,84 +519,86 @@ class _AIScreenState extends State<AIScreen> {
 
   // 메시지 입력 영역
   Widget _buildMessageInputArea(ThemeData theme, bool isLoading) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // 텍스트 입력 필드
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(24.0),
-                border: Border.all(
-                  color: theme.colorScheme.outline.shade500,
-                  width: 1.0,
-                ),
-              ),
-              child: TextField(
-                controller: _messageController,
-                focusNode: _inputFocusNode,
-                decoration: InputDecoration(
-                  hintText: '메시지를 입력하세요...',
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 12.0,
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.shade100,
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // 텍스트 입력 필드
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(24.0),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.shade500,
+                    width: 1.0,
                   ),
-                  isDense: true,
                 ),
-                maxLines: 4,
-                minLines: 1,
-                textInputAction: TextInputAction.newline,
-                style: theme.textTheme.bodyLarge,
-                onChanged: (value) {
-                  setState(() {
-                    _isComposing = value.trim().isNotEmpty;
-                  });
-                },
-                onSubmitted: (value) {
-                  if (_isComposing) {
-                    _sendMessage();
-                  }
-                },
+                child: TextField(
+                  controller: _messageController,
+                  focusNode: _inputFocusNode,
+                  decoration: InputDecoration(
+                    hintText: '메시지를 입력하세요...',
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    isDense: true,
+                  ),
+                  maxLines: 4,
+                  minLines: 1,
+                  textInputAction: TextInputAction.newline,
+                  style: theme.textTheme.bodyLarge,
+                  onChanged: (value) {
+                    setState(() {
+                      _isComposing = value.trim().isNotEmpty;
+                    });
+                  },
+                  onSubmitted: (value) {
+                    if (_isComposing) {
+                      _sendMessage();
+                    }
+                  },
+                ),
               ),
             ),
-          ),
 
-          const SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
 
-          // 전송 버튼
-          IconButton(
-            onPressed: _isComposing ? _sendMessage : null,
-            icon:
-                isLoading
-                    ? const SizedBox(
-                      width: 24.0,
-                      height: 24.0,
-                      child: CircularProgressIndicator(strokeWidth: 2.0),
-                    )
-                    : Icon(
-                      Icons.send,
-                      color:
-                          _isComposing
-                              ? theme.colorScheme.primary
-                              : theme.disabledColor,
-                    ),
-            tooltip: '메시지 전송',
-          ),
-        ],
+            // 전송 버튼
+            IconButton(
+              onPressed: _isComposing ? _sendMessage : null,
+              icon:
+                  isLoading
+                      ? const SizedBox(
+                        width: 24.0,
+                        height: 24.0,
+                        child: CircularProgressIndicator(strokeWidth: 2.0),
+                      )
+                      : Icon(
+                        Icons.send,
+                        color:
+                            _isComposing
+                                ? theme.colorScheme.primary
+                                : theme.disabledColor,
+                      ),
+              tooltip: '메시지 전송',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -628,8 +636,14 @@ class _AIScreenState extends State<AIScreen> {
               size: ButtonSize.large,
               rounded: true,
               onPressed: () {
-                // 계정 페이지로 이동
-                DefaultTabController.of(context).animateTo(3);
+                // 계정 페이지로 이동 - 해당 앱의 구조에서는 위젯 트리 최상위에서 처리
+                // Nav 위젯에서 _handleTabChange 함수를 호출하도록 수정
+                // 상위 페이지의 콜백을 통해 탭 전환
+                final navState = context.findAncestorStateOfType<State>();
+                if (navState != null) {
+                  // 탭 인덱스 3(계정 탭)으로 이동하기 위해 상위 경로로 이동
+                  Navigator.pushReplacementNamed(context, '/nav', arguments: 3);
+                }
               },
             ),
           ],

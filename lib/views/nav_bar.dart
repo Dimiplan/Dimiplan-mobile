@@ -6,6 +6,8 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/theme/app_theme.dart';
 import 'package:dimiplan/providers/theme_provider.dart';
 import 'package:dimiplan/providers/auth_provider.dart';
+import 'package:dimiplan/providers/planner_provider.dart';
+import 'package:dimiplan/providers/ai_provider.dart';
 import 'package:dimiplan/views/home.dart';
 import 'package:dimiplan/views/planner.dart';
 import 'package:dimiplan/views/ai_screen.dart';
@@ -13,7 +15,9 @@ import 'package:dimiplan/views/account.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class Nav extends StatefulWidget {
-  const Nav({Key? key}) : super(key: key);
+  final int? initialTab;
+
+  const Nav({Key? key, this.initialTab}) : super(key: key);
 
   @override
   State<Nav> createState() => _NavState();
@@ -58,11 +62,36 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
       duration: AppTheme.animationDuration,
     );
 
-    // 인증 상태 확인
-    _checkSession();
+    // 초기 탭 설정 (다른 화면에서 네비게이션으로 전달된 경우)
+    if (widget.initialTab != null &&
+        widget.initialTab! >= 0 &&
+        widget.initialTab! < _tabs.length) {
+      _currentIndex = widget.initialTab!;
+    }
 
-    // 마지막으로 선택한 탭 가져오기
-    _loadLastTab();
+    // 인증 상태 확인 - Widget 마운트 후 비동기 실행
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkSession();
+    });
+
+    // 초기 탭이 전달되지 않은 경우, 마지막으로 선택한 탭 가져오기
+    if (widget.initialTab == null) {
+      _loadLastTab();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 라우트 인자로 탭 인덱스를 받은 경우 처리
+    final arguments = ModalRoute.of(context)?.settings.arguments;
+    if (arguments is int && arguments >= 0 && arguments < _tabs.length) {
+      // setState를 사용하여 현재 인덱스 업데이트 (빌드 사이클 외부에서 처리됨)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _setCurrentIndex(arguments);
+      });
+    }
   }
 
   @override
@@ -82,10 +111,8 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       await authProvider.checkAuth();
 
-      // 플래너 탭이 선택되어 있을 경우, 플래너 데이터 로드
-      if (_currentIndex == 1) {
-        await _loadPlanners();
-      }
+      // 현재 선택된 탭에 따라 데이터 로드
+      _refreshCurrentTabData();
     } catch (e) {
       print('Error during session check: $e');
     } finally {
@@ -95,9 +122,30 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
     }
   }
 
-  // 플래너 데이터 로드
-  Future<void> _loadPlanners() async {
-    // 플래너 로직은 PlannerPage에서 처리
+  // 현재 선택된 탭의 데이터 로드
+  Future<void> _refreshCurrentTabData() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // 인증 상태가 아니면 데이터 로드하지 않음
+    if (!authProvider.isAuthenticated) return;
+
+    try {
+      // 플래너 탭 선택 시 플래너 데이터 로드
+      if (_currentIndex == 1) {
+        final plannerProvider = Provider.of<PlannerProvider>(
+          context,
+          listen: false,
+        );
+        await plannerProvider.loadPlanners();
+      }
+      // AI 챗봇 탭 선택 시 채팅방 데이터 로드
+      else if (_currentIndex == 2) {
+        final aiProvider = Provider.of<AIProvider>(context, listen: false);
+        await aiProvider.loadChatRooms();
+      }
+    } catch (e) {
+      print('Error refreshing tab data: $e');
+    }
   }
 
   // 마지막으로 선택한 탭 로드
@@ -106,7 +154,15 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
       final prefs = await SharedPreferences.getInstance();
       final lastTab = prefs.getInt('last_tab');
       if (lastTab != null) {
-        _setCurrentIndex(lastTab);
+        // 빌드 사이클 외부에서 setState 호출
+        setState(() {
+          _currentIndex = lastTab;
+        });
+
+        // 데이터 로드는 빌드 완료 후 실행
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _refreshCurrentTabData();
+        });
       }
     } catch (e) {
       print('Error loading last tab: $e');
@@ -125,15 +181,24 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
 
   // 탭 변경
   void _setCurrentIndex(int index) {
+    if (_currentIndex == index) {
+      // 같은 탭을 다시 선택한 경우 데이터 새로고침
+      // 빌드 사이클 외부에서 실행하기 위해 스케줄링
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _refreshCurrentTabData();
+      });
+      return;
+    }
+
     setState(() {
       _currentIndex = index;
     });
     _saveLastTab(index);
 
-    // 플래너 탭이 선택된 경우, 세션 및 플래너 확인
-    if (index == 1) {
-      _checkSession();
-    }
+    // 빌드 사이클 외부에서 데이터 로드
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshCurrentTabData();
+    });
   }
 
   // 다른 탭에서 플래너 탭으로 이동 처리

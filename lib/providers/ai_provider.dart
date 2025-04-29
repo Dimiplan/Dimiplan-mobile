@@ -23,6 +23,14 @@ class AIProvider extends ChangeNotifier {
     return prefs.getString('session') ?? '';
   }
 
+  /// 전체 데이터 새로고침
+  Future<void> refreshAll() async {
+    await loadChatRooms();
+    if (_selectedRoom != null) {
+      await loadMessages();
+    }
+  }
+
   /// 채팅방 목록 로드
   Future<void> loadChatRooms() async {
     if (_isLoading) return;
@@ -53,6 +61,16 @@ class AIProvider extends ChangeNotifier {
         // 채팅방이 있으면 첫 번째 채팅방 선택
         if (_chatRooms.isNotEmpty && _selectedRoom == null) {
           selectChatRoom(_chatRooms.first);
+        }
+        // 선택된 채팅방이 더 이상 존재하지 않는 경우
+        else if (_selectedRoom != null &&
+            !_chatRooms.any((r) => r.id == _selectedRoom!.id)) {
+          if (_chatRooms.isNotEmpty) {
+            selectChatRoom(_chatRooms.first);
+          } else {
+            _selectedRoom = null;
+            _messages = [];
+          }
         }
 
         notifyListeners();
@@ -89,7 +107,7 @@ class AIProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         // 채팅방 목록 새로고침
-        await loadChatRooms();
+        await refreshAll();
       } else {
         throw Exception('채팅방 생성 실패: ${response.statusCode}');
       }
@@ -103,6 +121,12 @@ class AIProvider extends ChangeNotifier {
 
   /// 채팅방 선택
   Future<void> selectChatRoom(ChatRoom room) async {
+    // 이미 같은 채팅방이 선택된 경우 데이터 새로고침만 수행
+    if (_selectedRoom?.id == room.id) {
+      await loadMessages();
+      return;
+    }
+
     _selectedRoom = room;
     await loadMessages();
     notifyListeners();
@@ -193,9 +217,7 @@ class AIProvider extends ChangeNotifier {
         // AI 응답 메시지 추가
         final aiMessage = ChatMessage(
           id: DateTime.now().millisecondsSinceEpoch + 1,
-          message:
-              responseData['response']['choices'][0]['text'] ??
-              "응답을 생성할 수 없습니다.",
+          message: responseData['response']['output_text'] ?? "응답을 생성할 수 없습니다.",
           sender: 'ai',
           from: _selectedRoom!.id,
           owner: '',
@@ -236,7 +258,7 @@ class AIProvider extends ChangeNotifier {
         return '/api/ai/gpt41';
       case 'gpt4o-mini':
       default:
-        return '/api/ai/gpt4o-mini';
+        return '/api/ai/gpt4o_m';
     }
   }
 

@@ -10,12 +10,22 @@ class PlannerProvider extends ChangeNotifier {
   List<Task> _tasks = [];
   Planner? _selectedPlanner;
   bool _isLoading = false;
+  bool _notificationsEnabled = true; // 상태 업데이트 알림 활성화 상태
 
   // 게터
   List<Planner> get planners => _planners;
   List<Task> get tasks => _tasks;
   Planner? get selectedPlanner => _selectedPlanner;
   bool get isLoading => _isLoading;
+
+  /// 상태 변경 알림 제어 (빌드 중에 상태 변경 방지)
+  void _pauseNotifications() {
+    _notificationsEnabled = false;
+  }
+
+  void _resumeNotifications() {
+    _notificationsEnabled = true;
+  }
 
   /// 세션 ID 가져오기
   Future<String> _getSession() async {
@@ -60,37 +70,73 @@ class PlannerProvider extends ChangeNotifier {
           loadedPlanners.add(Planner.fromMap(planner));
         }
 
+        // 상태 업데이트 알림 일시 중지
+        _pauseNotifications();
+
+        // 데이터 업데이트
         _planners = loadedPlanners;
 
         // 플래너가 있고 선택된 플래너가 없을 경우 첫 번째 플래너 선택
         if (_planners.isNotEmpty && _selectedPlanner == null) {
           _selectedPlanner = _planners[0];
+
+          // 알림 재개 후 변경 알림
+          _resumeNotifications();
+          notifyListeners();
+
+          // 별도 작업으로 태스크 로드
           await loadTasks();
+          return;
+        }
+        // 선택된 플래너가 더 이상 존재하지 않는 경우 다시 첫 번째 플래너 선택
+        else if (_selectedPlanner != null &&
+            !_planners.any((p) => p.id == _selectedPlanner!.id)) {
+          if (_planners.isNotEmpty) {
+            _selectedPlanner = _planners[0];
+
+            // 알림 재개 후 변경 알림
+            _resumeNotifications();
+            notifyListeners();
+
+            // 별도 작업으로 태스크 로드
+            await loadTasks();
+            return;
+          } else {
+            _selectedPlanner = null;
+            _tasks = [];
+          }
         }
 
+        // 알림 재개 및 변경 알림
+        _resumeNotifications();
         notifyListeners();
       } else {
         print('플래너 목록 가져오기 실패: ${response.statusCode}');
         _planners = [];
+        notifyListeners();
       }
     } catch (e) {
       print('플래너 목록 로드 중 오류 발생: $e');
       _planners = [];
+      notifyListeners();
     } finally {
       _setLoading(false);
     }
   }
 
+  /// 플래너 선택
   Future<void> selectPlanner(Planner planner) async {
     // 이미 같은 플래너가 선택된 경우 중복 처리 방지
-    if (_selectedPlanner?.id == planner.id) return;
+    if (_selectedPlanner?.id == planner.id) {
+      // 데이터 새로고침만 수행
+      await loadTasks();
+      return;
+    }
 
     _selectedPlanner = planner;
-
-    // 상태 업데이트 후 작업 로드 (별도 함수로 분리)
     notifyListeners();
 
-    // 작업 로드는 별도로 실행
+    // 작업 로드
     await _loadTasksForPlanner(planner.id);
   }
 
@@ -146,6 +192,14 @@ class PlannerProvider extends ChangeNotifier {
     await _loadTasksForPlanner(_selectedPlanner!.id);
   }
 
+  /// 전체 데이터 새로고침
+  Future<void> refreshAll() async {
+    await loadPlanners();
+    if (_selectedPlanner != null) {
+      await loadTasks();
+    }
+  }
+
   /// 플래너 생성
   Future<void> createPlanner(
     String name, {
@@ -174,8 +228,7 @@ class PlannerProvider extends ChangeNotifier {
 
       if (response.statusCode == ApiConstants.created) {
         // 플래너 목록 새로고침
-        await loadPlanners();
-        await loadTasks();
+        await refreshAll();
       } else {
         throw Exception('플래너 생성 실패: ${response.statusCode}');
       }
@@ -211,8 +264,7 @@ class PlannerProvider extends ChangeNotifier {
 
       if (response.statusCode == ApiConstants.created) {
         // 폴더 목록 새로고침
-        await loadPlanners();
-        await loadTasks();
+        await refreshAll();
       } else {
         throw Exception('폴더 생성 실패: ${response.statusCode}');
       }
@@ -353,8 +405,7 @@ class PlannerProvider extends ChangeNotifier {
 
       if (response.statusCode == ApiConstants.success) {
         // 플래너 목록 새로고침
-        await loadPlanners();
-        await loadTasks();
+        await refreshAll();
       } else {
         throw Exception('플래너 이름 변경 실패: ${response.statusCode}');
       }
@@ -390,8 +441,7 @@ class PlannerProvider extends ChangeNotifier {
 
       if (response.statusCode == ApiConstants.success) {
         // 플래너 목록 새로고침
-        await loadPlanners();
-        await loadTasks();
+        await refreshAll();
       } else {
         throw Exception('플래너 삭제 실패: ${response.statusCode}');
       }
@@ -406,6 +456,8 @@ class PlannerProvider extends ChangeNotifier {
   /// 로딩 상태 설정
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    if (_notificationsEnabled) {
+      notifyListeners();
+    }
   }
 }

@@ -245,6 +245,10 @@ class _AddTaskScreenState extends State<AddTaskScreen>
       );
       await plannerProvider.deleteTask(widget.task!.id!);
 
+      // 플래너 제공자에서 전체 데이터 새로고침
+      await plannerProvider.refreshAll();
+
+      // 콜백 호출
       widget.updateTaskList();
 
       if (mounted) {
@@ -306,7 +310,12 @@ class _AddTaskScreenState extends State<AddTaskScreen>
         }
       }
 
+      // 플래너 제공자에서 전체 데이터 새로고침
+      await plannerProvider.refreshAll();
+
+      // 콜백 호출
       widget.updateTaskList();
+
       Navigator.pop(context, true);
     } catch (e) {
       print('작업 저장 중 오류: $e');
@@ -357,7 +366,13 @@ class _AddTaskScreenState extends State<AddTaskScreen>
 
     if (result == true) {
       // 새 플래너가 추가된 경우 목록 새로고침
+      final plannerProvider = Provider.of<PlannerProvider>(
+        context,
+        listen: false,
+      );
+      await plannerProvider.refreshAll();
       await _loadPlanners();
+
       if (mounted) {
         showSuccessSnackBar(context, '새 플래너가 추가되었습니다.');
       }
