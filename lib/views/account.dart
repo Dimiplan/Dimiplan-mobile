@@ -283,17 +283,23 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                                 ? '라이트 모드로 전환'
                                 : '다크 모드로 전환',
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () => _toggleTheme(context),
                         ),
-                        Divider(),
+                        const Divider(),
                         ListTile(
                           leading: Icon(
                             Icons.info_outline,
                             color: theme.colorScheme.primary,
                           ),
-                          title: Text('앱 정보'),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          title: const Text('앱 정보'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () => _showAppInfo(context),
                         ),
                       ],

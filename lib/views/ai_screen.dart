@@ -289,7 +289,7 @@ class _AIScreenState extends State<AIScreen> {
           Expanded(
             child:
                 isLoading
-                    ? Center(child: AppLoadingIndicator())
+                    ? const Center(child: AppLoadingIndicator())
                     : chatRooms.isEmpty
                     ? _buildEmptyChatRoomsList(theme)
                     : ListView.builder(
@@ -521,7 +521,7 @@ class _AIScreenState extends State<AIScreen> {
   Widget _buildMessageInputArea(ThemeData theme, bool isLoading) {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           boxShadow: [
@@ -549,10 +549,10 @@ class _AIScreenState extends State<AIScreen> {
                 child: TextField(
                   controller: _messageController,
                   focusNode: _inputFocusNode,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: '메시지를 입력하세요...',
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
+                    contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.0,
                       vertical: 12.0,
                     ),
@@ -959,7 +959,7 @@ class _NewChatRoomDialogState extends State<_NewChatRoomDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: Text('새 채팅방 만들기'),
+      title: const Text('새 채팅방 만들기'),
       content: TextField(
         controller: _controller,
         decoration: InputDecoration(
@@ -969,17 +969,20 @@ class _NewChatRoomDialogState extends State<_NewChatRoomDialog> {
         autofocus: true,
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text('취소')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('취소'),
+        ),
         TextButton(
           onPressed:
               _isValid
                   ? () => Navigator.pop(context, _controller.text.trim())
                   : null,
-          child: Text('생성'),
           style: TextButton.styleFrom(
             foregroundColor:
                 _isValid ? theme.colorScheme.primary : theme.disabledColor,
           ),
+          child: const Text('생성'),
         ),
       ],
     );

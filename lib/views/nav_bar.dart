@@ -216,7 +216,7 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
 
     // 로딩 중일 때는 로딩 인디케이터 표시
     if (_isLoading) {
-      return Scaffold(body: Center(child: AppLoadingIndicator()));
+      return const Scaffold(body: Center(child: AppLoadingIndicator()));
     }
 
     return Scaffold(

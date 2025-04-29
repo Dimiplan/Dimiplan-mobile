@@ -398,7 +398,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
       ),
       body:
           _isLoadingPlanners
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : FadeTransition(
                 opacity: _fadeAnimation,
                 child: GestureDetector(

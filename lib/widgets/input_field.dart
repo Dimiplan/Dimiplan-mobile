@@ -335,7 +335,7 @@ class GradeClassDropdown extends StatelessWidget {
           child: AppDropdownField<String>(
             label: '학년',
             value: grade,
-            items: [
+            items: const [
               DropdownMenuItem<String>(value: '1', child: Text('1학년')),
               DropdownMenuItem<String>(value: '2', child: Text('2학년')),
               DropdownMenuItem<String>(value: '3', child: Text('3학년')),
@@ -352,7 +352,7 @@ class GradeClassDropdown extends StatelessWidget {
           child: AppDropdownField<String>(
             label: '반',
             value: classValue,
-            items: [
+            items: const [
               DropdownMenuItem<String>(value: '1', child: Text('1반')),
               DropdownMenuItem<String>(value: '2', child: Text('2반')),
               DropdownMenuItem<String>(value: '3', child: Text('3반')),
