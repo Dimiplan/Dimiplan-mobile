@@ -8,6 +8,7 @@ import 'package:dimiplan/providers/auth_provider.dart';
 import 'package:dimiplan/widgets/button.dart';
 import 'package:dimiplan/models/chat_models.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
+import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class AIScreen extends StatefulWidget {
   const AIScreen({Key? key}) : super(key: key);
@@ -23,6 +24,7 @@ class _AIScreenState extends State<AIScreen> {
 
   bool _isComposing = false;
   String _selectedModel = 'gpt4o-mini';
+  bool _isMobileChatListVisible = false; // 모바일 뷰에서 채팅 목록 표시 여부
 
   @override
   void initState() {
@@ -105,6 +107,13 @@ class _AIScreenState extends State<AIScreen> {
     final aiProvider = Provider.of<AIProvider>(context, listen: false);
     aiProvider.selectChatRoom(room);
     _scrollToBottom();
+
+    // 모바일 뷰에서 채팅 목록을 닫고 채팅 화면으로 전환
+    if (_isMobileChatListVisible) {
+      setState(() {
+        _isMobileChatListVisible = false;
+      });
+    }
   }
 
   // AI 모델 선택 모달
@@ -227,60 +236,138 @@ class _AIScreenState extends State<AIScreen> {
     final aiProvider = Provider.of<AIProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final isAuthenticated = authProvider.isAuthenticated;
+    final isSmallScreen = MediaQuery.of(context).size.width < 800;
 
     return Scaffold(
       body:
           isAuthenticated
-              ? _buildChatUI(theme, aiProvider)
+              ? isSmallScreen
+                  ? _buildMobileChatUI(theme, aiProvider)
+                  : _buildDesktopChatUI(theme, aiProvider)
               : _buildLoginPrompt(theme),
     );
   }
 
-  // 로그인 필요 화면
-  Widget _buildLoginPrompt(ThemeData theme) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.lock_outline,
-              size: 80,
-              color: theme.colorScheme.primary.shade700,
+  // 모바일 채팅 UI
+  Widget _buildMobileChatUI(ThemeData theme, AIProvider aiProvider) {
+    final selectedRoom = aiProvider.selectedChatRoom;
+    final messages = aiProvider.messages;
+    final chatRooms = aiProvider.chatRooms;
+    final isLoading = aiProvider.isLoading;
+
+    // 채팅방이 선택되지 않았거나 채팅 목록 화면이 표시 중이면 채팅 목록 표시
+    if (selectedRoom == null || _isMobileChatListVisible) {
+      return Column(
+        children: [
+          // 헤더
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.shade50,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              'AI 챗봇 사용을 위해\n로그인이 필요합니다',
-              style: theme.textTheme.titleLarge,
-              textAlign: TextAlign.center,
+            child: Row(
+              children: [
+                Text('채팅방 목록', style: theme.textTheme.titleLarge),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _createNewChatRoom,
+                  tooltip: '새 채팅방 만들기',
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              '로그인하고 AI 챗봇과 대화하여 학습에 도움을 받으세요.',
-              style: theme.textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            AppButton(
-              text: '로그인하기',
-              icon: Icons.login,
-              variant: ButtonVariant.primary,
-              size: ButtonSize.large,
-              rounded: true,
-              onPressed: () {
-                // 계정 페이지로 이동
-                DefaultTabController.of(context).animateTo(3);
-              },
-            ),
-          ],
+          ),
+
+          // 채팅방 목록
+          Expanded(
+            child:
+                isLoading
+                    ? Center(child: AppLoadingIndicator())
+                    : chatRooms.isEmpty
+                    ? _buildEmptyChatRoomsList(theme)
+                    : ListView.builder(
+                      itemCount: chatRooms.length,
+                      itemBuilder: (context, index) {
+                        final room = chatRooms[index];
+                        return _buildChatRoomItem(room, theme, selectedRoom);
+                      },
+                    ),
+          ),
+        ],
+      );
+    }
+
+    // 선택된 채팅방이 있고 채팅 화면이 표시 중이면 채팅 UI 표시
+    return Column(
+      children: [
+        // 헤더
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.shade50,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // 뒤로 가기 버튼 (채팅 목록으로)
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _isMobileChatListVisible = true;
+                  });
+                },
+              ),
+              // 채팅방 이름
+              Expanded(
+                child: Text(
+                  selectedRoom.name,
+                  style: theme.textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              // 모델 선택 버튼
+              TextButton.icon(
+                icon: const Icon(Icons.tune, size: 18),
+                label: Text(_getModelDisplayName()),
+                onPressed: _showModelSelectionModal,
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+
+        // 메시지 목록
+        Expanded(
+          child:
+              messages.isEmpty
+                  ? _buildEmptyChat(theme)
+                  : _buildChatMessages(messages, theme, isLoading),
+        ),
+
+        // 메시지 입력 영역
+        _buildMessageInputArea(theme, isLoading),
+      ],
     );
   }
 
-  // 채팅 UI
-  Widget _buildChatUI(ThemeData theme, AIProvider aiProvider) {
+  // 데스크탑 채팅 UI (채팅 목록 + 채팅 화면)
+  Widget _buildDesktopChatUI(ThemeData theme, AIProvider aiProvider) {
     final selectedRoom = aiProvider.selectedChatRoom;
     final messages = aiProvider.messages;
     final isLoading = aiProvider.isLoading;
@@ -289,7 +376,7 @@ class _AIScreenState extends State<AIScreen> {
       children: [
         // 사이드바 (채팅방 목록)
         Container(
-          width: 260,
+          width: 280,
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             border: Border(
@@ -336,137 +423,218 @@ class _AIScreenState extends State<AIScreen> {
 
         // 채팅 영역
         Expanded(
-          child: Column(
-            children: [
-              // 모델 선택 헤더
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 12.0,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: theme.colorScheme.outlineVariant,
-                      width: 1,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      selectedRoom?.name ?? '새 채팅',
-                      style: theme.textTheme.titleMedium,
-                    ),
-                    const Spacer(),
-                    TextButton.icon(
-                      icon: const Icon(Icons.tune),
-                      label: Text(_getModelDisplayName()),
-                      onPressed: _showModelSelectionModal,
-                      style: TextButton.styleFrom(
-                        foregroundColor: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // 메시지 목록
-              Expanded(
-                child:
-                    messages.isEmpty
-                        ? _buildEmptyChat(theme)
-                        : _buildChatMessages(messages, theme, isLoading),
-              ),
-
-              // 메시지 입력 영역
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.shadowColor.shade100,
-                      blurRadius: 4,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // 텍스트 입력 필드
-                    Expanded(
-                      child: Container(
+          child:
+              selectedRoom == null
+                  ? _buildNoChatSelectedState(theme)
+                  : Column(
+                    children: [
+                      // 모델 선택 헤더
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(24.0),
-                          border: Border.all(
-                            color: theme.colorScheme.outline.shade500,
-                            width: 1.0,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: theme.colorScheme.outlineVariant,
+                              width: 1,
+                            ),
                           ),
                         ),
-                        child: TextField(
-                          controller: _messageController,
-                          focusNode: _inputFocusNode,
-                          decoration: InputDecoration(
-                            hintText: '메시지를 입력하세요...',
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 12.0,
+                        child: Row(
+                          children: [
+                            Text(
+                              selectedRoom.name,
+                              style: theme.textTheme.titleMedium,
                             ),
-                            isDense: true,
-                          ),
-                          maxLines: 4,
-                          minLines: 1,
-                          textInputAction: TextInputAction.newline,
-                          style: theme.textTheme.bodyLarge,
-                          onChanged: (value) {
-                            setState(() {
-                              _isComposing = value.trim().isNotEmpty;
-                            });
-                          },
-                          onSubmitted: (value) {
-                            if (_isComposing) {
-                              _sendMessage();
-                            }
-                          },
+                            const Spacer(),
+                            TextButton.icon(
+                              icon: const Icon(Icons.tune),
+                              label: Text(_getModelDisplayName()),
+                              onPressed: _showModelSelectionModal,
+                              style: TextButton.styleFrom(
+                                foregroundColor: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
 
-                    const SizedBox(width: 12.0),
-
-                    // 전송 버튼
-                    IconButton(
-                      onPressed: _isComposing ? _sendMessage : null,
-                      icon:
-                          isLoading
-                              ? const SizedBox(
-                                width: 24.0,
-                                height: 24.0,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.0,
+                      // 메시지 목록
+                      Expanded(
+                        child:
+                            messages.isEmpty
+                                ? _buildEmptyChat(theme)
+                                : _buildChatMessages(
+                                  messages,
+                                  theme,
+                                  isLoading,
                                 ),
-                              )
-                              : Icon(
-                                Icons.send,
-                                color:
-                                    _isComposing
-                                        ? theme.colorScheme.primary
-                                        : theme.disabledColor,
-                              ),
-                      tooltip: '메시지 전송',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+                      ),
+
+                      // 메시지 입력 영역
+                      _buildMessageInputArea(theme, isLoading),
+                    ],
+                  ),
         ),
       ],
+    );
+  }
+
+  // 채팅 선택 안 됨 상태 UI
+  Widget _buildNoChatSelectedState(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 80,
+            color: theme.colorScheme.primary.shade700,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '채팅을 시작하세요',
+            style: theme.textTheme.titleLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '왼쪽에서 채팅방을 선택하거나 새 채팅을 시작하세요',
+            style: theme.textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 메시지 입력 영역
+  Widget _buildMessageInputArea(ThemeData theme, bool isLoading) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.shade100,
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // 텍스트 입력 필드
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(24.0),
+                border: Border.all(
+                  color: theme.colorScheme.outline.shade500,
+                  width: 1.0,
+                ),
+              ),
+              child: TextField(
+                controller: _messageController,
+                focusNode: _inputFocusNode,
+                decoration: InputDecoration(
+                  hintText: '메시지를 입력하세요...',
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 12.0,
+                  ),
+                  isDense: true,
+                ),
+                maxLines: 4,
+                minLines: 1,
+                textInputAction: TextInputAction.newline,
+                style: theme.textTheme.bodyLarge,
+                onChanged: (value) {
+                  setState(() {
+                    _isComposing = value.trim().isNotEmpty;
+                  });
+                },
+                onSubmitted: (value) {
+                  if (_isComposing) {
+                    _sendMessage();
+                  }
+                },
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12.0),
+
+          // 전송 버튼
+          IconButton(
+            onPressed: _isComposing ? _sendMessage : null,
+            icon:
+                isLoading
+                    ? const SizedBox(
+                      width: 24.0,
+                      height: 24.0,
+                      child: CircularProgressIndicator(strokeWidth: 2.0),
+                    )
+                    : Icon(
+                      Icons.send,
+                      color:
+                          _isComposing
+                              ? theme.colorScheme.primary
+                              : theme.disabledColor,
+                    ),
+            tooltip: '메시지 전송',
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 로그인 필요 화면
+  Widget _buildLoginPrompt(ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lock_outline,
+              size: 80,
+              color: theme.colorScheme.primary.shade700,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'AI 챗봇 사용을 위해\n로그인이 필요합니다',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '로그인하고 AI 챗봇과 대화하여 학습에 도움을 받으세요.',
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            AppButton(
+              text: '로그인하기',
+              icon: Icons.login,
+              variant: ButtonVariant.primary,
+              size: ButtonSize.large,
+              rounded: true,
+              onPressed: () {
+                // 계정 페이지로 이동
+                DefaultTabController.of(context).animateTo(3);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -479,13 +647,17 @@ class _AIScreenState extends State<AIScreen> {
     final isSelected = selectedRoom?.id == room.id;
 
     return ListTile(
-      leading: const Icon(Icons.chat_bubble_outline),
+      leading: Icon(
+        Icons.chat_bubble_outline,
+        color: isSelected ? theme.colorScheme.primary : null,
+      ),
       title: Text(
         room.name,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.bodyMedium?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? theme.colorScheme.primary : null,
         ),
       ),
       selected: isSelected,
@@ -519,6 +691,14 @@ class _AIScreenState extends State<AIScreen> {
               '새 채팅 버튼을 눌러 대화를 시작하세요',
               style: theme.textTheme.bodySmall,
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            AppButton(
+              text: '새 채팅 시작',
+              icon: Icons.add,
+              variant: ButtonVariant.primary,
+              size: ButtonSize.medium,
+              onPressed: _createNewChatRoom,
             ),
           ],
         ),

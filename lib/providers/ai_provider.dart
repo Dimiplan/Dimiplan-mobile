@@ -57,7 +57,7 @@ class AIProvider extends ChangeNotifier {
 
         notifyListeners();
       } else {
-        print('채팅방 목록 가져오기 실패: ${response.statusCode}');
+        print('채팅방 목록 가져오기 실패: ${response.body}');
         _chatRooms = [];
       }
     } catch (e) {

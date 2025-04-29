@@ -175,6 +175,7 @@ class PlannerProvider extends ChangeNotifier {
       if (response.statusCode == ApiConstants.created) {
         // 플래너 목록 새로고침
         await loadPlanners();
+        await loadTasks();
       } else {
         throw Exception('플래너 생성 실패: ${response.statusCode}');
       }
@@ -211,6 +212,7 @@ class PlannerProvider extends ChangeNotifier {
       if (response.statusCode == ApiConstants.created) {
         // 폴더 목록 새로고침
         await loadPlanners();
+        await loadTasks();
       } else {
         throw Exception('폴더 생성 실패: ${response.statusCode}');
       }
@@ -241,7 +243,7 @@ class PlannerProvider extends ChangeNotifier {
         body: json.encode(task.toMap()),
       );
 
-      if (response.statusCode == ApiConstants.success) {
+      if (response.statusCode == ApiConstants.created) {
         // 작업 목록 새로고침
         await loadTasks();
       } else {
@@ -352,6 +354,7 @@ class PlannerProvider extends ChangeNotifier {
       if (response.statusCode == ApiConstants.success) {
         // 플래너 목록 새로고침
         await loadPlanners();
+        await loadTasks();
       } else {
         throw Exception('플래너 이름 변경 실패: ${response.statusCode}');
       }
@@ -388,6 +391,7 @@ class PlannerProvider extends ChangeNotifier {
       if (response.statusCode == ApiConstants.success) {
         // 플래너 목록 새로고침
         await loadPlanners();
+        await loadTasks();
       } else {
         throw Exception('플래너 삭제 실패: ${response.statusCode}');
       }

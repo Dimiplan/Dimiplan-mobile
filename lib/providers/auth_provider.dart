@@ -126,6 +126,7 @@ class AuthProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Update task count without directly calling notifyListeners()
+        print(data);
         _updateTaskCount(data.length);
       }
     } catch (e) {
