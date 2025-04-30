@@ -62,16 +62,6 @@ jobs:
           path: |
             build/ios/iphoneos/Runner.app/
 
-      - name: Build macOS
-        run: flutter build macos --release
-
-      - name: Upload Android Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android Artifacts
-          path: |
-            build/macos/Build/Products/Release
-
   build_windows:
     name: Build Windows
     runs-on: windows-latest
