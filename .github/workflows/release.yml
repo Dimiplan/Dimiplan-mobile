@@ -45,12 +45,32 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Upload Artifacts
+      - name: Upload Android Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Android Artifacts
           path: |
             build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Build iOS
+        run: flutter build ios --release
+
+      - name: Upload iOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS Artifacts
+          path: |
+            build/ios/iphoneos/Runner.app/
+  
+      - name: Build macOS
+        run: flutter build mac --release
+
+      - name: Upload Android Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android Artifacts
+          path: |
+            build/macos/Build/Products/Release
 
   build_windows:
     name: Build Windows
@@ -78,7 +98,7 @@ jobs:
         with:
           name: Windows Artifacts
           path: |
-            build\windows\x64\runner\Release\dimiplan.exe
+            build\windows\x64\runner\Release\
 
   build_linux:
     name: Build Linux
