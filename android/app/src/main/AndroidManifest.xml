@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="dimiplan"
-        android:name="${applicationName}"
+        android:label="디미플랜"
+        android:name="디미플랜"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

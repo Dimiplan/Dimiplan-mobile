@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "dimiplan" "\0"
+            VALUE "FileDescription", "디미플랜" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "dimiplan" "\0"
+            VALUE "InternalName", "디미플랜" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "dimiplan.exe" "\0"
-            VALUE "ProductName", "dimiplan" "\0"
+            VALUE "OriginalFilename", "디미플랜.exe" "\0"
+            VALUE "ProductName", "디미플랜" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
