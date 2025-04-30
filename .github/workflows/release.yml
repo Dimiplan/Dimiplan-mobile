@@ -63,7 +63,7 @@ jobs:
             build/ios/iphoneos/Runner.app/
 
       - name: Build macOS
-        run: flutter build mac --release
+        run: flutter build macos --release
 
       - name: Upload Android Artifacts
         uses: actions/upload-artifact@v4
