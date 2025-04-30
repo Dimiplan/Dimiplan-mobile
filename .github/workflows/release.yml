@@ -53,7 +53,7 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
 
       - name: Build iOS
-        run: flutter build ios --release
+        run: flutter build ios --release --no-codesign
 
       - name: Upload iOS Artifacts
         uses: actions/upload-artifact@v4
@@ -61,7 +61,7 @@ jobs:
           name: iOS Artifacts
           path: |
             build/ios/iphoneos/Runner.app/
-  
+
       - name: Build macOS
         run: flutter build mac --release
 
