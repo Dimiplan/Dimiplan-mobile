@@ -9,7 +9,7 @@ import 'package:dimiplan/views/edit_profile.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
 
 class Account extends StatefulWidget {
-  const Account({Key? key}) : super(key: key);
+  const Account({super.key});
 
   @override
   State<Account> createState() => _AccountState();

@@ -103,11 +103,11 @@ class AddTaskScreen extends StatefulWidget {
   final int? selectedPlannerId;
 
   const AddTaskScreen({
-    Key? key,
+    super.key,
     required this.updateTaskList,
     this.task,
     this.selectedPlannerId,
-  }) : super(key: key);
+  });
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();

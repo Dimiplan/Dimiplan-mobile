@@ -12,10 +12,10 @@ class EditProfileScreen extends StatefulWidget {
   final Function updateUserInfo;
 
   const EditProfileScreen({
-    Key? key,
+    super.key,
     required this.user,
     required this.updateUserInfo,
-  }) : super(key: key);
+  });
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();

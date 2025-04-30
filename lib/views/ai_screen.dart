@@ -11,7 +11,7 @@ import 'package:dimiplan/utils/snackbar_util.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class AIScreen extends StatefulWidget {
-  const AIScreen({Key? key}) : super(key: key);
+  const AIScreen({super.key});
 
   @override
   State<AIScreen> createState() => _AIScreenState();

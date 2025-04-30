@@ -17,7 +17,7 @@ import 'package:dimiplan/widgets/loading_indicator.dart';
 class Nav extends StatefulWidget {
   final int? initialTab;
 
-  const Nav({Key? key, this.initialTab}) : super(key: key);
+  const Nav({super.key, this.initialTab});
 
   @override
   State<Nav> createState() => _NavState();

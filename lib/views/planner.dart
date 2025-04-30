@@ -10,7 +10,7 @@ import 'package:dimiplan/views/add_task.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
 
 class PlannerPage extends StatefulWidget {
-  const PlannerPage({Key? key}) : super(key: key);
+  const PlannerPage({super.key});
 
   @override
   State<PlannerPage> createState() => _PlannerPageState();

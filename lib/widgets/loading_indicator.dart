@@ -8,12 +8,12 @@ class AppLoadingIndicator extends StatelessWidget {
   final String? message;
 
   const AppLoadingIndicator({
-    Key? key,
+    super.key,
     this.size = 48.0,
     this.color,
     this.strokeWidth = 4.0,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +53,12 @@ class SkeletonLoading extends StatelessWidget {
   final bool isCircle;
 
   const SkeletonLoading({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.borderRadius = 4.0,
     this.isCircle = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

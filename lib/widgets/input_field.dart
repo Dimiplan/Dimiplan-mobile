@@ -27,7 +27,7 @@ class AppTextField extends StatefulWidget {
   final bool readOnly;
 
   const AppTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.placeholder,
     required this.controller,
@@ -47,7 +47,7 @@ class AppTextField extends StatefulWidget {
     this.focusNode,
     this.textInputAction,
     this.readOnly = false,
-  }) : super(key: key);
+  });
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -204,7 +204,7 @@ class AppDropdownField<T> extends StatelessWidget {
   final String? hint;
 
   const AppDropdownField({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.items,
@@ -212,7 +212,7 @@ class AppDropdownField<T> extends StatelessWidget {
     this.errorText,
     this.enabled = true,
     this.hint,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +316,7 @@ class GradeClassDropdown extends StatelessWidget {
   final bool enabled;
 
   const GradeClassDropdown({
-    Key? key,
+    super.key,
     this.grade,
     this.classValue,
     required this.onGradeChanged,
@@ -324,7 +324,7 @@ class GradeClassDropdown extends StatelessWidget {
     this.gradeError,
     this.classError,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

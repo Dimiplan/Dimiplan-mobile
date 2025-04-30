@@ -9,7 +9,7 @@ import 'package:dimiplan/widgets/button.dart';
 class Homepage extends StatefulWidget {
   final Function(int)? onTabChange;
 
-  const Homepage({Key? key, this.onTabChange}) : super(key: key);
+  const Homepage({super.key, this.onTabChange});
 
   @override
   State<Homepage> createState() => _HomepageState();
