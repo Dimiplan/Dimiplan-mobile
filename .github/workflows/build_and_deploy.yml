@@ -1,4 +1,4 @@
-name: Format and Build Web
+name: Build and Deploy
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
       - "assets/**"
       - "web/**"
       - "pubspec.yaml"
-      - ".github/workflows/format_and_build.yml"
+      - ".github/workflows/build_and_deploy.yml"
   workflow_dispatch:
 
 jobs:
@@ -50,6 +50,17 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{yaml,md,yml,json,toml,lock.json,lock.toml}
+
+      # 웹 클라이언트 ID 패치 적용
+      - name: Apply Web Client ID Patch
+        run: |
+          # GitHub Secrets에서 base64로 인코딩된 웹 패치 디코드
+          echo "${{ secrets.WEB_CLIENT_ID_PATCH_BASE64 }}" | base64 --decode > web_patch.patch
+
+          # 패치 적용
+          git apply web_patch.patch
+
+          echo "Applied web client ID patch"
 
       - name: Build
         uses: cedvdb/action-flutter-build-web@v1

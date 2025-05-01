@@ -46,3 +46,6 @@ app.*.map.json
 
 keystore.jks
 key.properties
+index.html
+*.patch
+*.patch.base64

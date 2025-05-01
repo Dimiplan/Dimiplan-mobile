@@ -15,9 +15,19 @@ import 'package:dimiplan/views/add_task.dart';
 class CustomHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    final client = super.createHttpClient(context);
+    // 개발 모드에서만 특정 호스트에 대해 인증서 오류 허용
+    assert(() {
+      client.badCertificateCallback = (
+        X509Certificate cert,
+        String host,
+        int port,
+      ) {
+        return false;
+      };
+      return true;
+    }());
+    return client;
   }
 }
 
