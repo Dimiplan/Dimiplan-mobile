@@ -149,7 +149,9 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       // 구글 로그인 시작
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn().signInSilently() ??
+          await GoogleSignIn().signIn();
 
       if (googleUser == null) {
         throw Exception('로그인이 취소되었습니다.');
