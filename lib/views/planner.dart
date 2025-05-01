@@ -10,7 +10,8 @@ import 'package:dimiplan/views/add_task.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
 
 class PlannerPage extends StatefulWidget {
-  const PlannerPage({super.key});
+  final void Function(int)? onTabChange;
+  const PlannerPage({super.key, this.onTabChange});
 
   @override
   State<PlannerPage> createState() => _PlannerPageState();
@@ -139,7 +140,7 @@ class _PlannerPageState extends State<PlannerPage>
               rounded: true,
               onPressed: () {
                 // 계정 페이지로 이동
-                DefaultTabController.of(context).animateTo(3);
+                widget.onTabChange!(3);
               },
             ),
           ],

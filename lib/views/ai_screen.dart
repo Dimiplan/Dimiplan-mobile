@@ -11,7 +11,8 @@ import 'package:dimiplan/utils/snackbar_util.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class AIScreen extends StatefulWidget {
-  const AIScreen({super.key});
+  final void Function(int)? onTabChange;
+  const AIScreen({super.key, this.onTabChange});
 
   @override
   State<AIScreen> createState() => _AIScreenState();
@@ -636,14 +637,7 @@ class _AIScreenState extends State<AIScreen> {
               size: ButtonSize.large,
               rounded: true,
               onPressed: () {
-                // 계정 페이지로 이동 - 해당 앱의 구조에서는 위젯 트리 최상위에서 처리
-                // Nav 위젯에서 _handleTabChange 함수를 호출하도록 수정
-                // 상위 페이지의 콜백을 통해 탭 전환
-                final navState = context.findAncestorStateOfType<State>();
-                if (navState != null) {
-                  // 탭 인덱스 3(계정 탭)으로 이동하기 위해 상위 경로로 이동
-                  Navigator.pushReplacementNamed(context, '/nav', arguments: 3);
-                }
+                widget.onTabChange!(3);
               },
             ),
           ],

@@ -40,12 +40,12 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
     _NavTab(
       icon: Icons.list_alt_rounded,
       label: '플래너',
-      screen: (_) => const PlannerPage(),
+      screen: (onTabChange) => PlannerPage(onTabChange: onTabChange),
     ),
     _NavTab(
       icon: Icons.chat_rounded,
       label: 'AI 챗봇',
-      screen: (_) => const AIScreen(),
+      screen: (onTabChange) => AIScreen(onTabChange: onTabChange),
     ),
     _NavTab(
       icon: Icons.account_circle_rounded,
