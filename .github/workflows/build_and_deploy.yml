@@ -63,16 +63,7 @@ jobs:
           echo "Applied web client ID patch"
 
       - name: Build
-        uses: cedvdb/action-flutter-build-web@v1
-        with:
-          build-cmd: flutter build web --wasm --release
-          working-directory: ./
-
-      - name: Archive Production artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: web
-          path: build/web
+        run: flutter build web --wasm --release
 
       - name: Deploy on Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
