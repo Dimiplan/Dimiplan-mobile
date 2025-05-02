@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_cookie_store/http_cookie_store.dart';
+import 'package:dimiplan/providers/http_provider.dart';
+
 import 'package:dimiplan/models/user_model.dart';
 import 'package:dimiplan/constants/api_constants.dart';
-import 'package:web/web.dart';
 
 class AuthProvider extends ChangeNotifier {
-  static const String _sessionKey = 'session';
-
   User? _user;
-  String _sessionId = '';
   bool _isLoading = false;
   bool _isAuthenticated = false;
   int _taskCount = 0;
@@ -23,25 +20,6 @@ class AuthProvider extends ChangeNotifier {
   int get taskCount => _taskCount;
   bool get isDimigoStudent => _user?.email.endsWith('@dimigo.hs.kr') ?? false;
 
-  /// 세션 ID 가져오기 (내부 사용)
-  Future<String> _getSessionId() async {
-    if (_sessionId.isNotEmpty) {
-      return _sessionId;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final session = prefs.getString(_sessionKey) ?? '';
-    _sessionId = session;
-    return session;
-  }
-
-  /// 세션 ID 저장 (내부 사용)
-  Future<void> _saveSessionId(String sessionId) async {
-    _sessionId = sessionId;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_sessionKey, sessionId);
-  }
-
   /// 인증 상태 확인
   Future<void> checkAuth() async {
     if (_isLoading) return;
@@ -49,8 +27,12 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSessionId();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _setAuthenticated(false);
         _setLoading(false);
         return;
@@ -70,17 +52,18 @@ class AuthProvider extends ChangeNotifier {
   /// 사용자 정보 가져오기
   Future<void> _fetchUserInfo() async {
     try {
-      final session = await _getSessionId();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _setAuthenticated(false);
         return;
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/whoami');
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -103,14 +86,15 @@ class AuthProvider extends ChangeNotifier {
   /// 유저 등록 상태 확인
   Future<void> _checkUserRegistered() async {
     try {
-      final session = await _getSessionId();
-      if (session.isEmpty) return;
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/registered');
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode != 200) {
         // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
@@ -124,14 +108,15 @@ class AuthProvider extends ChangeNotifier {
   /// 작업 수 가져오기
   Future<void> _fetchTaskCount() async {
     try {
-      final session = await _getSessionId();
-      if (session.isEmpty) return;
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/plan/getEveryPlan');
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -183,17 +168,13 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final cookie = response.headers['set-cookie'] ?? document.cookie;
-
-        final entity = cookie.split("; ").map((item) {
-          final split = item.split("=");
-          return MapEntry(split[0], split[1]);
-        });
-        final cookieMap = Map.fromEntries(entity);
-        print(cookieMap.keys);
-
-        if (cookie.isNotEmpty) {
-          await _saveSessionId(cookieMap['dimiplan.sid']!);
+        if (http
+            .store[CookieKey(
+              'dimiplan.sid',
+              Uri(host: 'https://dimigo.co.kr:3000'),
+            )]!
+            .value
+            .isNotEmpty) {
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
@@ -232,9 +213,7 @@ class AuthProvider extends ChangeNotifier {
 
   /// 세션 초기화
   Future<void> _clearSession() async {
-    _sessionId = '';
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_sessionKey);
+    http.store.clear();
   }
 
   /// 사용자 정보 업데이트
@@ -244,8 +223,12 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSessionId();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 

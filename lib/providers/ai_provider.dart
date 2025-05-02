@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dimiplan/providers/http_provider.dart';
+import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/models/chat_models.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -16,12 +16,6 @@ class AIProvider extends ChangeNotifier {
   List<ChatMessage> get messages => _messages;
   ChatRoom? get selectedChatRoom => _selectedRoom;
   bool get isLoading => _isLoading;
-
-  /// 세션 ID 가져오기
-  Future<String> _getSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('session') ?? '';
-  }
 
   /// 전체 데이터 새로고침
   Future<void> refreshAll() async {
@@ -38,18 +32,19 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _chatRooms = [];
         _setLoading(false);
         return;
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/ai/getRoomList');
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -96,8 +91,12 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -145,8 +144,12 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _messages = [];
         _setLoading(false);
         return;
@@ -193,8 +196,12 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 

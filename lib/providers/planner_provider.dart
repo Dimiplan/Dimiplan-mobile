@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dimiplan/providers/http_provider.dart';
+import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/models/planner_models.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -27,12 +27,6 @@ class PlannerProvider extends ChangeNotifier {
     _notificationsEnabled = true;
   }
 
-  /// 세션 ID 가져오기
-  Future<String> _getSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('session') ?? '';
-  }
-
   /// 플래너 목록 로드
   Future<void> loadPlanners() async {
     if (_isLoading) return;
@@ -40,8 +34,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _planners = [];
         _setLoading(false);
         return;
@@ -50,7 +48,6 @@ class PlannerProvider extends ChangeNotifier {
       // 루트 폴더가 없는 경우 자동 생성
       await http.post(
         Uri.https(ApiConstants.backendHost, ApiConstants.createRootFolderPath),
-        headers: {'Cookie': "dimigo.sid=$session"},
       );
 
       // 루트 폴더(id=0)의 플래너 목록 가져오기
@@ -60,10 +57,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': '0'},
       );
 
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -150,8 +144,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         _tasks = [];
         _setLoading(false);
         return;
@@ -163,10 +161,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': _selectedPlanner!.id.toString()},
       );
 
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -217,8 +212,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -228,10 +227,7 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'name': name, 'isDaily': isDaily, 'from': folderId}),
       );
 
@@ -256,8 +252,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -295,18 +295,19 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlanPath);
       final response = await http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
       );
 
@@ -331,8 +332,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -342,10 +347,7 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
       );
 
@@ -370,8 +372,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -381,10 +387,7 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id}),
       );
 
@@ -409,8 +412,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -448,8 +455,12 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session = await _getSession();
-      if (session.isEmpty) {
+      final session =
+          http.store[CookieKey(
+            'dimiplan.sid',
+            Uri(host: 'https://dimigo.co.kr:3000'),
+          )];
+      if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
       }
 
