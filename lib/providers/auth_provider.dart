@@ -182,11 +182,12 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final sessionId = responseData['sessionId'];
+        final cookie = response.headers['set-cookie'];
 
-        if (sessionId != null && sessionId.isNotEmpty) {
-          await _saveSessionId(sessionId);
+        final sessionId = cookie?.split(';').first.split('=')[1];
+
+        if (cookie != null && cookie.isNotEmpty) {
+          await _saveSessionId(sessionId!);
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {

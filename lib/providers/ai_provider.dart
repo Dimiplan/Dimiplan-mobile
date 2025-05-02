@@ -46,7 +46,10 @@ class AIProvider extends ChangeNotifier {
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/ai/getRoomList');
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -101,7 +104,10 @@ class AIProvider extends ChangeNotifier {
       final url = Uri.https(ApiConstants.backendHost, '/api/ai/addRoom');
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'name': name}),
       );
 
@@ -150,7 +156,10 @@ class AIProvider extends ChangeNotifier {
         'from': _selectedRoom!.id.toString(),
       });
 
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -207,7 +216,10 @@ class AIProvider extends ChangeNotifier {
 
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
       );
 
