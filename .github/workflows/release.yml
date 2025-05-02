@@ -1,5 +1,10 @@
 name: Build and Release
 
+permissions:
+  contents: read
+  secrets: read
+  actions: read
+
 on:
   push:
     branches: [main]
