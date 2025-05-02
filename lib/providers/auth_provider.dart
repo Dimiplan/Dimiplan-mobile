@@ -190,8 +190,9 @@ class AuthProvider extends ChangeNotifier {
           return MapEntry(split[0], split[1]);
         });
         final cookieMap = Map.fromEntries(entity);
+        print(cookieMap.keys);
 
-        if (cookie != null && cookie.isNotEmpty) {
+        if (cookie.isNotEmpty) {
           await _saveSessionId(cookieMap['dimiplan.sid']!);
           await _fetchUserInfo();
           await _fetchTaskCount();
