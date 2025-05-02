@@ -22,7 +22,7 @@
         <link rel="manifest" href="manifest.json" />
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self' https://apis.google.com 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://*.dimigo.co.kr; img-src 'self' data: blob: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src https://accounts.google.com;"
+            content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';"
         />
     </head>
     <body>
