@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/models/user_model.dart';
 import 'package:dimiplan/constants/api_constants.dart';
+import 'package:web/web.dart';
 
 class AuthProvider extends ChangeNotifier {
   static const String _sessionKey = 'session';
@@ -182,12 +183,16 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final cookie = response.headers['set-cookie'];
+        final cookie = response.headers['set-cookie'] ?? document.cookie;
 
-        final sessionId = cookie?.split(';').first.split('=')[1];
+        final entity = cookie.split("; ").map((item) {
+          final split = item.split("=");
+          return MapEntry(split[0], split[1]);
+        });
+        final cookieMap = Map.fromEntries(entity);
 
         if (cookie != null && cookie.isNotEmpty) {
-          await _saveSessionId(sessionId!);
+          await _saveSessionId(cookieMap['dimiplan.sid']!);
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
