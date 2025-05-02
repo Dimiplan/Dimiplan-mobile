@@ -50,7 +50,7 @@ class PlannerProvider extends ChangeNotifier {
       // 루트 폴더가 없는 경우 자동 생성
       await http.post(
         Uri.https(ApiConstants.backendHost, ApiConstants.createRootFolderPath),
-        headers: {'X-Session-ID': session},
+        headers: {'Cookie': "dimigo.sid=$session"},
       );
 
       // 루트 폴더(id=0)의 플래너 목록 가져오기
@@ -60,7 +60,10 @@ class PlannerProvider extends ChangeNotifier {
         {'id': '0'},
       );
 
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -160,7 +163,10 @@ class PlannerProvider extends ChangeNotifier {
         {'id': _selectedPlanner!.id.toString()},
       );
 
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -222,7 +228,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'name': name, 'isDaily': isDaily, 'from': folderId}),
       );
 
@@ -258,7 +267,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'name': name, 'from': parentFolderId}),
       );
 
@@ -291,7 +303,10 @@ class PlannerProvider extends ChangeNotifier {
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlanPath);
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode(task.toMap()),
       );
 
@@ -327,7 +342,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode(task.toMap()),
       );
 
@@ -363,7 +381,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'id': id}),
       );
 
@@ -399,7 +420,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'id': id, 'name': newName}),
       );
 
@@ -435,7 +459,10 @@ class PlannerProvider extends ChangeNotifier {
       );
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode({'id': id}),
       );
 

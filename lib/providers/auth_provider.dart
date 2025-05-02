@@ -76,7 +76,10 @@ class AuthProvider extends ChangeNotifier {
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/whoami');
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -103,7 +106,10 @@ class AuthProvider extends ChangeNotifier {
       if (session.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/user/registered');
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode != 200) {
         // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
@@ -121,7 +127,10 @@ class AuthProvider extends ChangeNotifier {
       if (session.isEmpty) return;
 
       final url = Uri.https(ApiConstants.backendHost, '/api/plan/getEveryPlan');
-      final response = await http.get(url, headers: {'X-Session-ID': session});
+      final response = await http.get(
+        url,
+        headers: {'Cookie': "dimigo.sid=$session"},
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -236,7 +245,10 @@ class AuthProvider extends ChangeNotifier {
       final url = Uri.https(ApiConstants.backendHost, '/api/user/updateme');
       final response = await http.post(
         url,
-        headers: {'X-Session-ID': session, 'Content-Type': 'application/json'},
+        headers: {
+          'Cookie': "dimigo.sid=$session",
+          'Content-Type': 'application/json',
+        },
         body: json.encode(userData),
       );
 
