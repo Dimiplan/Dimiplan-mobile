@@ -30,7 +30,7 @@ class AuthProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         _setAuthenticated(false);
@@ -55,7 +55,7 @@ class AuthProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         _setAuthenticated(false);
@@ -89,7 +89,7 @@ class AuthProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) return;
 
@@ -111,7 +111,7 @@ class AuthProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) return;
 
@@ -168,13 +168,12 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        if (http
-            .store[CookieKey(
+        final session =
+            http.store[CookieKey(
               'dimiplan.sid',
-              Uri(host: 'https://dimigo.co.kr:3000'),
-            )]!
-            .value
-            .isNotEmpty) {
+              Uri.https(ApiConstants.backendHost),
+            )];
+        if (session == null || session.value.isEmpty) {
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
@@ -226,7 +225,7 @@ class AuthProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');

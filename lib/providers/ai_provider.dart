@@ -35,7 +35,7 @@ class AIProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         _chatRooms = [];
@@ -94,7 +94,7 @@ class AIProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');
@@ -147,7 +147,7 @@ class AIProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         _messages = [];
@@ -199,7 +199,7 @@ class AIProvider extends ChangeNotifier {
       final session =
           http.store[CookieKey(
             'dimiplan.sid',
-            Uri(host: 'https://dimigo.co.kr:3000'),
+            Uri.https(ApiConstants.backendHost),
           )];
       if (session == null || session.value.isEmpty) {
         throw Exception('로그인이 필요합니다.');

@@ -1,7 +1,7 @@
 /// API 관련 상수
 class ApiConstants {
   /// 백엔드 서버 호스트
-  static const String backendHost = "https://dimigo.co.kr:3000";
+  static const String backendHost = "dimigo.co.kr:3000";
 
   /// API 응답 코드
   static const int success = 200;
