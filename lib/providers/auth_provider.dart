@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/providers/http_provider.dart';
-
+import 'package:collection/collection.dart';
 import 'package:dimiplan/models/user_model.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -176,6 +176,12 @@ class AuthProvider extends ChangeNotifier {
               'dimiplan.sid',
               Uri.https(ApiConstants.backendHost),
             )];
+        groupBy(http.store.cookies, (c) => c.domain).forEach((key, value) {
+          print("$key:");
+          for (var cookie in value) {
+            print('\t$cookie');
+          }
+        });
         if (session != null && session.value.isNotEmpty) {
           await _fetchUserInfo();
           await _fetchTaskCount();
