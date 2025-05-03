@@ -143,17 +143,24 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        // 응답에서 세션 ID 추출 및 저장
-        final responseData = json.decode(response.body);
-        if (responseData['sessionId'] != null) {
-          await Http.setSessionId(responseData['sessionId']);
+        // 헤더에서 세션 ID 확인
+        String? sessionId = response.headers['x-session-id'];
+
+        // 헤더에 없으면 응답 본문에서 확인
+        if (sessionId == null) {
+          final responseData = json.decode(response.body);
+          sessionId = responseData['sessionId'];
+        }
+
+        if (sessionId != null) {
+          await Http.setSessionId(sessionId);
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
           throw Exception('유효하지 않은 세션 ID');
         }
       } else {
-        throw Exception('로그인 실패: ${response.statusCode}');
+        throw Exception('로그인 실패: ${response.statusCode}, ${response.body}');
       }
     } catch (e) {
       print('로그인 중 오류 발생: $e');
@@ -206,7 +213,9 @@ class AuthProvider extends ChangeNotifier {
         // 성공적으로 업데이트됨, 사용자 정보 새로고침
         await refreshUserInfo();
       } else {
-        throw Exception('사용자 정보 업데이트 실패: ${response.statusCode}');
+        throw Exception(
+          '사용자 정보 업데이트 실패: ${response.statusCode}, ${response.body}',
+        );
       }
     } catch (e) {
       print('사용자 정보 업데이트 중 오류 발생: $e');

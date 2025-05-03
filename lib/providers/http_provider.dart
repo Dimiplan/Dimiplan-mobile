@@ -35,7 +35,8 @@ class HttpClient {
     final result = Map<String, String>.from(headers ?? {});
     final sid = await sessionId;
     if (sid != null) {
-      result['X-Session-ID'] = sid;
+      // 모든 헤더 이름을 소문자로 사용
+      result['x-session-id'] = sid;
     }
     return result;
   }
