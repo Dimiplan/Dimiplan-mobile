@@ -176,8 +176,7 @@ class AuthProvider extends ChangeNotifier {
               'dimiplan.sid',
               Uri.https(ApiConstants.backendHost),
             )];
-        if (session == null || session.value.isEmpty) {
-          print(session);
+        if (session != null && session.value.isNotEmpty) {
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
