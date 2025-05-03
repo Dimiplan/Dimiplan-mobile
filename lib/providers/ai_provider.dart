@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dimiplan/providers/http_provider.dart';
-import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/models/chat_models.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -32,19 +31,16 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         _chatRooms = [];
         _setLoading(false);
         return;
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/ai/getRoomList');
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -91,22 +87,16 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
       final url = Uri.https(ApiConstants.backendHost, '/api/ai/addRoom');
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'name': name}),
       );
 
@@ -144,12 +134,9 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         _messages = [];
         _setLoading(false);
         return;
@@ -159,10 +146,7 @@ class AIProvider extends ChangeNotifier {
         'from': _selectedRoom!.id.toString(),
       });
 
-      final response = await http.get(
-        url,
-        headers: {'Cookie': "dimigo.sid=$session"},
-      );
+      final response = await Http.get(url);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -196,12 +180,9 @@ class AIProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -221,12 +202,9 @@ class AIProvider extends ChangeNotifier {
       final endpoint = _getModelEndpoint(model);
       final url = Uri.https(ApiConstants.backendHost, endpoint);
 
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
       );
 

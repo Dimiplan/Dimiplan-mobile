@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dimiplan/providers/http_provider.dart';
-import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/models/planner_models.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -34,19 +33,16 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         _planners = [];
         _setLoading(false);
         return;
       }
 
       // 루트 폴더가 없는 경우 자동 생성
-      await http.post(
+      await Http.post(
         Uri.https(ApiConstants.backendHost, ApiConstants.createRootFolderPath),
       );
 
@@ -57,7 +53,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': '0'},
       );
 
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -144,12 +140,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         _tasks = [];
         _setLoading(false);
         return;
@@ -161,7 +154,7 @@ class PlannerProvider extends ChangeNotifier {
         {'id': _selectedPlanner!.id.toString()},
       );
 
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
@@ -212,12 +205,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -225,7 +215,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.addPlannerPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'name': name, 'isDaily': isDaily, 'from': folderId}),
@@ -252,12 +242,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -265,12 +252,9 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.addFolderPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'name': name, 'from': parentFolderId}),
       );
 
@@ -295,17 +279,14 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlanPath);
-      final response = await http.post(
+      final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
@@ -332,12 +313,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -345,7 +323,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.updatePlanPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
@@ -372,12 +350,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -385,7 +360,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.deletePlanPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id}),
@@ -412,12 +387,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -425,12 +397,9 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.renamePlannerPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id, 'name': newName}),
       );
 
@@ -455,12 +424,9 @@ class PlannerProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isSessionValid = await Http.isSessionValid();
+      if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
@@ -468,12 +434,9 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.deletePlannerPath,
       );
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id}),
       );
 

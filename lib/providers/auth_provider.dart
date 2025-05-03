@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http_cookie_store/http_cookie_store.dart';
 import 'package:dimiplan/providers/http_provider.dart';
-import 'package:collection/collection.dart';
 import 'package:dimiplan/models/user_model.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
@@ -27,12 +25,10 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
+      // 세션 유효성 검사
+      final isValid = await Http.isSessionValid();
+
+      if (!isValid) {
         _setAuthenticated(false);
         _setLoading(false);
         return;
@@ -52,18 +48,8 @@ class AuthProvider extends ChangeNotifier {
   /// 사용자 정보 가져오기
   Future<void> _fetchUserInfo() async {
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
-        _setAuthenticated(false);
-        return;
-      }
-
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.whoamiPath);
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -86,18 +72,11 @@ class AuthProvider extends ChangeNotifier {
   /// 유저 등록 상태 확인
   Future<void> _checkUserRegistered() async {
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) return;
-
       final url = Uri.https(
         ApiConstants.backendHost,
         ApiConstants.registeredPath,
       );
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode != 200) {
         // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
@@ -111,15 +90,8 @@ class AuthProvider extends ChangeNotifier {
   /// 작업 수 가져오기
   Future<void> _fetchTaskCount() async {
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) return;
-
       final url = Uri.https(ApiConstants.backendHost, '/api/plan/getEveryPlan');
-      final response = await http.get(url);
+      final response = await Http.get(url);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -164,25 +136,17 @@ class AuthProvider extends ChangeNotifier {
         'name': googleUser.displayName,
       };
 
-      final response = await http.post(
+      final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode(body),
       );
 
       if (response.statusCode == 200) {
-        final session =
-            http.store[CookieKey(
-              'dimiplan.sid',
-              Uri.https(ApiConstants.backendHost),
-            )];
-        groupBy(http.store.cookies, (c) => c.domain).forEach((key, value) {
-          print("$key:");
-          for (var cookie in value) {
-            print('\t$cookie');
-          }
-        });
-        if (session != null && session.value.isNotEmpty) {
+        // 응답에서 세션 ID 추출 및 저장
+        final responseData = json.decode(response.body);
+        if (responseData['sessionId'] != null) {
+          await Http.setSessionId(responseData['sessionId']);
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
@@ -221,7 +185,7 @@ class AuthProvider extends ChangeNotifier {
 
   /// 세션 초기화
   Future<void> _clearSession() async {
-    http.store.clear();
+    await Http.clearSessionId();
   }
 
   /// 사용자 정보 업데이트
@@ -231,22 +195,10 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final session =
-          http.store[CookieKey(
-            'dimiplan.sid',
-            Uri.https(ApiConstants.backendHost),
-          )];
-      if (session == null || session.value.isEmpty) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
       final url = Uri.https(ApiConstants.backendHost, '/api/user/updateme');
-      final response = await http.post(
+      final response = await Http.post(
         url,
-        headers: {
-          'Cookie': "dimigo.sid=$session",
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(userData),
       );
 
