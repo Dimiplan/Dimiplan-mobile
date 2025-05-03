@@ -62,7 +62,7 @@ class AuthProvider extends ChangeNotifier {
         return;
       }
 
-      final url = Uri.https(ApiConstants.backendHost, '/api/user/whoami');
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.whoamiPath);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -93,7 +93,10 @@ class AuthProvider extends ChangeNotifier {
           )];
       if (session == null || session.value.isEmpty) return;
 
-      final url = Uri.https(ApiConstants.backendHost, '/api/user/registered');
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.registeredPath,
+      );
       final response = await http.get(url);
 
       if (response.statusCode != 200) {
@@ -174,6 +177,7 @@ class AuthProvider extends ChangeNotifier {
               Uri.https(ApiConstants.backendHost),
             )];
         if (session == null || session.value.isEmpty) {
+          print(session);
           await _fetchUserInfo();
           await _fetchTaskCount();
         } else {
