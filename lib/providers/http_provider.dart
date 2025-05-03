@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/constants/api_constants.dart';
-import 'dart:convert';
 
 class HttpClient {
   final http.Client _client = http.Client();
@@ -83,11 +82,11 @@ class HttpClient {
     if (sid == null) return false;
 
     try {
-      final url = Uri.https(ApiConstants.backendHost, '/auth/session');
-      final response = await get(url);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.whoamiPath);
+      final response = await Http.get(url);
+
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return data['valid'] == true;
+        return true;
       }
     } catch (e) {
       print('세션 검증 중 오류: $e');
