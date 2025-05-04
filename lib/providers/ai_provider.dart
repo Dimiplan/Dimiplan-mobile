@@ -215,8 +215,8 @@ class AIProvider extends ChangeNotifier {
         final aiMessage = ChatMessage(
           id: DateTime.now().millisecondsSinceEpoch + 1,
           message:
-              responseData['response']['choices'][0]['message']['content'] ??
-              "응답을 생성할 수 없습니다.",
+              responseData['message'] ??
+              "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
           sender: 'ai',
           from: _selectedRoom!.id,
           owner: '',
