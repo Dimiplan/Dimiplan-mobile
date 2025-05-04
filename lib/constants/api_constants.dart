@@ -16,7 +16,9 @@ class ApiConstants {
   /// API 경로
   static const String authPath = "/auth";
   static const String userPath = "/api/user";
-  static const String planPath = "/api/plan";
+  static const String taskPath = "/api/task";
+  static const String plannerPath = "/api/planner";
+  static const String folderPath = "/api/folder";
   static const String aiPath = "/api/ai";
 
   /// 로그인 API
@@ -24,26 +26,27 @@ class ApiConstants {
   static const String logoutPath = "$authPath/logout";
 
   /// 사용자 API
-  static const String whoamiPath = "$userPath/whoami";
+  static const String getUserPath = "$userPath/get";
   static const String registeredPath = "$userPath/registered";
-  static const String updateUserPath = "$userPath/updateme";
+  static const String updateUserPath = "$userPath/update";
 
   /// 플래너 API
-  static const String createRootFolderPath = "$planPath/createRootFolder";
-  static const String getPlannersInFolderPath = "$planPath/getPlannersInFolder";
-  static const String getPlannerInfoPath = "$planPath/getPlannerInfoByID";
-  static const String getPlanInPlannerPath = "$planPath/getPlanInPlanner";
-  static const String getAllPlansPath = "$planPath/getEveryPlan";
-  static const String addPlannerPath = "$planPath/addPlanner";
-  static const String renamePlannerPath = "$planPath/renamePlanner";
-  static const String deletePlannerPath = "$planPath/deletePlanner";
-  static const String addFolderPath = "$planPath/addFolder";
-  static const String addPlanPath = "$planPath/addPlan";
-  static const String updatePlanPath = "$planPath/updatePlan";
-  static const String deletePlanPath = "$planPath/deletePlan";
+  static const String createRootFolderPath = "$folderPath/createRoot";
+  static const String addFolderPath = "$folderPath/add";
+
+  static const String getPlannersInFolderPath = "$plannerPath/getPlanners";
+  static const String getPlannerInfoPath = "$plannerPath/getInfo";
+  static const String addPlannerPath = "$plannerPath/add";
+  static const String renamePlannerPath = "$plannerPath/rename";
+  static const String deletePlannerPath = "$plannerPath/delete";
+
+  static const String getTaskPath = "$taskPath/get";
+  static const String addTaskPath = "$taskPath/add";
+  static const String updateTaskPath = "$taskPath/update";
+  static const String deleteTaskPath = "$taskPath/delete";
 
   /// AI API
-  static const String gpt4oMiniPath = "$aiPath/gpt4o-mini";
+  static const String gpt4oMiniPath = "$aiPath/gpt4o_m";
   static const String gpt4oPath = "$aiPath/gpt4o";
   static const String gpt41Path = "$aiPath/gpt41";
   static const String getRoomListPath = "$aiPath/getRoomList";

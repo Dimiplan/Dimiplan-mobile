@@ -82,7 +82,7 @@ class HttpClient {
     if (sid == null) return false;
 
     try {
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.whoamiPath);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.getUserPath);
       final response = await Http.get(url);
 
       if (response.statusCode == 200) {

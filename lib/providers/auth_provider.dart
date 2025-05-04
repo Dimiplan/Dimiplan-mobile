@@ -48,7 +48,7 @@ class AuthProvider extends ChangeNotifier {
   /// 사용자 정보 가져오기
   Future<void> _fetchUserInfo() async {
     try {
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.whoamiPath);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.getUserPath);
       final response = await Http.get(url);
 
       if (response.statusCode == 200) {
@@ -90,7 +90,7 @@ class AuthProvider extends ChangeNotifier {
   /// 작업 수 가져오기
   Future<void> _fetchTaskCount() async {
     try {
-      final url = Uri.https(ApiConstants.backendHost, '/api/plan/getEveryPlan');
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.getTaskPath);
       final response = await Http.get(url);
 
       if (response.statusCode == 200) {
@@ -128,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
       }
 
       // 서버에 로그인 요청
-      final url = Uri.https(ApiConstants.backendHost, '/auth/login');
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.loginPath);
       final body = {
         'userId': googleUser.id,
         'email': googleUser.email,
@@ -202,7 +202,10 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final url = Uri.https(ApiConstants.backendHost, '/api/user/updateme');
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.updateUserPath,
+      );
       final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},

@@ -150,7 +150,7 @@ class PlannerProvider extends ChangeNotifier {
 
       final url = Uri.https(
         ApiConstants.backendHost,
-        ApiConstants.getPlanInPlannerPath,
+        ApiConstants.getTaskPath,
         {'id': _selectedPlanner!.id.toString()},
       );
 
@@ -285,7 +285,7 @@ class PlannerProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addPlanPath);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addTaskPath);
       final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -321,7 +321,7 @@ class PlannerProvider extends ChangeNotifier {
 
       final url = Uri.https(
         ApiConstants.backendHost,
-        ApiConstants.updatePlanPath,
+        ApiConstants.updateTaskPath,
       );
       final response = await Http.post(
         url,
@@ -358,7 +358,7 @@ class PlannerProvider extends ChangeNotifier {
 
       final url = Uri.https(
         ApiConstants.backendHost,
-        ApiConstants.deletePlanPath,
+        ApiConstants.deleteTaskPath,
       );
       final response = await Http.post(
         url,

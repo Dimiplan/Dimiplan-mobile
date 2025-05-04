@@ -39,7 +39,10 @@ class AIProvider extends ChangeNotifier {
         return;
       }
 
-      final url = Uri.https(ApiConstants.backendHost, '/api/ai/getRoomList');
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.getRoomListPath,
+      );
       final response = await Http.get(url);
 
       if (response.statusCode == 200) {
@@ -93,7 +96,7 @@ class AIProvider extends ChangeNotifier {
         throw Exception('로그인이 필요합니다.');
       }
 
-      final url = Uri.https(ApiConstants.backendHost, '/api/ai/addRoom');
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addRoomPath);
       final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -142,9 +145,11 @@ class AIProvider extends ChangeNotifier {
         return;
       }
 
-      final url = Uri.https(ApiConstants.backendHost, '/api/ai/getChatInRoom', {
-        'from': _selectedRoom!.id.toString(),
-      });
+      final url = Uri.https(
+        ApiConstants.backendHost,
+        ApiConstants.getChatInRoomPath,
+        {'from': _selectedRoom!.id.toString()},
+      );
 
       final response = await Http.get(url);
 
@@ -252,12 +257,12 @@ class AIProvider extends ChangeNotifier {
   String _getModelEndpoint(String model) {
     switch (model) {
       case 'gpt4o':
-        return '/api/ai/gpt4o';
+        return ApiConstants.gpt4oPath;
       case 'gpt41':
-        return '/api/ai/gpt41';
+        return ApiConstants.gpt41Path;
       case 'gpt4o-mini':
       default:
-        return '/api/ai/gpt4o_m';
+        return ApiConstants.gpt4oMiniPath;
     }
   }
 
