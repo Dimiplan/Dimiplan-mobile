@@ -34,7 +34,7 @@ class ApiConstants {
   static const String createRootFolderPath = "$folderPath/createRoot";
   static const String addFolderPath = "$folderPath/add";
 
-  static const String getPlannersInFolderPath = "$plannerPath/getPlanners";
+  static const String getEveryPlanners = "$plannerPath/getPlanners";
   static const String getPlannerInfoPath = "$plannerPath/getInfo";
   static const String addPlannerPath = "$plannerPath/add";
   static const String renamePlannerPath = "$plannerPath/rename";

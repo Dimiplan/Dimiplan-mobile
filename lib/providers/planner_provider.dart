@@ -41,16 +41,10 @@ class PlannerProvider extends ChangeNotifier {
         return;
       }
 
-      // 루트 폴더가 없는 경우 자동 생성
-      await Http.post(
-        Uri.https(ApiConstants.backendHost, ApiConstants.createRootFolderPath),
-      );
-
-      // 루트 폴더(id=0)의 플래너 목록 가져오기
+      // 전체 플래너 목록 가져오기
       final url = Uri.https(
         ApiConstants.backendHost,
-        ApiConstants.getPlannersInFolderPath,
-        {'id': '0'},
+        ApiConstants.getEveryPlanners,
       );
 
       final response = await Http.get(url);
@@ -195,11 +189,7 @@ class PlannerProvider extends ChangeNotifier {
   }
 
   /// 플래너 생성
-  Future<void> createPlanner(
-    String name, {
-    int isDaily = 0,
-    int folderId = 0,
-  }) async {
+  Future<void> createPlanner(String name, {int isDaily = 0}) async {
     if (_isLoading) return;
 
     _setLoading(true);
@@ -218,7 +208,7 @@ class PlannerProvider extends ChangeNotifier {
       final response = await Http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'name': name, 'isDaily': isDaily, 'from': folderId}),
+        body: json.encode({'name': name, 'isDaily': isDaily}),
       );
 
       if (response.statusCode == ApiConstants.created) {
@@ -229,43 +219,6 @@ class PlannerProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('플래너 생성 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  /// 폴더 생성
-  Future<void> createFolder(String name, {int parentFolderId = 0}) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.addFolderPath,
-      );
-      final response = await Http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'name': name, 'from': parentFolderId}),
-      );
-
-      if (response.statusCode == ApiConstants.created) {
-        // 폴더 목록 새로고침
-        await refreshAll();
-      } else {
-        throw Exception('폴더 생성 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('폴더 생성 중 오류 발생: $e');
       rethrow;
     } finally {
       _setLoading(false);

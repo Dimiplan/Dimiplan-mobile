@@ -63,29 +63,22 @@ class Task {
 class Planner {
   final int id;
   final String name;
-  final int from; // 폴더 ID
   final int isDaily; // 일일 플래너 여부 (0: 일반, 1: 일일)
 
-  const Planner({
-    required this.id,
-    required this.name,
-    required this.from,
-    this.isDaily = 0,
-  });
+  const Planner({required this.id, required this.name, this.isDaily = 0});
 
   /// Map에서 Planner 객체 생성
   factory Planner.fromMap(Map<String, dynamic> map) {
     return Planner(
       id: map['id'] ?? 0,
       name: map['name'] ?? '',
-      from: map['from'] ?? 0,
       isDaily: map['isDaily'] ?? 0,
     );
   }
 
   /// Planner 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'from': from, 'isDaily': isDaily};
+    return {'id': id, 'name': name, 'isDaily': isDaily};
   }
 
   /// 업데이트된 정보로 새 객체 생성
@@ -93,31 +86,7 @@ class Planner {
     return Planner(
       id: id,
       name: name ?? this.name,
-      from: from,
       isDaily: isDaily ?? this.isDaily,
     );
-  }
-}
-
-/// 폴더 모델
-class Folder {
-  final int id;
-  final String name;
-  final int from; // 상위 폴더 ID (0: 루트)
-
-  const Folder({required this.id, required this.name, required this.from});
-
-  /// Map에서 Folder 객체 생성
-  factory Folder.fromMap(Map<String, dynamic> map) {
-    return Folder(
-      id: map['id'] ?? 0,
-      name: map['name'] ?? '',
-      from: map['from'] ?? 0,
-    );
-  }
-
-  /// Folder 객체를 Map으로 변환
-  Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'from': from};
   }
 }

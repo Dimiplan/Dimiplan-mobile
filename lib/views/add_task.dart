@@ -20,20 +20,13 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) {
         builder: (context, setState) {
           // 플래너 추가 함수
           Future<void> addNewPlanner(String name) async {
-            // 루트 폴더 ID: 0
-            const int rootFolderId = 0;
-
             try {
               setState(() {
                 isAddingPlanner = true;
               });
 
               // 플래너 추가
-              await plannerProvider.createPlanner(
-                name,
-                isDaily: 0,
-                folderId: rootFolderId,
-              );
+              await plannerProvider.createPlanner(name, isDaily: 0);
 
               Navigator.pop(dialogContext, true);
             } catch (e) {
