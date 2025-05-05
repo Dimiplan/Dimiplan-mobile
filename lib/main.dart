@@ -9,7 +9,8 @@ import 'package:dimiplan/providers/planner_provider.dart';
 import 'package:dimiplan/providers/ai_provider.dart';
 import 'package:dimiplan/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:dimiplan/views/add_task.dart';
+import 'package:web/web.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // SSL 인증서 오류 처리
 class CustomHttpOverrides extends HttpOverrides {
@@ -32,6 +33,21 @@ class CustomHttpOverrides extends HttpOverrides {
 }
 
 void main() async {
+  // 웹인 경우 모바일 기기 확인 및 리다이렉트
+  if (kIsWeb) {
+    final userAgent = window.navigator.userAgent.toLowerCase();
+    final isMobile =
+        userAgent.contains('mobi') ||
+        userAgent.contains('android') ||
+        userAgent.contains('iphone') ||
+        userAgent.contains('ipad');
+
+    if (!isMobile) {
+      window.location.href = 'https://dimiplan.com';
+      return;
+    }
+  }
+
   // SSL 인증서 오류 처리 설정
   HttpOverrides.global = CustomHttpOverrides();
 
@@ -95,36 +111,6 @@ class MyApp extends StatelessWidget {
                   ).copyWith(textScaler: const TextScaler.linear(1.0)),
                   child: child!,
                 ),
-
-            // 라우트
-            onGenerateRoute: (settings) {
-              if (settings.name == '/nav') {
-                // 네비게이션 라우트 - 탭 인덱스 인자 처리
-                final args = settings.arguments;
-                return MaterialPageRoute(
-                  builder:
-                      (context) => Nav(initialTab: args is int ? args : null),
-                );
-              }
-
-              if (settings.name == '/add_task') {
-                return MaterialPageRoute(
-                  builder: (context) {
-                    final plannerProvider = Provider.of<PlannerProvider>(
-                      context,
-                      listen: false,
-                    );
-                    return AddTaskScreen(
-                      updateTaskList: () => plannerProvider.loadTasks(),
-                      selectedPlannerId: plannerProvider.selectedPlanner?.id,
-                    );
-                  },
-                );
-              }
-
-              // 기본 라우트에 대한 처리
-              return null;
-            },
           ),
     );
   }
