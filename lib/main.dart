@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -11,26 +10,6 @@ import 'package:dimiplan/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:web/web.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
-// SSL 인증서 오류 처리
-class CustomHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    final client = super.createHttpClient(context);
-    // 개발 모드에서만 특정 호스트에 대해 인증서 오류 허용
-    assert(() {
-      client.badCertificateCallback = (
-        X509Certificate cert,
-        String host,
-        int port,
-      ) {
-        return false;
-      };
-      return true;
-    }());
-    return client;
-  }
-}
 
 void main() async {
   // 웹인 경우 모바일 기기 확인 및 리다이렉트
@@ -47,9 +26,6 @@ void main() async {
       return;
     }
   }
-
-  // SSL 인증서 오류 처리 설정
-  HttpOverrides.global = CustomHttpOverrides();
 
   // Flutter 엔진 초기화
   WidgetsFlutterBinding.ensureInitialized();
