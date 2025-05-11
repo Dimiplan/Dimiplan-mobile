@@ -137,6 +137,7 @@ class _AIScreenState extends State<AIScreen> {
   void _selectChatRoom(ChatRoom room) {
     final aiProvider = Provider.of<AIProvider>(context, listen: false);
     aiProvider.selectChatRoom(room);
+    aiProvider.refreshAll();
     _scrollToBottom();
 
     // 모바일 뷰에서 채팅 목록을 닫고 채팅 화면으로 전환
