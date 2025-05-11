@@ -900,10 +900,7 @@ class _AIScreenState extends State<AIScreen> {
 
   // 마크다운 형식 AI 메시지 표시
   Widget _buildMarkdownBody(String message, ThemeData theme) {
-    return GptMarkdown(
-      message,
-      style: theme.textTheme.bodyMedium
-    );
+    return GptMarkdown(message, style: theme.textTheme.bodyMedium);
   }
 }
 
