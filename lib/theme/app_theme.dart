@@ -11,18 +11,18 @@ class AppTheme {
 
   // 테마 기본 색상
   static const Color background = Colors.white;
-  static const Color surface = Color(0xFFF8F8F8);
-  static const Color surfaceVariant = Color(0xFFF0F0F0);
-  static const Color textPrimary = Color(0xFF333333);
-  static const Color textSecondary = Color(0xFF666666);
-  static const Color textMuted = Color(0xFF888888);
-  static const Color borderColor = Color(0xFFE0E0E0);
+  static Color surface = Colors.white.shade50;
+  static Color surfaceVariant = Colors.white.shade100;
+  static Color textPrimary = Colors.grey.shade800;
+  static Color textSecondary = Colors.grey.shade600;
+  static Color textMuted = Colors.grey.shade500;
+  static Color borderColor = Colors.grey.shade400;
 
   // 상태 색상
-  static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color error = Color(0xFFF44336);
-  static const Color info = Color(0xFF2196F3);
+  static Color success = Colors.green.shade500;
+  static Color warning = Colors.amber.shade600;
+  static Color error = Colors.red.shade600;
+  static Color info = Colors.blue.shade600;
 
   // 그림자
   static List<BoxShadow> get lightShadow => [
@@ -63,18 +63,18 @@ class AppTheme {
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: textPrimary,
         elevation: 0,
         centerTitle: false,
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
         selectedItemColor: primaryColor,
         unselectedItemColor: textSecondary,
       ),
-      tabBarTheme: const TabBarThemeData(
+      tabBarTheme: TabBarThemeData(
         labelColor: primaryColor,
         unselectedLabelColor: textSecondary,
         indicatorColor: primaryColor,
@@ -94,7 +94,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: borderColor, width: 2.0),
+          borderSide: BorderSide(color: borderColor, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -106,7 +106,7 @@ class AppTheme {
           horizontal: 12.0,
         ),
       ),
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         headlineLarge: TextStyle(
           fontFamily: 'Montserrat',
           fontWeight: FontWeight.w800,
