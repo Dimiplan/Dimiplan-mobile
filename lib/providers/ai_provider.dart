@@ -16,9 +16,15 @@ class AIProvider extends ChangeNotifier {
   ChatRoom? get selectedChatRoom => _selectedRoom;
   bool get isLoading => _isLoading;
 
-  /// 전체 데이터 새로고침
+  /// 전체 데이터 새로고침 - 불필요한 새로고침 방지
   Future<void> refreshAll() async {
+    // 이미 로딩 중이면 중복 호출 방지
+    if (_isLoading) return;
+    
+    // 채팅방 목록 로드
     await loadChatRooms();
+    
+    // 선택된 채팅방이 있는 경우에만 메시지 로드
     if (_selectedRoom != null) {
       await loadMessages();
     }

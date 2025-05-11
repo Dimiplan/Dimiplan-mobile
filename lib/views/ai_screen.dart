@@ -31,10 +31,12 @@ class _AIScreenState extends State<AIScreen> {
   void initState() {
     super.initState();
 
-    // AI 채팅방 로드
+    // AI 채팅방 로드 - 한 번만 수행하도록 수정
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final aiProvider = Provider.of<AIProvider>(context, listen: false);
-      aiProvider.loadChatRooms();
+      if (mounted) { // mounted 체크 추가
+        final aiProvider = Provider.of<AIProvider>(context, listen: false);
+        aiProvider.loadChatRooms();
+      }
     });
   }
 
@@ -44,6 +46,31 @@ class _AIScreenState extends State<AIScreen> {
     _scrollController.dispose();
     _inputFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 불필요한 refreshAll() 호출 제거
+    _scrollToBottom();
+  }
+
+  @override
+  void didUpdateWidget(covariant AIScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // 탭이 변경된 경우에만 데이터 새로고침
+    if (oldWidget.onTabChange != widget.onTabChange) {
+      _scrollToBottom();
+      
+      // 필요한 경우에만 새로고침 수행
+      if (mounted) { // mounted 체크 추가
+        final aiProvider = Provider.of<AIProvider>(context, listen: false);
+        if (!aiProvider.isLoading) {
+          aiProvider.loadChatRooms(); // 전체 refreshAll 대신 필요한 데이터만 로드
+        }
+      }
+    }
   }
 
   // 스크롤을 맨 아래로 이동
@@ -63,42 +90,43 @@ class _AIScreenState extends State<AIScreen> {
   Future<void> _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
-    final aiProvider = Provider.of<AIProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    if (!authProvider.isAuthenticated) {
-      showSnackBar(context, '로그인이 필요합니다.');
-      return;
-    }
-
     final messageText = _messageController.text.trim();
     _messageController.clear();
     _inputFocusNode.requestFocus();
 
+    // 컨텍스트 미리 캡처
+    final aiProvider = Provider.of<AIProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (!authProvider.isAuthenticated) {
+      if (mounted) showSnackBar(context, '로그인이 필요합니다.');
+      return;
+    }
+
     try {
       await aiProvider.sendMessage(message: messageText, model: _selectedModel);
-      _scrollToBottom();
+      if (mounted) _scrollToBottom();
     } catch (e) {
-      showSnackBar(context, '메시지 전송 중 오류가 발생했습니다: $e');
+      if (mounted) showSnackBar(context, '메시지 전송 중 오류가 발생했습니다: $e');
     }
   }
 
   // 새 채팅방 생성
   Future<void> _createNewChatRoom() async {
-    final aiProvider = Provider.of<AIProvider>(context, listen: false);
-
     // 다이얼로그 표시
     final result = await showDialog<String>(
       context: context,
       builder: (context) => _NewChatRoomDialog(),
     );
 
-    if (result != null && result.isNotEmpty) {
+    if (result != null && result.isNotEmpty && mounted) {
+      final aiProvider = Provider.of<AIProvider>(context, listen: false);
+      
       try {
         await aiProvider.createChatRoom(result);
-        showSnackBar(context, '새 채팅방이 생성되었습니다.');
+        if (mounted) showSnackBar(context, '새 채팅방이 생성되었습니다.');
       } catch (e) {
-        showSnackBar(context, '채팅방 생성 중 오류가 발생했습니다: $e');
+        if (mounted) showSnackBar(context, '채팅방 생성 중 오류가 발생했습니다: $e');
       }
     }
   }
@@ -304,8 +332,6 @@ class _AIScreenState extends State<AIScreen> {
         ],
       );
     }
-
-    aiProvider.refreshAll();
 
     // 선택된 채팅방이 있고 채팅 화면이 표시 중이면 채팅 UI 표시
     return SafeArea(
