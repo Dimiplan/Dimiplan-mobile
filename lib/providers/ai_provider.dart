@@ -20,10 +20,10 @@ class AIProvider extends ChangeNotifier {
   Future<void> refreshAll() async {
     // 이미 로딩 중이면 중복 호출 방지
     if (_isLoading) return;
-    
+
     // 채팅방 목록 로드
     await loadChatRooms();
-    
+
     // 선택된 채팅방이 있는 경우에만 메시지 로드
     if (_selectedRoom != null) {
       await loadMessages();

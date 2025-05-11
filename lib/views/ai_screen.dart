@@ -33,7 +33,8 @@ class _AIScreenState extends State<AIScreen> {
 
     // AI 채팅방 로드 - 한 번만 수행하도록 수정
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) { // mounted 체크 추가
+      if (mounted) {
+        // mounted 체크 추가
         final aiProvider = Provider.of<AIProvider>(context, listen: false);
         aiProvider.loadChatRooms();
       }
@@ -58,13 +59,14 @@ class _AIScreenState extends State<AIScreen> {
   @override
   void didUpdateWidget(covariant AIScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // 탭이 변경된 경우에만 데이터 새로고침
     if (oldWidget.onTabChange != widget.onTabChange) {
       _scrollToBottom();
-      
+
       // 필요한 경우에만 새로고침 수행
-      if (mounted) { // mounted 체크 추가
+      if (mounted) {
+        // mounted 체크 추가
         final aiProvider = Provider.of<AIProvider>(context, listen: false);
         if (!aiProvider.isLoading) {
           aiProvider.loadChatRooms(); // 전체 refreshAll 대신 필요한 데이터만 로드
@@ -121,7 +123,7 @@ class _AIScreenState extends State<AIScreen> {
 
     if (result != null && result.isNotEmpty && mounted) {
       final aiProvider = Provider.of<AIProvider>(context, listen: false);
-      
+
       try {
         await aiProvider.createChatRoom(result);
         if (mounted) showSnackBar(context, '새 채팅방이 생성되었습니다.');
