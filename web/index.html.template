@@ -26,11 +26,8 @@
         />
     </head>
     <body>
-        <script src="flutter_bootstrap.js" async></script>
-        <script
-            src="https://apis.google.com/js/platform.js"
-            async
-            defer
-        ></script>
+        <script>
+            {{flutter_bootstrap_js}}
+        </script>
     </body>
 </html>

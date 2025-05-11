@@ -10,6 +10,7 @@ import 'package:dimiplan/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:web/web.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
 void main() async {
   // 웹인 경우 모바일 기기 확인 및 리다이렉트
@@ -21,7 +22,7 @@ void main() async {
         userAgent.contains('iphone') ||
         userAgent.contains('ipad');
 
-    if (!isMobile) {
+    if (!isMobile && kReleaseMode) {
       window.location.href = 'https://dimiplan.com';
       return;
     }

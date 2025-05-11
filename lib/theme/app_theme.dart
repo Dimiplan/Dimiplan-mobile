@@ -84,6 +84,7 @@ class AppTheme {
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
+      disabledColor: Colors.blueGrey.shade400,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
@@ -237,6 +238,7 @@ class AppTheme {
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
+      disabledColor: Colors.blueGrey.shade600,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryLight,
         foregroundColor: Colors.white,

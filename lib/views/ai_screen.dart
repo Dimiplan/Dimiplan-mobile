@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:color_shade/color_shade.dart';
@@ -304,6 +304,8 @@ class _AIScreenState extends State<AIScreen> {
         ],
       );
     }
+
+    aiProvider.refreshAll();
 
     // 선택된 채팅방이 있고 채팅 화면이 표시 중이면 채팅 UI 표시
     return SafeArea(
@@ -898,24 +900,9 @@ class _AIScreenState extends State<AIScreen> {
 
   // 마크다운 형식 AI 메시지 표시
   Widget _buildMarkdownBody(String message, ThemeData theme) {
-    return MarkdownBody(
-      data: message,
-      selectable: true,
-      styleSheet: MarkdownStyleSheet(
-        p: theme.textTheme.bodyMedium,
-        h1: theme.textTheme.titleLarge,
-        h2: theme.textTheme.titleMedium,
-        h3: theme.textTheme.titleSmall,
-        code: theme.textTheme.bodyMedium?.copyWith(
-          fontFamily: 'monospace',
-          backgroundColor: theme.colorScheme.surfaceContainerHighest,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-        codeblockDecoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
+    return GptMarkdown(
+      message,
+      style: theme.textTheme.bodyMedium
     );
   }
 }

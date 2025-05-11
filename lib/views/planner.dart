@@ -64,6 +64,25 @@ class _PlannerPageState extends State<PlannerPage>
   }
 
   @override
+  void didUpdateWidget(covariant PlannerPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // 플래너 목록이 변경되면 TabController 업데이트
+    final plannerProvider = Provider.of<PlannerProvider>(context);
+    final planners = plannerProvider.planners;
+
+    if (planners.isNotEmpty && _isInitialized) {
+      _tabController.dispose();
+      _tabController = TabController(length: planners.length, vsync: this);
+      _tabController.addListener(() {
+        if (!_tabController.indexIsChanging) {
+          plannerProvider.selectPlanner(planners[_tabController.index]);
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
     if (_isInitialized) {
       _tabController.dispose();
@@ -372,7 +391,7 @@ class _PlannerPageState extends State<PlannerPage>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
           side: BorderSide(
-            color: _getPriorityColor(task.priority, theme),
+            color: _getPriorityColor(isCompleted, task.priority, theme),
             width: 2.0,
           ),
         ),
@@ -399,7 +418,7 @@ class _PlannerPageState extends State<PlannerPage>
                 height: 12,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _getPriorityColor(task.priority, theme),
+                  color: _getPriorityColor(isCompleted, task.priority, theme),
                 ),
               ),
               const SizedBox(width: 8),
@@ -418,7 +437,10 @@ class _PlannerPageState extends State<PlannerPage>
   }
 
   // 우선순위 색상 가져오기
-  Color _getPriorityColor(int priority, ThemeData theme) {
+  Color _getPriorityColor(bool isCompleted, int priority, ThemeData theme) {
+    if (isCompleted) {
+      return theme.disabledColor; // 완료된 작업은 회색
+    }
     switch (priority) {
       case 0:
         return Colors.blue.shade500; // 낮음
