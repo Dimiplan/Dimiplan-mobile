@@ -746,8 +746,7 @@ class _AIScreenState extends State<AIScreen> {
 
   // 빈 채팅 화면
   Widget _buildEmptyChat(ThemeData theme) {
-    AIProvider aiProvider =
-        Provider.of<AIProvider>(context, listen: false);
+    AIProvider aiProvider = Provider.of<AIProvider>(context, listen: false);
     aiProvider.refreshAll();
     return Center(
       child: SingleChildScrollView(
