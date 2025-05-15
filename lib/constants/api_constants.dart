@@ -30,16 +30,14 @@ class ApiConstants {
   static const String registeredPath = "$userPath/registered";
   static const String updateUserPath = "$userPath/update";
 
-  /// 플래너 API
-  static const String createRootFolderPath = "$folderPath/createRoot";
-  static const String addFolderPath = "$folderPath/add";
-
+  // 플래너 API
   static const String getEveryPlanners = "$plannerPath/getPlanners";
   static const String getPlannerInfoPath = "$plannerPath/getInfo";
   static const String addPlannerPath = "$plannerPath/add";
   static const String renamePlannerPath = "$plannerPath/rename";
   static const String deletePlannerPath = "$plannerPath/delete";
 
+  // 작업 API
   static const String getTaskPath = "$taskPath/get";
   static const String addTaskPath = "$taskPath/add";
   static const String updateTaskPath = "$taskPath/update";
