@@ -52,7 +52,6 @@ class _AIScreenState extends State<AIScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 불필요한 refreshAll() 호출 제거
     _scrollToBottom();
   }
 
@@ -747,6 +746,9 @@ class _AIScreenState extends State<AIScreen> {
 
   // 빈 채팅 화면
   Widget _buildEmptyChat(ThemeData theme) {
+    AIProvider aiProvider =
+        Provider.of<AIProvider>(context, listen: false);
+    aiProvider.refreshAll();
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
