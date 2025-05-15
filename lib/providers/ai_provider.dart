@@ -210,8 +210,7 @@ class AIProvider extends ChangeNotifier {
       notifyListeners();
 
       // API에 따라 AI 모델 엔드포인트 선택
-      final endpoint = _getModelEndpoint(model);
-      final url = Uri.https(ApiConstants.backendHost, endpoint);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.autoAIPath);
 
       final response = await Http.post(
         url,
@@ -256,19 +255,6 @@ class AIProvider extends ChangeNotifier {
       rethrow;
     } finally {
       _setLoading(false);
-    }
-  }
-
-  /// AI 모델에 따른 API 엔드포인트 반환
-  String _getModelEndpoint(String model) {
-    switch (model) {
-      case 'gpt4o':
-        return ApiConstants.gpt4oPath;
-      case 'gpt41':
-        return ApiConstants.gpt41Path;
-      case 'gpt4o-mini':
-      default:
-        return ApiConstants.gpt4oMiniPath;
     }
   }
 

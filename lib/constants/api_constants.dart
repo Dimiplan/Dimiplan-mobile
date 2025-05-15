@@ -46,9 +46,7 @@ class ApiConstants {
   static const String deleteTaskPath = "$taskPath/delete";
 
   /// AI API
-  static const String gpt4oMiniPath = "$aiPath/gpt4o_m";
-  static const String gpt4oPath = "$aiPath/gpt4o";
-  static const String gpt41Path = "$aiPath/gpt41";
+  static const String autoAIPath = "$aiPath/auto";
   static const String getRoomListPath = "$aiPath/getRoomList";
   static const String getChatInRoomPath = "$aiPath/getChatInRoom";
   static const String addRoomPath = "$aiPath/addRoom";

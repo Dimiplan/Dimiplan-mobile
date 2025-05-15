@@ -49,3 +49,6 @@ key.properties
 index.html
 *.patch
 *.patch.base64
+
+# FVM Version Cache
+.fvm/
