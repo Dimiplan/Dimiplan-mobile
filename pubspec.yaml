@@ -22,7 +22,7 @@ dependencies:
   google_sign_in: ^6.3.0
   gpt_markdown: ^1.0.19
   http: ^1.4.0
-  intl: ^0.19.0
+  intl: ^0.20.2
   path_provider: ^2.1.5
   provider: ^6.1.4
   shared_preferences: ^2.5.3
