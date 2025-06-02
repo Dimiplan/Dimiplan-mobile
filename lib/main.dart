@@ -17,10 +17,10 @@ void main() async {
   if (kIsWeb) {
     final userAgent = window.navigator.userAgent.toLowerCase();
     final isMobile =
-        userAgent.contains('mobi') ||
-        userAgent.contains('android') ||
-        userAgent.contains('iphone') ||
-        userAgent.contains('ipad');
+      userAgent.contains('mobi') ||
+      userAgent.contains('android') ||
+      userAgent.contains('iphone') ||
+      userAgent.contains('ipad');
 
     if (!isMobile && kReleaseMode) {
       window.location.href = 'https://dimiplan.com';
@@ -57,34 +57,34 @@ class MyApp extends StatelessWidget {
     // 테마 프로바이더 사용
     return Consumer<ThemeProvider>(
       builder:
-          (context, themeProvider, _) => MaterialApp(
-            title: "디미플랜",
+        (context, themeProvider, _) => MaterialApp(
+          title: "디미플랜",
 
-            // 다국어 지원 설정
-            localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            supportedLocales: const [Locale('ko')],
+          // 다국어 지원 설정
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: const [Locale('ko')],
 
-            // 디버그 배너 숨기기
-            debugShowCheckedModeBanner: false,
+          // 디버그 배너 숨기기
+          debugShowCheckedModeBanner: false,
 
-            // 테마 설정
-            theme: themeProvider.themeData,
-            darkTheme: AppTheme.darkTheme(),
-            themeMode:
-                themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          // 테마 설정
+          theme: themeProvider.themeData,
+          darkTheme: AppTheme.darkTheme(),
+          themeMode:
+              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
-            // 홈 화면
-            home: const Nav(),
+          // 홈 화면
+          home: const Nav(),
 
-            // 텍스트 스케일링 제한 (폰트 크기 일관성 유지)
-            builder:
-                (context, child) => MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                  child: child!,
-                ),
-          ),
+          // 텍스트 스케일링 제한 (폰트 크기 일관성 유지)
+          builder:
+            (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.0)),
+              child: child!,
+            ),
+        ),
     );
   }
 }

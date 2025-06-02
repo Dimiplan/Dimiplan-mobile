@@ -404,20 +404,20 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     final confirm = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: const Text('로그아웃'),
-            content: const Text('정말 로그아웃 하시겠습니까?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('취소'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('로그아웃'),
-              ),
-            ],
-          ),
+        (context) => AlertDialog(
+          title: const Text('로그아웃'),
+          content: const Text('정말 로그아웃 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('로그아웃'),
+            ),
+          ],
+        ),
     );
 
     if (confirm == true) {
@@ -440,10 +440,10 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder:
-            (_) => EditProfileScreen(
-              user: authProvider.user!,
-              updateUserInfo: authProvider.refreshUserInfo,
-            ),
+          (_) => EditProfileScreen(
+            user: authProvider.user!,
+            updateUserInfo: authProvider.refreshUserInfo,
+          ),
       ),
     );
   }
@@ -453,30 +453,30 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: const Text('앱 정보'),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('디미플랜 (Dimiplan)'),
-                SizedBox(height: 8),
-                Text('버전: 1.1.0'),
-                SizedBox(height: 8),
-                Text('개발: 디미고 학생 개발팀'),
-                SizedBox(height: 8),
-                Text('라이센스 : AGPL'),
-                SizedBox(height: 8),
-                Text('디미플랜은 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('확인'),
-              ),
+        (context) => AlertDialog(
+          title: const Text('앱 정보'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('디미플랜 (Dimiplan)'),
+              SizedBox(height: 8),
+              Text('버전: 1.1.0'),
+              SizedBox(height: 8),
+              Text('개발: 디미고 학생 개발팀'),
+              SizedBox(height: 8),
+              Text('라이센스 : AGPL'),
+              SizedBox(height: 8),
+              Text('디미플랜은 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
             ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
     );
   }
 

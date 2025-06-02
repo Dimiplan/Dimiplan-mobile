@@ -391,9 +391,9 @@ class _AIScreenState extends State<AIScreen> {
           // 메시지 목록
           Expanded(
             child:
-                messages.isEmpty
-                    ? _buildEmptyChat(theme)
-                    : _buildChatMessages(messages, theme, isLoading),
+              messages.isEmpty
+                ? _buildEmptyChat(theme)
+                : _buildChatMessages(messages, theme, isLoading),
           ),
 
           // 메시지 입력 영역
@@ -461,60 +461,60 @@ class _AIScreenState extends State<AIScreen> {
         // 채팅 영역
         Expanded(
           child:
-              selectedRoom == null
-                  ? _buildNoChatSelectedState(theme)
-                  : Column(
-                    children: [
-                      // 모델 선택 헤더
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 12.0,
+            selectedRoom == null
+              ? _buildNoChatSelectedState(theme)
+              : Column(
+                children: [
+                  // 모델 선택 헤더
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                          width: 1,
                         ),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          border: Border(
-                            bottom: BorderSide(
-                              color: theme.colorScheme.outlineVariant,
-                              width: 1,
-                            ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          selectedRoom.name,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const Spacer(),
+                        TextButton.icon(
+                          icon: const Icon(Icons.tune),
+                          label: Text(_getModelDisplayName()),
+                          onPressed: _showModelSelectionModal,
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.colorScheme.primary,
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              selectedRoom.name,
-                              style: theme.textTheme.titleMedium,
-                            ),
-                            const Spacer(),
-                            TextButton.icon(
-                              icon: const Icon(Icons.tune),
-                              label: Text(_getModelDisplayName()),
-                              onPressed: _showModelSelectionModal,
-                              style: TextButton.styleFrom(
-                                foregroundColor: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // 메시지 목록
-                      Expanded(
-                        child:
-                            messages.isEmpty
-                                ? _buildEmptyChat(theme)
-                                : _buildChatMessages(
-                                  messages,
-                                  theme,
-                                  isLoading,
-                                ),
-                      ),
-
-                      // 메시지 입력 영역
-                      _buildMessageInputArea(theme, isLoading),
-                    ],
+                      ],
+                    ),
                   ),
+
+                  // 메시지 목록
+                  Expanded(
+                    child:
+                        messages.isEmpty
+                            ? _buildEmptyChat(theme)
+                            : _buildChatMessages(
+                              messages,
+                              theme,
+                              isLoading,
+                            ),
+                  ),
+
+                  // 메시지 입력 영역
+                  _buildMessageInputArea(theme, isLoading),
+                ],
+              ),
         ),
       ],
     );
@@ -613,19 +613,19 @@ class _AIScreenState extends State<AIScreen> {
             IconButton(
               onPressed: _isComposing ? _sendMessage : null,
               icon:
-                  isLoading
-                      ? const SizedBox(
-                        width: 24.0,
-                        height: 24.0,
-                        child: CircularProgressIndicator(strokeWidth: 2.0),
-                      )
-                      : Icon(
-                        Icons.send,
-                        color:
-                            _isComposing
-                                ? theme.colorScheme.primary
-                                : theme.disabledColor,
-                      ),
+                isLoading
+                  ? const SizedBox(
+                    width: 24.0,
+                    height: 24.0,
+                    child: CircularProgressIndicator(strokeWidth: 2.0),
+                  )
+                  : Icon(
+                    Icons.send,
+                    color:
+                        _isComposing
+                            ? theme.colorScheme.primary
+                            : theme.disabledColor,
+                  ),
               tooltip: '메시지 전송',
             ),
           ],
