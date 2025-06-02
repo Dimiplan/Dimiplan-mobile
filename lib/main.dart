@@ -61,11 +61,7 @@ class MyApp extends StatelessWidget {
             title: "디미플랜",
 
             // 다국어 지원 설정
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
             supportedLocales: const [Locale('ko')],
 
             // 디버그 배너 숨기기
