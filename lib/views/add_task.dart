@@ -390,237 +390,237 @@ class _AddTaskScreenState extends State<AddTaskScreen>
         elevation: 0,
       ),
       body:
-        _isLoadingPlanners
-            ? const Center(child: CircularProgressIndicator())
-          : FadeTransition(
-            opacity: _fadeAnimation,
-            child: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 작업 이름 입력
-                        Text('이름', style: theme.textTheme.titleSmall),
-                        const SizedBox(height: 8),
-                        AppTextField(
-                          label: '',
-                          controller: _titleController,
-                          errorText: _titleError,
-                          placeholder: '작업 이름을 입력하세요',
-                          onChanged:
-                              (_) => setState(() => _titleError = null),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // 우선순위 선택
-                        Text('중요도', style: theme.textTheme.titleSmall),
-                        const SizedBox(height: 8),
-                        Column(
+          _isLoadingPlanners
+              ? const Center(child: CircularProgressIndicator())
+              : FadeTransition(
+                opacity: _fadeAnimation,
+                child: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 4.0,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                  color:
-                                      _priorityError != null
-                                          ? theme.colorScheme.error
-                                          : theme.colorScheme.outline,
-                                  width: 2.0,
+                            // 작업 이름 입력
+                            Text('이름', style: theme.textTheme.titleSmall),
+                            const SizedBox(height: 8),
+                            AppTextField(
+                              label: '',
+                              controller: _titleController,
+                              errorText: _titleError,
+                              placeholder: '작업 이름을 입력하세요',
+                              onChanged:
+                                  (_) => setState(() => _titleError = null),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // 우선순위 선택
+                            Text('중요도', style: theme.textTheme.titleSmall),
+                            const SizedBox(height: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 4.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    border: Border.all(
+                                      color:
+                                          _priorityError != null
+                                              ? theme.colorScheme.error
+                                              : theme.colorScheme.outline,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: _priority,
+                                      hint: const Text('중요도 선택'),
+                                      isExpanded: true,
+                                      items:
+                                          _priorities.map((priority) {
+                                            return DropdownMenuItem(
+                                              value: priority,
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 12,
+                                                    height: 12,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color:
+                                                          priority == '낮음'
+                                                              ? Colors
+                                                                  .blue
+                                                                  .shade500
+                                                              : priority == '중간'
+                                                              ? Colors
+                                                                  .orange
+                                                                  .shade500
+                                                              : Colors
+                                                                  .red
+                                                                  .shade500,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    priority,
+                                                    style:
+                                                        theme
+                                                            .textTheme
+                                                            .bodyMedium,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _priority = value;
+                                          _priorityError = null;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: _priority,
-                                  hint: const Text('중요도 선택'),
-                                  isExpanded: true,
-                                  items:
-                                      _priorities.map((priority) {
-                                        return DropdownMenuItem(
-                                          value: priority,
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                width: 12,
-                                                height: 12,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color:
-                                                      priority == '낮음'
-                                                          ? Colors
-                                                              .blue
-                                                              .shade500
-                                                          : priority == '중간'
-                                                          ? Colors
-                                                              .orange
-                                                              .shade500
-                                                          : Colors
-                                                              .red
-                                                              .shade500,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                priority,
-                                                style:
-                                                    theme
-                                                        .textTheme
-                                                        .bodyMedium,
-                                              ),
-                                            ],
+                                if (_priorityError != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 16.0,
+                                      top: 4.0,
+                                    ),
+                                    child: Text(
+                                      _priorityError!,
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: theme.colorScheme.error,
                                           ),
-                                        );
-                                      }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _priority = value;
-                                      _priorityError = null;
-                                    });
-                                  },
-                                ),
-                              ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                            if (_priorityError != null)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16.0,
-                                  top: 4.0,
-                                ),
-                                child: Text(
-                                  _priorityError!,
-                                  style: theme.textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: theme.colorScheme.error,
+                            const SizedBox(height: 24),
+
+                            // 플래너 선택
+                            Text('플래너', style: theme.textTheme.titleSmall),
+                            const SizedBox(height: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (_planners.isEmpty)
+                                  Text(
+                                    '사용 가능한 플래너가 없습니다. 먼저 플래너를 추가해주세요.',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.error,
+                                    ),
+                                  )
+                                else
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                      vertical: 4.0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      border: Border.all(
+                                        color: theme.colorScheme.outline,
+                                        width: 2.0,
                                       ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value:
+                                            _planners.any((p) => p.id == _from)
+                                                ? _from
+                                                : _planners.isNotEmpty
+                                                ? _planners.first.id
+                                                : null,
+                                        hint: const Text('플래너 선택'),
+                                        isExpanded: true,
+                                        items:
+                                            _planners.map((planner) {
+                                              return DropdownMenuItem(
+                                                value: planner.id,
+                                                child: Text(
+                                                  planner.name,
+                                                  style:
+                                                      theme
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                ),
+                                              );
+                                            }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _from = value!;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
 
-                        // 플래너 선택
-                        Text('플래너', style: theme.textTheme.titleSmall),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (_planners.isEmpty)
-                              Text(
-                                '사용 가능한 플래너가 없습니다. 먼저 플래너를 추가해주세요.',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.error,
-                                ),
-                              )
-                            else
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 4.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(
-                                    color: theme.colorScheme.outline,
-                                    width: 2.0,
+                                // 새 플래너 추가 버튼
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: TextButton.icon(
+                                    onPressed: _navigateToCreatePlannerScreen,
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('새 플래너 추가'),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor:
+                                          theme.colorScheme.primary,
+                                    ),
                                   ),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int>(
-                                    value:
-                                        _planners.any((p) => p.id == _from)
-                                            ? _from
-                                            : _planners.isNotEmpty
-                                            ? _planners.first.id
-                                            : null,
-                                    hint: const Text('플래너 선택'),
-                                    isExpanded: true,
-                                    items:
-                                        _planners.map((planner) {
-                                          return DropdownMenuItem(
-                                            value: planner.id,
-                                            child: Text(
-                                              planner.name,
-                                              style:
-                                                  theme
-                                                      .textTheme
-                                                      .bodyMedium,
-                                            ),
-                                          );
-                                        }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _from = value!;
-                                      });
-                                    },
+                              ],
+                            ),
+
+                            const SizedBox(height: 40),
+
+                            // 버튼 영역
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // 저장 버튼
+                                Expanded(
+                                  child: AppButton(
+                                    text: widget.task == null ? '추가' : '수정',
+                                    variant: ButtonVariant.primary,
+                                    isLoading: _isSubmitting,
+                                    isFullWidth: true,
+                                    rounded: true,
+                                    onPressed: _submit,
                                   ),
                                 ),
-                              ),
 
-                            // 새 플래너 추가 버튼
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: TextButton.icon(
-                                onPressed: _navigateToCreatePlannerScreen,
-                                icon: const Icon(Icons.add),
-                                label: const Text('새 플래너 추가'),
-                                style: TextButton.styleFrom(
-                                  foregroundColor:
-                                      theme.colorScheme.primary,
-                                ),
-                              ),
+                                // 삭제 버튼 (수정 모드일 때만)
+                                if (widget.task != null) ...[
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: AppButton(
+                                      text: '삭제',
+                                      variant: ButtonVariant.danger,
+                                      isFullWidth: true,
+                                      rounded: true,
+                                      onPressed: _delete,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ],
                         ),
-
-                        const SizedBox(height: 40),
-
-                        // 버튼 영역
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // 저장 버튼
-                            Expanded(
-                              child: AppButton(
-                                text: widget.task == null ? '추가' : '수정',
-                                variant: ButtonVariant.primary,
-                                isLoading: _isSubmitting,
-                                isFullWidth: true,
-                                rounded: true,
-                                onPressed: _submit,
-                              ),
-                            ),
-
-                            // 삭제 버튼 (수정 모드일 때만)
-                            if (widget.task != null) ...[
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: AppButton(
-                                  text: '삭제',
-                                  variant: ButtonVariant.danger,
-                                  isFullWidth: true,
-                                  rounded: true,
-                                  onPressed: _delete,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
     );
   }
 }

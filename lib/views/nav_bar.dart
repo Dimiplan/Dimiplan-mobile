@@ -236,19 +236,19 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
           // 다크모드 토글 버튼
           Consumer<ThemeProvider>(
             builder:
-              (context, themeProvider, _) => IconButton(
-                icon: Icon(
-                  themeProvider.isDarkMode
-                      ? Icons.light_mode_outlined
-                      : Icons.dark_mode_outlined,
-                  color: theme.colorScheme.primary,
+                (context, themeProvider, _) => IconButton(
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: theme.colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    themeProvider.toggleTheme();
+                  },
+                  tooltip:
+                      themeProvider.isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환',
                 ),
-                onPressed: () {
-                  themeProvider.toggleTheme();
-                },
-                tooltip:
-                    themeProvider.isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환',
-              ),
           ),
           const SizedBox(width: 8),
         ],
@@ -274,28 +274,28 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
           onDestinationSelected: _setCurrentIndex,
           animationDuration: AppTheme.animationDuration,
           destinations:
-            _tabs
-              .map(
-                (tab) => NavigationDestination(
-                  icon: Icon(tab.icon),
-                  label: tab.label,
-                ),
-              )
-              .toList(),
+              _tabs
+                  .map(
+                    (tab) => NavigationDestination(
+                      icon: Icon(tab.icon),
+                      label: tab.label,
+                    ),
+                  )
+                  .toList(),
         ),
       ),
       floatingActionButton:
-        _currentIndex == 1 && isAuthenticated
-          ? FloatingActionButton(
-            backgroundColor: theme.colorScheme.primaryContainer,
-            elevation: 8.0,
-            child: const Icon(Icons.add, size: 32),
-            onPressed: () {
-              // AddTaskScreen으로 이동
-              Navigator.pushNamed(context, '/add_task');
-            },
-          )
-          : null,
+          _currentIndex == 1 && isAuthenticated
+              ? FloatingActionButton(
+                backgroundColor: theme.colorScheme.primaryContainer,
+                elevation: 8.0,
+                child: const Icon(Icons.add, size: 32),
+                onPressed: () {
+                  // AddTaskScreen으로 이동
+                  Navigator.pushNamed(context, '/add_task');
+                },
+              )
+              : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
