@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:dimiplan/providers/http_provider.dart';
 import 'package:dimiplan/models/chat_models.dart';
 import 'package:dimiplan/constants/api_constants.dart';
+import 'package:dimiplan/utils/state_utils.dart';
+import 'package:dimiplan/utils/api_utils.dart';
 
-class AIProvider extends ChangeNotifier {
+class AIProvider extends ChangeNotifier with LoadingStateMixin {
   List<ChatRoom> _chatRooms = [];
   List<ChatMessage> _messages = [];
   ChatRoom? _selectedRoom;
-  bool _isLoading = false;
 
   // 게터
   List<ChatRoom> get chatRooms => _chatRooms;
   List<ChatMessage> get messages => _messages;
   ChatRoom? get selectedChatRoom => _selectedRoom;
-  bool get isLoading => _isLoading;
 
   /// 전체 데이터 새로고침 - 불필요한 새로고침 방지
   Future<void> refreshAll() async {
     // 이미 로딩 중이면 중복 호출 방지
-    if (_isLoading) return;
+    if (isLoading) return;
 
     // 채팅방 목록 로드
     await loadChatRooms();
@@ -32,95 +32,47 @@ class AIProvider extends ChangeNotifier {
 
   /// 채팅방 목록 로드
   Future<void> loadChatRooms() async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
-      if (!isSessionValid) {
-        _chatRooms = [];
-        _setLoading(false);
-        return;
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.getRoomListPath,
-      );
-      final response = await Http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final rooms = <ChatRoom>[];
-
-        for (var room in data['roomData']) {
-          rooms.add(ChatRoom.fromMap(room));
-        }
-
-        _chatRooms = rooms;
-
-        // 채팅방이 있으면 첫 번째 채팅방 선택
-        if (_chatRooms.isNotEmpty && _selectedRoom == null) {
-          selectChatRoom(_chatRooms.first);
-        }
-        // 선택된 채팅방이 더 이상 존재하지 않는 경우
-        else if (_selectedRoom != null &&
-            !_chatRooms.any((r) => r.id == _selectedRoom!.id)) {
-          if (_chatRooms.isNotEmpty) {
-            selectChatRoom(_chatRooms.first);
-          } else {
-            _selectedRoom = null;
-            _messages = [];
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        final data = await ApiUtils.fetchData(ApiConstants.getRoomListPath);
+        if (data != null) {
+          final rooms = <ChatRoom>[];
+          for (var room in data['roomData']) {
+            rooms.add(ChatRoom.fromMap(room));
           }
-        }
+          _chatRooms = rooms;
 
-        notifyListeners();
-      } else {
-        print('채팅방 목록 가져오기 실패: ${response.body}');
-        _chatRooms = [];
-      }
-    } catch (e) {
-      print('채팅방 목록 로드 중 오류 발생: $e');
-      _chatRooms = [];
-    } finally {
-      _setLoading(false);
-    }
+          if (_chatRooms.isNotEmpty && _selectedRoom == null) {
+            await selectChatRoom(_chatRooms.first);
+          } else if (_selectedRoom != null &&
+              !_chatRooms.any((r) => r.id == _selectedRoom!.id)) {
+            if (_chatRooms.isNotEmpty) {
+              await selectChatRoom(_chatRooms.first);
+            } else {
+              _selectedRoom = null;
+              _messages = [];
+            }
+          }
+          safeNotifyListeners();
+        } else {
+          _chatRooms = [];
+        }
+      },
+      setLoading: setLoading,
+      errorContext: '채팅방 목록 로드',
+    );
   }
 
   /// 채팅방 생성
   Future<void> createChatRoom(String name) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addRoomPath);
-      final response = await Http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'name': name}),
-      );
-
-      if (response.statusCode == 200) {
-        // 채팅방 목록 새로고침
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        await ApiUtils.postData(ApiConstants.addRoomPath, data: {'name': name});
         await refreshAll();
-      } else {
-        throw Exception('채팅방 생성 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('채팅방 생성 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+      },
+      setLoading: setLoading,
+      errorContext: '채팅방 생성',
+    );
   }
 
   /// 채팅방 선택
@@ -138,47 +90,28 @@ class AIProvider extends ChangeNotifier {
 
   /// 채팅 메시지 로드
   Future<void> loadMessages() async {
-    if (_selectedRoom == null || _isLoading) return;
+    if (_selectedRoom == null) return;
 
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
-      if (!isSessionValid) {
-        _messages = [];
-        _setLoading(false);
-        return;
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.getChatInRoomPath,
-        {'from': _selectedRoom!.id.toString()},
-      );
-
-      final response = await Http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final messages = <ChatMessage>[];
-
-        for (var message in data['chatData']) {
-          messages.add(ChatMessage.fromMap(message));
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        final data = await ApiUtils.fetchData(
+          ApiConstants.getChatInRoomPath,
+          queryParams: {'from': _selectedRoom!.id.toString()},
+        );
+        if (data != null) {
+          final messages = <ChatMessage>[];
+          for (var message in data['chatData']) {
+            messages.add(ChatMessage.fromMap(message));
+          }
+          _messages = messages;
+          safeNotifyListeners();
+        } else {
+          _messages = [];
         }
-
-        _messages = messages;
-        notifyListeners();
-      } else {
-        print('채팅 메시지 가져오기 실패: ${response.statusCode}');
-        _messages = [];
-      }
-    } catch (e) {
-      print('채팅 메시지 로드 중 오류 발생: $e');
-      _messages = [];
-    } finally {
-      _setLoading(false);
-    }
+      },
+      setLoading: setLoading,
+      errorContext: '채팅 메시지 로드',
+    );
   }
 
   /// 메시지 전송
@@ -186,81 +119,73 @@ class AIProvider extends ChangeNotifier {
     required String message,
     required String model,
   }) async {
-    if (_selectedRoom == null || _isLoading) return;
+    if (_selectedRoom == null) return;
 
-    _setLoading(true);
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        // 세션 유효성 검사
+        final isSessionValid = await Http.isSessionValid();
+        if (!isSessionValid) {
+          throw Exception('로그인이 필요합니다.');
+        }
 
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
+        // 사용자 메시지 추가 (낙관적 UI 업데이트)
+        final userMessage = ChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch,
+          message: message,
+          sender: 'user',
+          from: _selectedRoom!.id,
+          owner: '',
+        );
 
-      // 사용자 메시지 추가 (낙관적 UI 업데이트)
-      final userMessage = ChatMessage(
-        id: DateTime.now().millisecondsSinceEpoch,
-        message: message,
-        sender: 'user',
-        from: _selectedRoom!.id,
-        owner: '',
-      );
+        _messages.add(userMessage);
+        safeNotifyListeners();
 
-      _messages.add(userMessage);
-      notifyListeners();
+        // API에 따라 AI 모델 엔드포인트 선택
+        final url = Uri.https(ApiConstants.backendHost, ApiConstants.autoAIPath);
 
-      // API에 따라 AI 모델 엔드포인트 선택
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.autoAIPath);
+        final response = await Http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
+        );
 
-      final response = await Http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
-      );
+        if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
+          // AI 응답 메시지 추가
+          final aiMessage = ChatMessage(
+            id: DateTime.now().millisecondsSinceEpoch + 1,
+            message:
+                responseData['message'] ??
+                "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
+            sender: 'ai',
+            from: _selectedRoom!.id,
+            owner: '',
+          );
 
-        // AI 응답 메시지 추가
-        final aiMessage = ChatMessage(
-          id: DateTime.now().millisecondsSinceEpoch + 1,
-          message:
-              responseData['message'] ??
-              "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
+          _messages.add(aiMessage);
+          safeNotifyListeners();
+        } else {
+          throw Exception('메시지 전송 실패: ${response.statusCode}');
+        }
+      },
+      setLoading: setLoading,
+      errorContext: '메시지 전송',
+      onError: (error) {
+        // 오류 메시지 추가
+        final errorMessage = ChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch + 2,
+          message: "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
           sender: 'ai',
           from: _selectedRoom!.id,
           owner: '',
         );
 
-        _messages.add(aiMessage);
-        notifyListeners();
-      } else {
-        throw Exception('메시지 전송 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('메시지 전송 중 오류 발생: $e');
-
-      // 오류 메시지 추가
-      final errorMessage = ChatMessage(
-        id: DateTime.now().millisecondsSinceEpoch + 2,
-        message: "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
-        sender: 'ai',
-        from: _selectedRoom!.id,
-        owner: '',
-      );
-
-      _messages.add(errorMessage);
-      notifyListeners();
-
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+        _messages.add(errorMessage);
+        safeNotifyListeners();
+      },
+    );
   }
 
-  /// 로딩 상태 설정
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
 }

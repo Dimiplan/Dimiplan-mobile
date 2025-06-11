@@ -6,6 +6,7 @@ import 'package:dimiplan/providers/auth_provider.dart';
 import 'package:dimiplan/widgets/button.dart';
 import 'package:dimiplan/widgets/input_field.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
+import 'package:dimiplan/utils/validation_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User user;
@@ -54,26 +55,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     bool isValid = true;
 
     // 이름 검증
-    if (_nameController.text.trim().isEmpty) {
-      setState(() {
-        _nameError = '이름을 입력해 주세요.';
-      });
-      isValid = false;
-    } else if (_nameController.text.trim().length < 2) {
-      setState(() {
-        _nameError = '이름은 2글자 이상이어야 합니다.';
-      });
-      isValid = false;
-    } else if (_nameController.text.trim().length > 15) {
-      setState(() {
-        _nameError = '이름은 15글자 이하여야 합니다.';
-      });
-      isValid = false;
-    } else {
-      setState(() {
-        _nameError = null;
-      });
-    }
+    final nameError = ValidationUtils.validateLength(_nameController.text, 2, 15, '이름');
+    setState(() {
+      _nameError = nameError;
+    });
+    if (nameError != null) isValid = false;
 
     // 디미고 학생인 경우 학년/반 검증
     if (_isDimigoStudent) {

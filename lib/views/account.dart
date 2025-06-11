@@ -7,6 +7,7 @@ import 'package:dimiplan/providers/theme_provider.dart';
 import 'package:dimiplan/widgets/button.dart';
 import 'package:dimiplan/views/edit_profile.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
+import 'package:dimiplan/utils/dialog_utils.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -401,23 +402,11 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
   // 로그아웃 처리
   Future<void> _handleLogout(AuthProvider authProvider) async {
     // 확인 다이얼로그
-    final confirm = await showDialog<bool>(
+    final confirm = await DialogUtils.showConfirmDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('로그아웃'),
-            content: const Text('정말 로그아웃 하시겠습니까?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('취소'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('로그아웃'),
-              ),
-            ],
-          ),
+      title: '로그아웃',
+      content: '정말 로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
     );
 
     if (confirm == true) {
@@ -450,33 +439,35 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
 
   // 앱 정보 다이얼로그
   void _showAppInfo(BuildContext context) {
-    showDialog(
+    DialogUtils.showBottomSheet(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('앱 정보'),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('디미플랜 (Dimiplan)'),
-                SizedBox(height: 8),
-                Text('버전: 1.1.0'),
-                SizedBox(height: 8),
-                Text('개발: 디미고 학생 개발팀'),
-                SizedBox(height: 8),
-                Text('라이센스 : AGPL'),
-                SizedBox(height: 8),
-                Text('디미플랜은 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
-              ],
-            ),
-            actions: [
-              TextButton(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('앱 정보', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
+            const Text('디미플랜 (Dimiplan)'),
+            const SizedBox(height: 8),
+            const Text('버전: 1.1.0'),
+            const SizedBox(height: 8),
+            const Text('개발: 디미고 학생 개발팀'),
+            const SizedBox(height: 8),
+            const Text('라이센스 : AGPL'),
+            const SizedBox(height: 8),
+            const Text('디미플랜은 학생들을 위한 플래너 및 AI 챗봇 앱입니다.'),
+            const SizedBox(height: 24),
+            Center(
+              child: TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('확인'),
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

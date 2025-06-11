@@ -5,88 +5,32 @@ import 'package:dimiplan/providers/planner_provider.dart';
 import 'package:dimiplan/widgets/button.dart';
 import 'package:dimiplan/widgets/input_field.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
+import 'package:dimiplan/utils/dialog_utils.dart';
+import 'package:dimiplan/utils/validation_utils.dart';
 
 /// 새 플래너 생성 다이얼로그
-Future<bool?> showCreatePlannerDialog(BuildContext context) {
-  final TextEditingController plannerNameController = TextEditingController();
-  final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
-  bool isAddingPlanner = false;
-  final theme = Theme.of(context);
-
-  return showDialog<bool>(
+Future<bool?> showCreatePlannerDialog(BuildContext context) async {
+  final result = await DialogUtils.showInputDialog(
     context: context,
-    builder: (dialogContext) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          // 플래너 추가 함수
-          Future<void> addNewPlanner(String name) async {
-            try {
-              setState(() {
-                isAddingPlanner = true;
-              });
-
-              // 플래너 추가
-              await plannerProvider.createPlanner(name, isDaily: 0);
-
-              Navigator.pop(dialogContext, true);
-            } catch (e) {
-              print('플래너 추가 중 오류: $e');
-              showErrorSnackBar(context, '플래너 추가 중 오류가 발생했습니다.');
-              Navigator.pop(dialogContext, false);
-            }
-          }
-
-          return AlertDialog(
-            title: const Text('새 플래너 추가'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppTextField(
-                  label: '',
-                  placeholder: '새 플래너 이름을 입력하세요',
-                  controller: plannerNameController,
-                ),
-              ],
-            ),
-            actions: [
-              // 취소 버튼
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: Text(
-                  '취소',
-                  style: TextStyle(color: theme.colorScheme.secondary),
-                ),
-              ),
-
-              // 추가 버튼 또는 로딩 인디케이터
-              isAddingPlanner
-                  ? const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  )
-                  : TextButton(
-                    onPressed: () {
-                      if (plannerNameController.text.trim().isEmpty) {
-                        showSnackBar(context, '플래너 이름을 입력해주세요', isError: true);
-                        return;
-                      }
-
-                      addNewPlanner(plannerNameController.text);
-                    },
-                    child: Text(
-                      '추가',
-                      style: TextStyle(color: theme.colorScheme.primary),
-                    ),
-                  ),
-            ],
-          );
-        },
-      );
-    },
+    title: '새 플래너 추가',
+    hintText: '새 플래너 이름을 입력하세요',
+    validator: (value) => ValidationUtils.validateRequired(value, '플래너 이름'),
   );
+
+  if (result != null) {
+    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    try {
+      await plannerProvider.createPlanner(result, isDaily: 0);
+      return true;
+    } catch (e) {
+      print('플래너 추가 중 오류: $e');
+      if (context.mounted) {
+        showErrorSnackBar(context, '플래너 추가 중 오류가 발생했습니다.');
+      }
+      return false;
+    }
+  }
+  return null;
 }
 
 /// 작업 추가/수정 화면
@@ -206,23 +150,12 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     if (widget.task == null) return;
 
     // 확인 다이얼로그
-    final confirm = await showDialog<bool>(
+    final confirm = await DialogUtils.showConfirmDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('작업 삭제'),
-            content: Text('정말 "${widget.task!.contents}" 작업을 삭제하시겠습니까?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('취소'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('삭제'),
-              ),
-            ],
-          ),
+      title: '작업 삭제',
+      content: '정말 "${widget.task!.contents}" 작업을 삭제하시겠습니까?',
+      confirmText: '삭제',
+      confirmColor: Theme.of(context).colorScheme.error,
     );
 
     if (confirm != true) return;
@@ -327,16 +260,11 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     bool isValid = true;
 
     // 제목 검증
-    if (_titleController.text.trim().isEmpty) {
-      setState(() {
-        _titleError = '작업 이름을 입력해 주세요.';
-      });
-      isValid = false;
-    } else {
-      setState(() {
-        _titleError = null;
-      });
-    }
+    final titleError = ValidationUtils.validateRequired(_titleController.text, '작업 이름');
+    setState(() {
+      _titleError = titleError;
+    });
+    if (titleError != null) isValid = false;
 
     // 우선순위 검증
     if (_priority == null) {
