@@ -13,7 +13,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
 void main() async {
-  // 웹인 경우 모바일 기기 확인 및 리다이렉트
+  // 웹인 경우 모바일 기기 확인 및 리다이렉트 (dev 브랜치에서는 비활성화)
   if (kIsWeb) {
     final userAgent = window.navigator.userAgent.toLowerCase();
     final isMobile =
@@ -22,7 +22,10 @@ void main() async {
         userAgent.contains('iphone') ||
         userAgent.contains('ipad');
 
-    if (!isMobile && kReleaseMode) {
+    // dev 브랜치에서는 리다이렉트 비활성화
+    const bool isDevBuild = bool.fromEnvironment('DEV_BUILD', defaultValue: false);
+    
+    if (!isMobile && kReleaseMode && !isDevBuild) {
       window.location.href = 'https://dimiplan.com';
       return;
     }

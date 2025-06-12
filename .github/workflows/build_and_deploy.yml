@@ -53,16 +53,19 @@ jobs:
       # 웹 클라이언트 ID 패치 적용
       - name: Apply Web Client ID Patch
         run: |
-          # GitHub Secrets에서 base64로 인코딩된 웹 패치 디코드
           echo "${{ secrets.WEB_CLIENT_ID_PATCH_BASE64 }}" | base64 --decode > web_patch.patch
 
-          # 패치 적용
           git apply web_patch.patch
 
           echo "Applied web client ID patch"
 
       - name: Build
-        run: flutter build web --wasm --release
+        run: |
+          if [ "${{ github.ref_name }}" == "dev" ]; then
+            flutter build web --wasm --release --dart-define=DEV_BUILD=true
+          else
+            flutter build web --wasm --release
+          fi
 
       - name: Deploy on Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
