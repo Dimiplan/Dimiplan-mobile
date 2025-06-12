@@ -23,8 +23,8 @@ void main() async {
         userAgent.contains('ipad');
 
     // dev 브랜치에서는 리다이렉트 비활성화
-    const bool isDevBuild = bool.fromEnvironment('DEV_BUILD', defaultValue: false);
-    
+    const bool isDevBuild = bool.fromEnvironment('DEV_BUILD');
+
     if (!isMobile && kReleaseMode && !isDevBuild) {
       window.location.href = 'https://dimiplan.com';
       return;

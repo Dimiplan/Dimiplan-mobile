@@ -1,9 +1,10 @@
 /// API 관련 상수
 class ApiConstants {
   /// 백엔드 서버 호스트 (dev 브랜치에서는 개발 서버 사용)
-  static const String backendHost = bool.fromEnvironment('DEV_BUILD', defaultValue: false) 
-      ? 'api-dev.dimiplan.com'
-      : 'api.dimiplan.com';
+  static const String backendHost =
+      bool.fromEnvironment('DEV_BUILD')
+          ? 'api-dev.dimiplan.com'
+          : 'api.dimiplan.com';
 
   /// API 응답 코드
   static const int success = 200;
