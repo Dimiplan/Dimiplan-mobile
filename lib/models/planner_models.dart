@@ -1,16 +1,8 @@
 /// 작업(Task) 모델
-class Task {
-  final int? id;
-  final String contents;
-  final int priority;
-  final int from; // 플래너 ID
-  final int isCompleted; // 0: 진행 중, 1: 완료됨
+class Task { // 0: 진행 중, 1: 완료됨
 
   const Task({
-    this.id,
-    required this.contents,
-    required this.priority,
-    required this.from,
+    required this.contents, required this.priority, required this.from, this.id,
     this.isCompleted = 0,
   });
 
@@ -24,6 +16,11 @@ class Task {
       isCompleted: map['isCompleted'] ?? 0,
     );
   }
+  final int? id;
+  final String contents;
+  final int priority;
+  final int from; // 플래너 ID
+  final int isCompleted;
 
   /// Task 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
@@ -60,10 +57,7 @@ class Task {
 }
 
 /// 플래너 모델
-class Planner {
-  final int id;
-  final String name;
-  final int isDaily; // 일일 플래너 여부 (0: 일반, 1: 일일)
+class Planner { // 일일 플래너 여부 (0: 일반, 1: 일일)
 
   const Planner({required this.id, required this.name, this.isDaily = 0});
 
@@ -75,6 +69,9 @@ class Planner {
       isDaily: map['isDaily'] ?? 0,
     );
   }
+  final int id;
+  final String name;
+  final int isDaily;
 
   /// Planner 객체를 Map으로 변환
   Map<String, dynamic> toMap() {

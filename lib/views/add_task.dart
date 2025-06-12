@@ -18,9 +18,10 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) async {
   );
 
   if (result != null) {
+    if (!context.mounted) return false;
     final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
     try {
-      await plannerProvider.createPlanner(result, isDaily: 0);
+      await plannerProvider.createPlanner(result);
       return true;
     } catch (e) {
       print('플래너 추가 중 오류: $e');
@@ -35,16 +36,15 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) async {
 
 /// 작업 추가/수정 화면
 class AddTaskScreen extends StatefulWidget {
-  final Function updateTaskList;
-  final Task? task;
-  final int? selectedPlannerId;
 
   const AddTaskScreen({
-    super.key,
-    required this.updateTaskList,
+    required this.updateTaskList, super.key,
     this.task,
     this.selectedPlannerId,
   });
+  final Function updateTaskList;
+  final Task? task;
+  final int? selectedPlannerId;
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -165,6 +165,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
         _isSubmitting = true;
       });
 
+      if (!context.mounted) return;
       final plannerProvider = Provider.of<PlannerProvider>(
         context,
         listen: false,
@@ -242,7 +243,9 @@ class _AddTaskScreenState extends State<AddTaskScreen>
       // 콜백 호출
       widget.updateTaskList();
 
-      Navigator.pop(context, true);
+      if (mounted && context.mounted) {
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       print('작업 저장 중 오류: $e');
       if (mounted) {
@@ -287,6 +290,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
 
     if (result == true) {
       // 새 플래너가 추가된 경우 목록 새로고침
+      if (!context.mounted) return;
       final plannerProvider = Provider.of<PlannerProvider>(
         context,
         listen: false,
@@ -519,7 +523,6 @@ class _AddTaskScreenState extends State<AddTaskScreen>
                                 Expanded(
                                   child: AppButton(
                                     text: widget.task == null ? '추가' : '수정',
-                                    variant: ButtonVariant.primary,
                                     isLoading: _isSubmitting,
                                     isFullWidth: true,
                                     rounded: true,

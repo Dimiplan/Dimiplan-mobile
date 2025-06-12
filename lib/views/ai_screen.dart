@@ -13,8 +13,8 @@ import 'package:dimiplan/utils/validation_utils.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class AIScreen extends StatefulWidget {
-  final void Function(int)? onTabChange;
   const AIScreen({super.key, this.onTabChange});
+  final void Function(int)? onTabChange;
 
   @override
   State<AIScreen> createState() => _AIScreenState();
@@ -422,7 +422,6 @@ class _AIScreenState extends State<AIScreen> {
                   borderRadius: BorderRadius.circular(24.0),
                   border: Border.all(
                     color: theme.colorScheme.outline.shade500,
-                    width: 1.0,
                   ),
                 ),
                 child: TextField(
@@ -511,7 +510,6 @@ class _AIScreenState extends State<AIScreen> {
             AppButton(
               text: '로그인하기',
               icon: Icons.login,
-              variant: ButtonVariant.primary,
               size: ButtonSize.large,
               rounded: true,
               onPressed: () {
@@ -582,8 +580,6 @@ class _AIScreenState extends State<AIScreen> {
             AppButton(
               text: '새 채팅 시작',
               icon: Icons.add,
-              variant: ButtonVariant.primary,
-              size: ButtonSize.medium,
               onPressed: _createNewChatRoom,
             ),
           ],
@@ -594,7 +590,7 @@ class _AIScreenState extends State<AIScreen> {
 
   // 빈 채팅 화면
   Widget _buildEmptyChat(ThemeData theme) {
-    AIProvider aiProvider = Provider.of<AIProvider>(context, listen: false);
+    final AIProvider aiProvider = Provider.of<AIProvider>(context, listen: false);
     aiProvider.refreshAll();
     return Center(
       child: SingleChildScrollView(
@@ -703,7 +699,6 @@ class _AIScreenState extends State<AIScreen> {
             ),
             side: BorderSide(
               color: theme.colorScheme.outlineVariant,
-              width: 1.0,
             ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -716,7 +711,6 @@ class _AIScreenState extends State<AIScreen> {
                   speed: const Duration(milliseconds: 50),
                 ),
               ],
-              isRepeatingAnimation: true,
               repeatForever: true,
             ),
           ),
@@ -755,7 +749,6 @@ class _AIScreenState extends State<AIScreen> {
                     ? BorderSide.none
                     : BorderSide(
                       color: theme.colorScheme.outlineVariant,
-                      width: 1.0,
                     ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8.0),

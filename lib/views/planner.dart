@@ -9,10 +9,11 @@ import 'package:dimiplan/widgets/list_widgets.dart';
 import 'package:dimiplan/widgets/navigation_widgets.dart';
 import 'package:dimiplan/utils/dialog_utils.dart';
 import 'package:dimiplan/utils/snackbar_util.dart';
+import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class PlannerPage extends StatefulWidget {
-  final void Function(int)? onTabChange;
   const PlannerPage({super.key, this.onTabChange});
+  final void Function(int)? onTabChange;
 
   @override
   State<PlannerPage> createState() => _PlannerPageState();
@@ -90,13 +91,10 @@ class _PlannerPageState extends State<PlannerPage>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<PlannerProvider, AuthProvider>(
-      builder: (context, plannerProvider, authProvider, _) {
-        if (plannerProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!authProvider.isAuthenticated) {
+    return Selector<AuthProvider, bool>(
+      selector: (context, auth) => auth.isAuthenticated,
+      builder: (context, isAuthenticated, child) {
+        if (!isAuthenticated) {
           return UnauthenticatedState(
             title: '플래너 사용을 위해\n로그인이 필요합니다',
             subtitle: '로그인하고 나만의 플래너를 관리해보세요.',
@@ -105,19 +103,35 @@ class _PlannerPageState extends State<PlannerPage>
           );
         }
 
-        if (plannerProvider.planners.isEmpty) {
-          return EmptyState(
-            title: '플래너가 없습니다',
-            subtitle: '새 플래너를 추가하고 일정 관리를 시작하세요.',
-            actionText: '새 플래너 만들기',
-            onAction: () => _showCreatePlannerDialog(plannerProvider),
-            icon: Icons.folder_open,
-            secondaryActionText: '새로고침',
-            onSecondaryAction: () => plannerProvider.loadPlanners(),
-          );
-        }
+        return Selector<PlannerProvider, ({bool isLoading, List<Planner> planners})>(
+          selector: (context, planner) => (
+            isLoading: planner.isLoading,
+            planners: planner.planners,
+          ),
+          builder: (context, plannerData, child) {
+            if (plannerData.isLoading) {
+              return const TaskListSkeleton();
+            }
 
-        return _buildPlannerContent(plannerProvider);
+            if (plannerData.planners.isEmpty) {
+              return Consumer<PlannerProvider>(
+                builder: (context, plannerProvider, _) => EmptyState(
+                  title: '플래너가 없습니다',
+                  subtitle: '새 플래너를 추가하고 일정 관리를 시작하세요.',
+                  actionText: '새 플래너 만들기',
+                  onAction: () => _showCreatePlannerDialog(plannerProvider),
+                  icon: Icons.folder_open,
+                  secondaryActionText: '새로고침',
+                  onSecondaryAction: () => plannerProvider.loadPlanners(),
+                ),
+              );
+            }
+
+            return Consumer<PlannerProvider>(
+              builder: (context, plannerProvider, _) => _buildPlannerContent(plannerProvider),
+            );
+          },
+        );
       },
     );
   }
@@ -136,12 +150,15 @@ class _PlannerPageState extends State<PlannerPage>
         ),
 
         if (selectedPlanner != null)
-          SectionHeader(
-            title: selectedPlanner.name,
-            subtitle: '${tasks.where((task) => task.isCompleted == 1).length}/${tasks.length} 완료됨',
-            action: IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () => _showPlannerOptions(selectedPlanner, plannerProvider),
+          Selector<PlannerProvider, List<Task>>(
+            selector: (context, planner) => planner.tasks,
+            builder: (context, tasks, child) => SectionHeader(
+              title: selectedPlanner.name,
+              subtitle: '${tasks.where((task) => task.isCompleted == 1).length}/${tasks.length} 완료됨',
+              action: IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () => _showPlannerOptions(selectedPlanner, plannerProvider),
+              ),
             ),
           ),
 

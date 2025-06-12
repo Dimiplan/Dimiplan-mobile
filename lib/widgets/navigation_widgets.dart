@@ -3,16 +3,14 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/utils/dialog_utils.dart';
 
 class AppTabBar extends StatelessWidget {
+
+  const AppTabBar({
+    required this.controller, required this.tabNames, super.key,
+    this.isScrollable = false,
+  });
   final TabController controller;
   final List<String> tabNames;
   final bool isScrollable;
-
-  const AppTabBar({
-    super.key,
-    required this.controller,
-    required this.tabNames,
-    this.isScrollable = false,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +42,16 @@ class AppTabBar extends StatelessWidget {
 }
 
 class SideNavigation extends StatelessWidget {
+
+  const SideNavigation({
+    required this.title, required this.children, super.key,
+    this.headerAction,
+    this.width = 250,
+  });
   final String title;
   final List<Widget> children;
   final Widget? headerAction;
   final double width;
-
-  const SideNavigation({
-    super.key,
-    required this.title,
-    required this.children,
-    this.headerAction,
-    this.width = 250,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +64,6 @@ class SideNavigation extends StatelessWidget {
         border: Border(
           right: BorderSide(
             color: theme.dividerColor,
-            width: 1.0,
           ),
         ),
       ),
@@ -81,7 +76,6 @@ class SideNavigation extends StatelessWidget {
               border: Border(
                 bottom: BorderSide(
                   color: theme.dividerColor,
-                  width: 1.0,
                 ),
               ),
             ),
@@ -136,12 +130,11 @@ class SideNavigation extends StatelessWidget {
 }
 
 class OptionsBottomSheet extends StatelessWidget {
-  final List<OptionItem> options;
 
   const OptionsBottomSheet({
-    super.key,
-    required this.options,
+    required this.options, super.key,
   });
+  final List<OptionItem> options;
 
   @override
   Widget build(BuildContext context) {
@@ -180,10 +173,6 @@ class OptionsBottomSheet extends StatelessWidget {
 }
 
 class OptionItem {
-  final String title;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isDestructive;
 
   const OptionItem({
     required this.title,
@@ -191,17 +180,20 @@ class OptionItem {
     required this.onTap,
     this.isDestructive = false,
   });
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool isDestructive;
 }
 
 class FloatingActionGroup extends StatelessWidget {
-  final List<FloatingActionItem> actions;
-  final Color? backgroundColor;
 
   const FloatingActionGroup({
-    super.key,
-    required this.actions,
+    required this.actions, super.key,
     this.backgroundColor,
   });
+  final List<FloatingActionItem> actions;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -242,13 +234,13 @@ class FloatingActionGroup extends StatelessWidget {
 }
 
 class FloatingActionItem {
-  final String title;
-  final IconData icon;
-  final VoidCallback onPressed;
 
   const FloatingActionItem({
     required this.title,
     required this.icon,
     required this.onPressed,
   });
+  final String title;
+  final IconData icon;
+  final VoidCallback onPressed;
 }

@@ -2,7 +2,7 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
     paths:
       - "lib/**"
       - "assets/**"
@@ -69,5 +69,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build/web --project-name=dimiplan-mobile
+          command: pages deploy build/web --project-name=${{ github.ref_name == 'main' && 'dimiplan-mobile' || 'dimiplan-mobile-dev' }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

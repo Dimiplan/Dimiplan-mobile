@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:dimiplan/theme/app_theme.dart';
 import 'package:color_shade/color_shade.dart';
 
 /// 앱 전체에서 사용되는 일관된 버튼 디자인
 /// 웹 버전과 동일한 디자인 시스템 적용
 class AppButton extends StatelessWidget {
+
+  const AppButton({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+    this.isFullWidth = false,
+    this.icon,
+    this.variant = ButtonVariant.primary,
+    this.size = ButtonSize.medium,
+    this.disabled = false,
+    this.rounded = false,
+  });
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
@@ -14,19 +28,6 @@ class AppButton extends StatelessWidget {
   final ButtonSize size;
   final bool disabled;
   final bool rounded;
-
-  const AppButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-    this.isFullWidth = false,
-    this.icon,
-    this.variant = ButtonVariant.primary,
-    this.size = ButtonSize.medium,
-    this.disabled = false,
-    this.rounded = false,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +46,19 @@ class AppButton extends StatelessWidget {
     // 버튼 테두리 스타일 설정
     final BorderSide borderSide = _getBorderSide(theme);
 
-    return SizedBox(
-      width: isFullWidth ? double.infinity : null,
-      height: height,
-      child: ElevatedButton(
-        onPressed: (disabled || isLoading) ? null : onPressed,
+    return Semantics(
+      button: true,
+      enabled: !disabled && !isLoading,
+      label: text,
+      hint: _getSemanticHint(),
+      child: SizedBox(
+        width: isFullWidth ? double.infinity : null,
+        height: height,
+        child: ElevatedButton(
+        onPressed: (disabled || isLoading) ? null : () {
+          HapticFeedback.lightImpact();
+          onPressed();
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
@@ -72,6 +81,7 @@ class AppButton extends StatelessWidget {
                 ? _buildLoadingIndicator(foregroundColor)
                 : _buildButtonContent(foregroundColor),
       ),
+    ),
     );
   }
 
@@ -185,7 +195,7 @@ class AppButton extends StatelessWidget {
 
   BorderSide _getBorderSide(ThemeData theme) {
     if (variant == ButtonVariant.secondary) {
-      return BorderSide(color: theme.colorScheme.outline, width: 1.0);
+      return BorderSide(color: theme.colorScheme.outline);
     }
 
     if (variant == ButtonVariant.text) {
@@ -193,6 +203,24 @@ class AppButton extends StatelessWidget {
     }
 
     return BorderSide.none;
+  }
+
+  String _getSemanticHint() {
+    if (isLoading) return '로딩 중입니다';
+    if (disabled) return '비활성화된 버튼입니다';
+    
+    switch (variant) {
+      case ButtonVariant.primary:
+        return '기본 버튼';
+      case ButtonVariant.secondary:
+        return '보조 버튼';
+      case ButtonVariant.danger:
+        return '위험한 동작을 수행하는 버튼입니다';
+      case ButtonVariant.success:
+        return '성공 동작을 수행하는 버튼입니다';
+      case ButtonVariant.text:
+        return '텍스트 버튼';
+    }
   }
 }
 

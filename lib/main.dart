@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder:
           (context, themeProvider, _) => MaterialApp(
-            title: "디미플랜",
+            title: '디미플랜',
 
             // 다국어 지원 설정
             localizationsDelegates: GlobalMaterialLocalizations.delegates,

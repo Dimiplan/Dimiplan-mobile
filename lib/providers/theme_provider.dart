@@ -3,14 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/theme/app_theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  static const String _themePreferenceKey = 'dimiplan_dark_mode';
-
-  bool _isDarkMode = false;
-  ThemeData _themeData = AppTheme.lightTheme();
 
   ThemeProvider() {
     _loadThemePreference();
   }
+  static const String _themePreferenceKey = 'dimiplan_dark_mode';
+
+  bool _isDarkMode = false;
+  ThemeData _themeData = AppTheme.lightTheme();
 
   bool get isDarkMode => _isDarkMode;
   ThemeData get themeData => _themeData;

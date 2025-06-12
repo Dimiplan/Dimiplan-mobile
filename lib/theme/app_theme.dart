@@ -52,7 +52,6 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
-        brightness: Brightness.light,
       ),
       primaryColor: primaryColor,
       scaffoldBackgroundColor: background,

@@ -10,7 +10,7 @@ class ApiUtils {
   }) async {
     try {
       if (shouldValidateSession) {
-        final isSessionValid = await Http.isSessionValid();
+        final isSessionValid = await httpClient.isSessionValid();
         if (!isSessionValid) {
           return null;
         }
@@ -34,7 +34,7 @@ class ApiUtils {
           path,
           queryParams,
         );
-        final response = await Http.get(url);
+        final response = await httpClient.get(url);
 
         if (response.statusCode == 200) {
           return json.decode(response.body);
@@ -53,7 +53,7 @@ class ApiUtils {
     return performApiCall<Map<String, dynamic>?>(
       apiCall: () async {
         final url = Uri.https(ApiConstants.backendHost, path);
-        final response = await Http.post(
+        final response = await httpClient.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(data),

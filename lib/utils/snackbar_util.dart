@@ -38,7 +38,6 @@ void showSuccessSnackBar(
   showSnackBar(
     context,
     message,
-    isError: false,
     duration: duration,
     action: action,
   );

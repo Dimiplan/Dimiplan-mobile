@@ -22,7 +22,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> checkAuth() async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        final isValid = await Http.isSessionValid();
+        final isValid = await httpClient.isSessionValid();
 
         if (!isValid) {
           _setAuthenticated(false);
@@ -63,7 +63,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
         ApiConstants.backendHost,
         ApiConstants.registeredPath,
       );
-      final response = await Http.get(url);
+      final response = await httpClient.get(url);
 
       if (response.statusCode != 200) {
         // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
@@ -115,28 +115,23 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
         };
 
         final url = ApiUtils.buildApiUrl(ApiConstants.loginPath);
-        final response = await Http.post(
+        final response = await httpClient.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(body),
         );
 
         if (response.statusCode == 200) {
-          String? sessionId = response.headers['x-session-id'];
-
-          if (sessionId == null) {
-            final responseData = json.decode(response.body);
-            sessionId = responseData['sessionId'];
-          }
-
+          final String? sessionId = response.headers['x-session-id'];
+          
           if (sessionId != null) {
-            await Http.setSessionId(sessionId);
-            await _fetchUserInfo();
-            await _fetchTaskCount();
+            await httpClient.setSessionId(sessionId);
           } else {
-            throw Exception('유효하지 않은 세션 ID');
+            throw Exception('세션 ID를 받을 수 없습니다.');
           }
-        } else {
+          await _fetchUserInfo();
+          await _fetchTaskCount();
+                } else {
           throw Exception('로그인 실패: ${response.statusCode}, ${response.body}');
         }
       },
@@ -162,7 +157,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
 
   /// 세션 초기화
   Future<void> _clearSession() async {
-    await Http.clearSessionId();
+    await httpClient.clearSessionId();
   }
 
   /// 사용자 정보 업데이트

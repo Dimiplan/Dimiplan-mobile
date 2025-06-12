@@ -1,8 +1,5 @@
 /// 채팅방 모델
 class ChatRoom {
-  final int id;
-  final String name;
-  final String owner;
 
   const ChatRoom({required this.id, required this.name, required this.owner});
 
@@ -14,6 +11,9 @@ class ChatRoom {
       owner: map['owner'] ?? '',
     );
   }
+  final int id;
+  final String name;
+  final String owner;
 
   /// ChatRoom 객체를 Map으로 변환
   Map<String, dynamic> toMap() {
@@ -28,11 +28,6 @@ class ChatRoom {
 
 /// 채팅 메시지 모델
 class ChatMessage {
-  final int id;
-  final String message;
-  final String sender; // 'user' 또는 'ai'
-  final int from; // 채팅방 ID
-  final String owner;
 
   const ChatMessage({
     required this.id,
@@ -52,6 +47,11 @@ class ChatMessage {
       owner: map['owner'] ?? '',
     );
   }
+  final int id;
+  final String message;
+  final String sender; // 'user' 또는 'ai'
+  final int from; // 채팅방 ID
+  final String owner;
 
   /// ChatMessage 객체를 Map으로 변환
   Map<String, dynamic> toMap() {

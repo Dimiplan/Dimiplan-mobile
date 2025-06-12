@@ -6,6 +6,27 @@ import 'package:dimiplan/theme/app_theme.dart';
 /// 앱 전체에서 사용하는 입력 필드 컴포넌트
 /// 라벨, 오류 메시지, 부동 라벨 등을 지원
 class AppTextField extends StatefulWidget {
+
+  const AppTextField({
+    required this.label, required this.controller, super.key,
+    this.placeholder,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.text,
+    this.errorText,
+    this.onChanged,
+    this.onSubmitted,
+    this.autofocus = false,
+    this.enabled = true,
+    this.maxLines = 1,
+    this.maxLength,
+    this.contentPadding,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.inputFormatters,
+    this.focusNode,
+    this.textInputAction,
+    this.readOnly = false,
+  });
   final String label;
   final String? placeholder;
   final TextEditingController controller;
@@ -25,29 +46,6 @@ class AppTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final bool readOnly;
-
-  const AppTextField({
-    super.key,
-    required this.label,
-    this.placeholder,
-    required this.controller,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.text,
-    this.errorText,
-    this.onChanged,
-    this.onSubmitted,
-    this.autofocus = false,
-    this.enabled = true,
-    this.maxLines = 1,
-    this.maxLength,
-    this.contentPadding,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.inputFormatters,
-    this.focusNode,
-    this.textInputAction,
-    this.readOnly = false,
-  });
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -195,6 +193,13 @@ class _AppTextFieldState extends State<AppTextField> {
 
 /// 드롭다운 필드 (학년/반 선택 등에 사용)
 class AppDropdownField<T> extends StatelessWidget {
+
+  const AppDropdownField({
+    required this.label, required this.value, required this.items, required this.onChanged, super.key,
+    this.errorText,
+    this.enabled = true,
+    this.hint,
+  });
   final String label;
   final T? value;
   final List<DropdownMenuItem<T>> items;
@@ -202,17 +207,6 @@ class AppDropdownField<T> extends StatelessWidget {
   final String? errorText;
   final bool enabled;
   final String? hint;
-
-  const AppDropdownField({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-    this.errorText,
-    this.enabled = true,
-    this.hint,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +286,6 @@ class AppDropdownField<T> extends StatelessWidget {
               Icons.arrow_drop_down_circle,
               color: enabled ? theme.colorScheme.primary : theme.disabledColor,
             ),
-            isDense: true,
             isExpanded: true,
             dropdownColor: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(10.0),
@@ -307,6 +300,15 @@ class AppDropdownField<T> extends StatelessWidget {
 /// 학년/반 드롭다운 컨테이너
 /// 웹 버전의 GradeClassDropdown 컴포넌트와 동일한 기능
 class GradeClassDropdown extends StatelessWidget {
+
+  const GradeClassDropdown({
+    required this.onGradeChanged, required this.onClassChanged, super.key,
+    this.grade,
+    this.classValue,
+    this.gradeError,
+    this.classError,
+    this.enabled = true,
+  });
   final String? grade;
   final String? classValue;
   final Function(String?) onGradeChanged;
@@ -314,17 +316,6 @@ class GradeClassDropdown extends StatelessWidget {
   final String? gradeError;
   final String? classError;
   final bool enabled;
-
-  const GradeClassDropdown({
-    super.key,
-    this.grade,
-    this.classValue,
-    required this.onGradeChanged,
-    required this.onClassChanged,
-    this.gradeError,
-    this.classError,
-    this.enabled = true,
-  });
 
   @override
   Widget build(BuildContext context) {

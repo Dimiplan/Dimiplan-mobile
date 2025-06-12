@@ -3,20 +3,16 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/widgets/button.dart';
 
 class UnauthenticatedState extends StatelessWidget {
+
+  const UnauthenticatedState({
+    required this.title, required this.subtitle, required this.actionText, required this.onAction, super.key,
+    this.icon = Icons.lock_outline,
+  });
   final String title;
   final String subtitle;
   final String actionText;
   final VoidCallback onAction;
   final IconData icon;
-
-  const UnauthenticatedState({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.actionText,
-    required this.onAction,
-    this.icon = Icons.lock_outline,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +45,6 @@ class UnauthenticatedState extends StatelessWidget {
             AppButton(
               text: actionText,
               icon: Icons.login,
-              variant: ButtonVariant.primary,
               size: ButtonSize.large,
               rounded: true,
               onPressed: onAction,
@@ -62,6 +57,12 @@ class UnauthenticatedState extends StatelessWidget {
 }
 
 class EmptyState extends StatelessWidget {
+
+  const EmptyState({
+    required this.title, required this.subtitle, required this.actionText, required this.onAction, required this.icon, super.key,
+    this.secondaryActionText,
+    this.onSecondaryAction,
+  });
   final String title;
   final String subtitle;
   final String actionText;
@@ -69,17 +70,6 @@ class EmptyState extends StatelessWidget {
   final IconData icon;
   final String? secondaryActionText;
   final VoidCallback? onSecondaryAction;
-
-  const EmptyState({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.actionText,
-    required this.onAction,
-    required this.icon,
-    this.secondaryActionText,
-    this.onSecondaryAction,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +102,6 @@ class EmptyState extends StatelessWidget {
             AppButton(
               text: actionText,
               icon: Icons.add,
-              variant: ButtonVariant.primary,
               size: ButtonSize.large,
               rounded: true,
               onPressed: onAction,
@@ -133,9 +122,9 @@ class EmptyState extends StatelessWidget {
 }
 
 class LoadingState extends StatelessWidget {
-  final String? message;
 
   const LoadingState({super.key, this.message});
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
@@ -158,18 +147,14 @@ class LoadingState extends StatelessWidget {
 }
 
 class ErrorState extends StatelessWidget {
+
+  const ErrorState({
+    required this.title, required this.message, required this.actionText, required this.onAction, super.key,
+  });
   final String title;
   final String message;
   final String actionText;
   final VoidCallback onAction;
-
-  const ErrorState({
-    super.key,
-    required this.title,
-    required this.message,
-    required this.actionText,
-    required this.onAction,
-  });
 
   @override
   Widget build(BuildContext context) {

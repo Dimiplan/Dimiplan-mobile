@@ -5,14 +5,14 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/widgets/button.dart';
 
 class AppBackground extends StatelessWidget {
-  final String? assetPath;
-  final double opacity;
 
   const AppBackground({
     super.key,
     this.assetPath = 'assets/images/background.svg',
     this.opacity = 0.6,
   });
+  final String? assetPath;
+  final double opacity;
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +29,17 @@ class AppBackground extends StatelessWidget {
 }
 
 class AppHeader extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final IconData? icon;
-  final double iconSize;
 
   const AppHeader({
-    super.key,
-    required this.title,
+    required this.title, super.key,
     this.subtitle,
     this.icon = Icons.calendar_today_rounded,
     this.iconSize = 100,
   });
+  final String title;
+  final String? subtitle;
+  final IconData? icon;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -77,16 +76,15 @@ class AppHeader extends StatelessWidget {
 }
 
 class TypewriterText extends StatelessWidget {
-  final List<String> texts;
-  final Duration speed;
-  final bool repeat;
 
   const TypewriterText({
-    super.key,
-    required this.texts,
+    required this.texts, super.key,
     this.speed = const Duration(milliseconds: 100),
     this.repeat = true,
   });
+  final List<String> texts;
+  final Duration speed;
+  final bool repeat;
 
   @override
   Widget build(BuildContext context) {
@@ -113,14 +111,12 @@ class TypewriterText extends StatelessWidget {
 }
 
 class AnimatedButtonGroup extends StatelessWidget {
-  final AnimationController controller;
-  final List<AnimatedButtonData> buttons;
 
   const AnimatedButtonGroup({
-    super.key,
-    required this.controller,
-    required this.buttons,
+    required this.controller, required this.buttons, super.key,
   });
+  final AnimationController controller;
+  final List<AnimatedButtonData> buttons;
 
   @override
   Widget build(BuildContext context) {
@@ -153,12 +149,6 @@ class AnimatedButtonGroup extends StatelessWidget {
 }
 
 class AnimatedButtonData {
-  final String text;
-  final IconData icon;
-  final ButtonVariant variant;
-  final ButtonSize size;
-  final bool rounded;
-  final VoidCallback? onPressed;
 
   const AnimatedButtonData({
     required this.text,
@@ -168,23 +158,27 @@ class AnimatedButtonData {
     this.rounded = true,
     this.onPressed,
   });
+  final String text;
+  final IconData icon;
+  final ButtonVariant variant;
+  final ButtonSize size;
+  final bool rounded;
+  final VoidCallback? onPressed;
 }
 
 class StatusInfoCard extends StatelessWidget {
+
+  const StatusInfoCard({
+    required this.controller, required this.message, super.key,
+    this.actionText,
+    this.onActionPressed,
+    this.actionColor,
+  });
   final AnimationController controller;
   final String message;
   final String? actionText;
   final VoidCallback? onActionPressed;
   final Color? actionColor;
-
-  const StatusInfoCard({
-    super.key,
-    required this.controller,
-    required this.message,
-    this.actionText,
-    this.onActionPressed,
-    this.actionColor,
-  });
 
   @override
   Widget build(BuildContext context) {

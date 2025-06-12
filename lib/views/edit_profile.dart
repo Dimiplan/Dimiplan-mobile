@@ -9,14 +9,12 @@ import 'package:dimiplan/utils/snackbar_util.dart';
 import 'package:dimiplan/utils/validation_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final User user;
-  final Function updateUserInfo;
 
   const EditProfileScreen({
-    super.key,
-    required this.user,
-    required this.updateUserInfo,
+    required this.user, required this.updateUserInfo, super.key,
   });
+  final User user;
+  final Function updateUserInfo;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -363,7 +361,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Center(
                     child: AppButton(
                       text: '저장',
-                      variant: ButtonVariant.primary,
                       isLoading: _isSubmitting,
                       size: ButtonSize.large,
                       rounded: true,

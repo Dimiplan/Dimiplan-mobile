@@ -237,8 +237,6 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                         AppButton(
                           text: '회원정보 수정',
                           icon: Icons.edit,
-                          variant: ButtonVariant.primary,
-                          size: ButtonSize.medium,
                           isFullWidth: true,
                           onPressed: () => _navigateToEditProfile(authProvider),
                         ),
@@ -250,7 +248,6 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                           text: '로그아웃',
                           icon: Icons.logout,
                           variant: ButtonVariant.secondary,
-                          size: ButtonSize.medium,
                           isFullWidth: true,
                           onPressed: () => _handleLogout(authProvider),
                         ),
@@ -363,7 +360,6 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
                 AppButton(
                   text: '구글 계정으로 로그인',
                   icon: Icons.login,
-                  variant: ButtonVariant.primary,
                   size: ButtonSize.large,
                   isFullWidth: true,
                   rounded: true,

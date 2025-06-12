@@ -1,19 +1,11 @@
 /// 사용자 모델
 class User {
-  final String id;
-  final String name;
-  final int? grade;
-  final int? classnum;
-  final String email;
-  final String profileImage;
 
   const User({
     required this.id,
     required this.name,
-    this.grade,
+    required this.email, required this.profileImage, this.grade,
     this.classnum,
-    required this.email,
-    required this.profileImage,
   });
 
   /// Map에서 User 객체 생성
@@ -27,6 +19,12 @@ class User {
       profileImage: map['profile_image'] ?? '',
     );
   }
+  final String id;
+  final String name;
+  final int? grade;
+  final int? classnum;
+  final String email;
+  final String profileImage;
 
   /// User 객체를 Map으로 변환
   Map<String, dynamic> toMap() {

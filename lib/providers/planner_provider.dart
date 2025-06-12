@@ -34,7 +34,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         _planners = [];
         _setLoading(false);
@@ -47,13 +47,16 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.getEveryPlanners,
       );
 
-      final response = await Http.get(url);
+      final response = await httpClient.get(
+        url,
+        cacheTtl: const Duration(minutes: 2),
+      );
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
         final List<Planner> loadedPlanners = [];
 
-        for (var planner in data) {
+        for (final planner in data) {
           loadedPlanners.add(Planner.fromMap(planner));
         }
 
@@ -135,7 +138,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         _tasks = [];
         _setLoading(false);
@@ -148,13 +151,16 @@ class PlannerProvider extends ChangeNotifier {
         {'id': _selectedPlanner!.id.toString()},
       );
 
-      final response = await Http.get(url);
+      final response = await httpClient.get(
+        url,
+        cacheTtl: const Duration(minutes: 5),
+      );
 
       if (response.statusCode == ApiConstants.success) {
         final data = json.decode(response.body);
         final List<Task> loadedTasks = [];
 
-        for (var task in data) {
+        for (final task in data) {
           loadedTasks.add(Task.fromMap(task));
         }
 
@@ -196,7 +202,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
@@ -205,7 +211,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.addPlannerPath,
       );
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'name': name, 'isDaily': isDaily}),
@@ -233,13 +239,13 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
 
       final url = Uri.https(ApiConstants.backendHost, ApiConstants.addTaskPath);
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
@@ -267,7 +273,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
@@ -276,7 +282,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.updateTaskPath,
       );
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode(task.toMap()),
@@ -304,7 +310,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
@@ -313,7 +319,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.deleteTaskPath,
       );
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id}),
@@ -341,7 +347,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
@@ -350,7 +356,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.renamePlannerPath,
       );
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id, 'name': newName}),
@@ -378,7 +384,7 @@ class PlannerProvider extends ChangeNotifier {
 
     try {
       // 세션 유효성 검사
-      final isSessionValid = await Http.isSessionValid();
+      final isSessionValid = await httpClient.isSessionValid();
       if (!isSessionValid) {
         throw Exception('로그인이 필요합니다.');
       }
@@ -387,7 +393,7 @@ class PlannerProvider extends ChangeNotifier {
         ApiConstants.backendHost,
         ApiConstants.deletePlannerPath,
       );
-      final response = await Http.post(
+      final response = await httpClient.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id': id}),

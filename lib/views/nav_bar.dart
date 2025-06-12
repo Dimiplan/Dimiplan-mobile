@@ -15,9 +15,9 @@ import 'package:dimiplan/views/account.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class Nav extends StatefulWidget {
-  final int? initialTab;
 
   const Nav({super.key, this.initialTab});
+  final int? initialTab;
 
   @override
   State<Nav> createState() => _NavState();
@@ -230,7 +230,6 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
         title: SvgPicture.asset(
           'assets/icons/logo_rectangular.svg',
           height: 50,
-          fit: BoxFit.contain,
         ),
         actions: [
           // 다크모드 토글 버튼
@@ -303,9 +302,9 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
 
 /// 네비게이션 탭 데이터 클래스
 class _NavTab {
+
+  _NavTab({required this.icon, required this.label, required this.screen});
   final IconData icon;
   final String label;
   final Widget Function(Function(int) onTabChange) screen;
-
-  _NavTab({required this.icon, required this.label, required this.screen});
 }

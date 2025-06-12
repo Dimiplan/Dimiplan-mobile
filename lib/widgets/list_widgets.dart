@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:color_shade/color_shade.dart';
@@ -8,18 +9,18 @@ import 'package:dimiplan/widgets/loading_indicator.dart';
 import 'package:dimiplan/utils/dialog_utils.dart';
 
 class TaskListItem extends StatelessWidget {
-  final Task task;
-  final Function(Task) onToggleComplete;
-  final Function(Task) onEdit;
-  final Function(Task) onDelete;
 
   const TaskListItem({
-    super.key,
     required this.task,
     required this.onToggleComplete,
     required this.onEdit,
     required this.onDelete,
+    super.key,
   });
+  final Task task;
+  final Function(Task) onToggleComplete;
+  final Function(Task) onEdit;
+  final Function(Task) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,10 @@ class TaskListItem extends StatelessWidget {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (_) => _handleDelete(context),
+            onPressed: (_) {
+              HapticFeedback.mediumImpact();
+              _handleDelete(context);
+            },
             backgroundColor: theme.colorScheme.error,
             foregroundColor: Colors.white,
             icon: Icons.delete,
@@ -53,20 +57,24 @@ class TaskListItem extends StatelessWidget {
             width: 2.0,
           ),
         ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 8.0,
-          ),
-          title: Text(
-            task.contents,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              decoration: isCompleted ? TextDecoration.lineThrough : null,
-              color: isCompleted
-                  ? theme.colorScheme.onSurface.shade500
-                  : theme.colorScheme.onSurface,
+        child: Semantics(
+          label: '작업: ${task.contents}',
+          hint: isCompleted ? '완료된 작업' : '미완료 작업',
+          onTap: () => onEdit(task),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
             ),
-          ),
+            title: Text(
+              task.contents,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                decoration: isCompleted ? TextDecoration.lineThrough : null,
+                color: isCompleted
+                    ? theme.colorScheme.onSurface.shade500
+                    : theme.colorScheme.onSurface,
+              ),
+            ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -75,14 +83,22 @@ class TaskListItem extends StatelessWidget {
                 isCompleted: isCompleted,
               ),
               const SizedBox(width: 8),
-              Checkbox(
-                value: isCompleted,
-                activeColor: theme.colorScheme.primary,
-                onChanged: (_) => onToggleComplete(task),
+              Semantics(
+                label: isCompleted ? '작업 완료 취소' : '작업 완료 처리',
+                hint: '체크박스',
+                child: Checkbox(
+                  value: isCompleted,
+                  activeColor: theme.colorScheme.primary,
+                  onChanged: (_) {
+                    HapticFeedback.selectionClick();
+                    onToggleComplete(task);
+                  },
+                ),
               ),
             ],
           ),
-          onTap: () => onEdit(task),
+            onTap: () => onEdit(task),
+          ),
         ),
       ),
     );
@@ -114,14 +130,14 @@ class TaskListItem extends StatelessWidget {
 }
 
 class PriorityIndicator extends StatelessWidget {
-  final int priority;
-  final bool isCompleted;
 
   const PriorityIndicator({
-    super.key,
     required this.priority,
     required this.isCompleted,
+    super.key,
   });
+  final int priority;
+  final bool isCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -149,55 +165,63 @@ class PriorityIndicator extends StatelessWidget {
 }
 
 class ChatRoomListItem extends StatelessWidget {
-  final ChatRoom room;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const ChatRoomListItem({
-    super.key,
     required this.room,
     required this.isSelected,
     required this.onTap,
+    super.key,
   });
+  final ChatRoom room;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isSelected ? theme.colorScheme.primary.shade100 : null,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.dividerColor.withOpacity(0.3),
-            width: 0.5,
+    return Semantics(
+      label: '채팅방: ${room.name}',
+      hint: isSelected ? '선택된 채팅방' : '채팅방 선택하기',
+      button: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary.shade100 : null,
+          border: Border(
+            bottom: BorderSide(
+              color: theme.dividerColor.withValues(alpha: 0.3),
+              width: 0.5,
+            ),
           ),
         ),
-      ),
-      child: ListTile(
-        title: Text(
-          room.name,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? theme.colorScheme.primary : null,
+        child: ListTile(
+          title: Text(
+            room.name,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? theme.colorScheme.primary : null,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          dense: true,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
         ),
-        dense: true,
-        onTap: onTap,
       ),
     );
   }
 }
 
 class ChatMessageBubble extends StatelessWidget {
-  final ChatMessage message;
 
   const ChatMessageBubble({
-    super.key,
     required this.message,
+    super.key,
   });
+  final ChatMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -267,16 +291,16 @@ class ChatMessageBubble extends StatelessWidget {
 }
 
 class SectionHeader extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final Widget? action;
 
   const SectionHeader({
-    super.key,
     required this.title,
+    super.key,
     this.subtitle,
     this.action,
   });
+  final String title;
+  final String? subtitle;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -311,22 +335,22 @@ class SectionHeader extends StatelessWidget {
 }
 
 class ChatInput extends StatelessWidget {
+
+  const ChatInput({
+    required this.controller,
+    required this.isComposing,
+    required this.isLoading,
+    required this.onSend,
+    required this.onChanged,
+    super.key,
+    this.hintText = 'AI에게 질문해보세요...',
+  });
   final TextEditingController controller;
   final bool isComposing;
   final bool isLoading;
   final VoidCallback onSend;
   final ValueChanged<String> onChanged;
   final String? hintText;
-
-  const ChatInput({
-    super.key,
-    required this.controller,
-    required this.isComposing,
-    required this.isLoading,
-    required this.onSend,
-    required this.onChanged,
-    this.hintText = 'AI에게 질문해보세요...',
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +401,10 @@ class ChatInput extends StatelessWidget {
                     ? theme.colorScheme.primary 
                     : theme.disabledColor,
               ),
-              onPressed: isComposing ? onSend : null,
+              onPressed: isComposing ? () {
+                HapticFeedback.lightImpact();
+                onSend();
+              } : null,
             ),
         ],
       ),

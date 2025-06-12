@@ -37,7 +37,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         final data = await ApiUtils.fetchData(ApiConstants.getRoomListPath);
         if (data != null) {
           final rooms = <ChatRoom>[];
-          for (var room in data['roomData']) {
+          for (final room in data['roomData']) {
             rooms.add(ChatRoom.fromMap(room));
           }
           _chatRooms = rooms;
@@ -100,7 +100,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         );
         if (data != null) {
           final messages = <ChatMessage>[];
-          for (var message in data['chatData']) {
+          for (final message in data['chatData']) {
             messages.add(ChatMessage.fromMap(message));
           }
           _messages = messages;
@@ -124,7 +124,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
     await AsyncOperationHandler.execute(
       operation: () async {
         // 세션 유효성 검사
-        final isSessionValid = await Http.isSessionValid();
+        final isSessionValid = await httpClient.isSessionValid();
         if (!isSessionValid) {
           throw Exception('로그인이 필요합니다.');
         }
@@ -144,7 +144,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         // API에 따라 AI 모델 엔드포인트 선택
         final url = Uri.https(ApiConstants.backendHost, ApiConstants.autoAIPath);
 
-        final response = await Http.post(
+        final response = await httpClient.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
@@ -158,7 +158,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
             id: DateTime.now().millisecondsSinceEpoch + 1,
             message:
                 responseData['message'] ??
-                "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
+                '죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.',
             sender: 'ai',
             from: _selectedRoom!.id,
             owner: '',
@@ -176,7 +176,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         // 오류 메시지 추가
         final errorMessage = ChatMessage(
           id: DateTime.now().millisecondsSinceEpoch + 2,
-          message: "죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.",
+          message: '죄송합니다. 응답을 생성하는 데 문제가 발생했습니다. 다시 시도해 주세요.',
           sender: 'ai',
           from: _selectedRoom!.id,
           owner: '',
