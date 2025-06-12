@@ -20,7 +20,7 @@ dependencies:
   flutter_slidable: ^4.0.0
   flutter_svg: ^2.1.0
   google_sign_in: ^6.3.0
-  gpt_markdown: ^1.0.19
+  gpt_markdown: ^1.0.20
   http: ^1.4.0
   intl: ^0.20.2
   path_provider: ^2.1.5
