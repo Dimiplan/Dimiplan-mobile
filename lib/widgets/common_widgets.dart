@@ -5,7 +5,6 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/widgets/button.dart';
 
 class AppBackground extends StatelessWidget {
-
   const AppBackground({
     super.key,
     this.assetPath = 'assets/images/background.svg',
@@ -19,19 +18,16 @@ class AppBackground extends StatelessWidget {
     return Positioned.fill(
       child: Opacity(
         opacity: opacity,
-        child: SvgPicture.asset(
-          assetPath!,
-          fit: BoxFit.cover,
-        ),
+        child: SvgPicture.asset(assetPath!, fit: BoxFit.cover),
       ),
     );
   }
 }
 
 class AppHeader extends StatelessWidget {
-
   const AppHeader({
-    required this.title, super.key,
+    required this.title,
+    super.key,
     this.subtitle,
     this.icon = Icons.calendar_today_rounded,
     this.iconSize = 100,
@@ -47,12 +43,7 @@ class AppHeader extends StatelessWidget {
 
     return Column(
       children: [
-        if (icon != null)
-          Icon(
-            icon,
-            size: iconSize,
-            color: theme.primaryColor,
-          ),
+        if (icon != null) Icon(icon, size: iconSize, color: theme.primaryColor),
         if (icon != null) const SizedBox(height: 24),
         Text(
           title,
@@ -76,9 +67,9 @@ class AppHeader extends StatelessWidget {
 }
 
 class TypewriterText extends StatelessWidget {
-
   const TypewriterText({
-    required this.texts, super.key,
+    required this.texts,
+    super.key,
     this.speed = const Duration(milliseconds: 100),
     this.repeat = true,
   });
@@ -98,9 +89,10 @@ class TypewriterText extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
         child: AnimatedTextKit(
-          animatedTexts: texts
-              .map((text) => TypewriterAnimatedText(text, speed: speed))
-              .toList(),
+          animatedTexts:
+              texts
+                  .map((text) => TypewriterAnimatedText(text, speed: speed))
+                  .toList(),
           repeatForever: repeat,
           isRepeatingAnimation: repeat,
           displayFullTextOnTap: true,
@@ -111,9 +103,10 @@ class TypewriterText extends StatelessWidget {
 }
 
 class AnimatedButtonGroup extends StatelessWidget {
-
   const AnimatedButtonGroup({
-    required this.controller, required this.buttons, super.key,
+    required this.controller,
+    required this.buttons,
+    super.key,
   });
   final AnimationController controller;
   final List<AnimatedButtonData> buttons;
@@ -121,35 +114,35 @@ class AnimatedButtonGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: buttons.asMap().entries.map((entry) {
-        final index = entry.key;
-        final button = entry.value;
-        
-        return Column(
-          children: [
-            if (index > 0) const SizedBox(height: 20),
-            AnimatedOpacity(
-              opacity: controller.value,
-              duration: Duration(milliseconds: 500 + (index * 100)),
-              curve: Curves.easeIn,
-              child: AppButton(
-                text: button.text,
-                icon: button.icon,
-                variant: button.variant,
-                size: button.size,
-                rounded: button.rounded,
-                onPressed: button.onPressed!,
-              ),
-            ),
-          ],
-        );
-      }).toList(),
+      children:
+          buttons.asMap().entries.map((entry) {
+            final index = entry.key;
+            final button = entry.value;
+
+            return Column(
+              children: [
+                if (index > 0) const SizedBox(height: 20),
+                AnimatedOpacity(
+                  opacity: controller.value,
+                  duration: Duration(milliseconds: 500 + (index * 100)),
+                  curve: Curves.easeIn,
+                  child: AppButton(
+                    text: button.text,
+                    icon: button.icon,
+                    variant: button.variant,
+                    size: button.size,
+                    rounded: button.rounded,
+                    onPressed: button.onPressed!,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
     );
   }
 }
 
 class AnimatedButtonData {
-
   const AnimatedButtonData({
     required this.text,
     required this.icon,
@@ -167,9 +160,10 @@ class AnimatedButtonData {
 }
 
 class StatusInfoCard extends StatelessWidget {
-
   const StatusInfoCard({
-    required this.controller, required this.message, super.key,
+    required this.controller,
+    required this.message,
+    super.key,
     this.actionText,
     this.onActionPressed,
     this.actionColor,

@@ -142,7 +142,10 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         safeNotifyListeners();
 
         // API에 따라 AI 모델 엔드포인트 선택
-        final url = Uri.https(ApiConstants.backendHost, ApiConstants.autoAIPath);
+        final url = Uri.https(
+          ApiConstants.backendHost,
+          ApiConstants.autoAIPath,
+        );
 
         final response = await httpClient.post(
           url,
@@ -187,5 +190,4 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
       },
     );
   }
-
 }

@@ -28,7 +28,12 @@ class ValidationUtils {
     return null;
   }
 
-  static String? validateLength(String? value, int minLength, int maxLength, String fieldName) {
+  static String? validateLength(
+    String? value,
+    int minLength,
+    int maxLength,
+    String fieldName,
+  ) {
     if (!isNotEmpty(value)) {
       return '$fieldName을(를) 입력해주세요.';
     }

@@ -3,9 +3,10 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/utils/dialog_utils.dart';
 
 class AppTabBar extends StatelessWidget {
-
   const AppTabBar({
-    required this.controller, required this.tabNames, super.key,
+    required this.controller,
+    required this.tabNames,
+    super.key,
     this.isScrollable = false,
   });
   final TabController controller;
@@ -42,9 +43,10 @@ class AppTabBar extends StatelessWidget {
 }
 
 class SideNavigation extends StatelessWidget {
-
   const SideNavigation({
-    required this.title, required this.children, super.key,
+    required this.title,
+    required this.children,
+    super.key,
     this.headerAction,
     this.width = 250,
   });
@@ -61,11 +63,7 @@ class SideNavigation extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(
-          right: BorderSide(
-            color: theme.dividerColor,
-          ),
-        ),
+        border: Border(right: BorderSide(color: theme.dividerColor)),
       ),
       child: Column(
         children: [
@@ -73,11 +71,7 @@ class SideNavigation extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.shade50,
-              border: Border(
-                bottom: BorderSide(
-                  color: theme.dividerColor,
-                ),
-              ),
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,9 +87,10 @@ class SideNavigation extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: children.isEmpty
-                ? _buildEmptyState(theme)
-                : ListView(children: children),
+            child:
+                children.isEmpty
+                    ? _buildEmptyState(theme)
+                    : ListView(children: children),
           ),
         ],
       ),
@@ -130,34 +125,36 @@ class SideNavigation extends StatelessWidget {
 }
 
 class OptionsBottomSheet extends StatelessWidget {
-
-  const OptionsBottomSheet({
-    required this.options, super.key,
-  });
+  const OptionsBottomSheet({required this.options, super.key});
   final List<OptionItem> options;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: options.map((option) {
-        return ListTile(
-          leading: Icon(
-            option.icon,
-            color: option.isDestructive ? Theme.of(context).colorScheme.error : null,
-          ),
-          title: Text(
-            option.title,
-            style: option.isDestructive
-                ? TextStyle(color: Theme.of(context).colorScheme.error)
-                : null,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            option.onTap();
-          },
-        );
-      }).toList(),
+      children:
+          options.map((option) {
+            return ListTile(
+              leading: Icon(
+                option.icon,
+                color:
+                    option.isDestructive
+                        ? Theme.of(context).colorScheme.error
+                        : null,
+              ),
+              title: Text(
+                option.title,
+                style:
+                    option.isDestructive
+                        ? TextStyle(color: Theme.of(context).colorScheme.error)
+                        : null,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                option.onTap();
+              },
+            );
+          }).toList(),
     );
   }
 
@@ -173,7 +170,6 @@ class OptionsBottomSheet extends StatelessWidget {
 }
 
 class OptionItem {
-
   const OptionItem({
     required this.title,
     required this.icon,
@@ -187,9 +183,9 @@ class OptionItem {
 }
 
 class FloatingActionGroup extends StatelessWidget {
-
   const FloatingActionGroup({
-    required this.actions, super.key,
+    required this.actions,
+    super.key,
     this.backgroundColor,
   });
   final List<FloatingActionItem> actions;
@@ -218,23 +214,23 @@ class FloatingActionGroup extends StatelessWidget {
       context: context,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: actions.map((action) {
-          return ListTile(
-            leading: Icon(action.icon),
-            title: Text(action.title),
-            onTap: () {
-              Navigator.pop(context);
-              action.onPressed();
-            },
-          );
-        }).toList(),
+        children:
+            actions.map((action) {
+              return ListTile(
+                leading: Icon(action.icon),
+                title: Text(action.title),
+                onTap: () {
+                  Navigator.pop(context);
+                  action.onPressed();
+                },
+              );
+            }).toList(),
       ),
     );
   }
 }
 
 class FloatingActionItem {
-
   const FloatingActionItem({
     required this.title,
     required this.icon,

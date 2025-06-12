@@ -1,10 +1,11 @@
 /// 사용자 모델
 class User {
-
   const User({
     required this.id,
     required this.name,
-    required this.email, required this.profileImage, this.grade,
+    required this.email,
+    required this.profileImage,
+    this.grade,
     this.classnum,
   });
 

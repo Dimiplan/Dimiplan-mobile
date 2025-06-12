@@ -19,7 +19,10 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) async {
 
   if (result != null) {
     if (!context.mounted) return false;
-    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    final plannerProvider = Provider.of<PlannerProvider>(
+      context,
+      listen: false,
+    );
     try {
       await plannerProvider.createPlanner(result);
       return true;
@@ -36,9 +39,9 @@ Future<bool?> showCreatePlannerDialog(BuildContext context) async {
 
 /// 작업 추가/수정 화면
 class AddTaskScreen extends StatefulWidget {
-
   const AddTaskScreen({
-    required this.updateTaskList, super.key,
+    required this.updateTaskList,
+    super.key,
     this.task,
     this.selectedPlannerId,
   });
@@ -263,7 +266,10 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     bool isValid = true;
 
     // 제목 검증
-    final titleError = ValidationUtils.validateRequired(_titleController.text, '작업 이름');
+    final titleError = ValidationUtils.validateRequired(
+      _titleController.text,
+      '작업 이름',
+    );
     setState(() {
       _titleError = titleError;
     });

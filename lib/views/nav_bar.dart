@@ -15,7 +15,6 @@ import 'package:dimiplan/views/account.dart';
 import 'package:dimiplan/widgets/loading_indicator.dart';
 
 class Nav extends StatefulWidget {
-
   const Nav({super.key, this.initialTab});
   final int? initialTab;
 
@@ -302,7 +301,6 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
 
 /// 네비게이션 탭 데이터 클래스
 class _NavTab {
-
   _NavTab({required this.icon, required this.label, required this.screen});
   final IconData icon;
   final String label;

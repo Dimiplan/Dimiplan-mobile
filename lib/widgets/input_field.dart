@@ -6,9 +6,10 @@ import 'package:dimiplan/theme/app_theme.dart';
 /// 앱 전체에서 사용하는 입력 필드 컴포넌트
 /// 라벨, 오류 메시지, 부동 라벨 등을 지원
 class AppTextField extends StatefulWidget {
-
   const AppTextField({
-    required this.label, required this.controller, super.key,
+    required this.label,
+    required this.controller,
+    super.key,
     this.placeholder,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
@@ -193,9 +194,12 @@ class _AppTextFieldState extends State<AppTextField> {
 
 /// 드롭다운 필드 (학년/반 선택 등에 사용)
 class AppDropdownField<T> extends StatelessWidget {
-
   const AppDropdownField({
-    required this.label, required this.value, required this.items, required this.onChanged, super.key,
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    super.key,
     this.errorText,
     this.enabled = true,
     this.hint,
@@ -300,9 +304,10 @@ class AppDropdownField<T> extends StatelessWidget {
 /// 학년/반 드롭다운 컨테이너
 /// 웹 버전의 GradeClassDropdown 컴포넌트와 동일한 기능
 class GradeClassDropdown extends StatelessWidget {
-
   const GradeClassDropdown({
-    required this.onGradeChanged, required this.onClassChanged, super.key,
+    required this.onGradeChanged,
+    required this.onClassChanged,
+    super.key,
     this.grade,
     this.classValue,
     this.gradeError,

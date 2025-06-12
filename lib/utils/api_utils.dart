@@ -29,11 +29,7 @@ class ApiUtils {
   }) async {
     return performApiCall<Map<String, dynamic>?>(
       apiCall: () async {
-        final url = Uri.https(
-          ApiConstants.backendHost,
-          path,
-          queryParams,
-        );
+        final url = Uri.https(ApiConstants.backendHost, path, queryParams);
         final response = await httpClient.get(url);
 
         if (response.statusCode == 200) {

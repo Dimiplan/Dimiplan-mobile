@@ -3,9 +3,12 @@ import 'package:color_shade/color_shade.dart';
 import 'package:dimiplan/widgets/button.dart';
 
 class UnauthenticatedState extends StatelessWidget {
-
   const UnauthenticatedState({
-    required this.title, required this.subtitle, required this.actionText, required this.onAction, super.key,
+    required this.title,
+    required this.subtitle,
+    required this.actionText,
+    required this.onAction,
+    super.key,
     this.icon = Icons.lock_outline,
   });
   final String title;
@@ -24,11 +27,7 @@ class UnauthenticatedState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 80,
-              color: theme.colorScheme.primary.shade700,
-            ),
+            Icon(icon, size: 80, color: theme.colorScheme.primary.shade700),
             const SizedBox(height: 24),
             Text(
               title,
@@ -57,9 +56,13 @@ class UnauthenticatedState extends StatelessWidget {
 }
 
 class EmptyState extends StatelessWidget {
-
   const EmptyState({
-    required this.title, required this.subtitle, required this.actionText, required this.onAction, required this.icon, super.key,
+    required this.title,
+    required this.subtitle,
+    required this.actionText,
+    required this.onAction,
+    required this.icon,
+    super.key,
     this.secondaryActionText,
     this.onSecondaryAction,
   });
@@ -81,11 +84,7 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 80,
-              color: theme.colorScheme.primary.shade700,
-            ),
+            Icon(icon, size: 80, color: theme.colorScheme.primary.shade700),
             const SizedBox(height: 24),
             Text(
               title,
@@ -122,7 +121,6 @@ class EmptyState extends StatelessWidget {
 }
 
 class LoadingState extends StatelessWidget {
-
   const LoadingState({super.key, this.message});
   final String? message;
 
@@ -135,10 +133,7 @@ class LoadingState extends StatelessWidget {
           const CircularProgressIndicator(),
           if (message != null) ...[
             const SizedBox(height: 16),
-            Text(
-              message!,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(message!, style: Theme.of(context).textTheme.bodyMedium),
           ],
         ],
       ),
@@ -147,9 +142,12 @@ class LoadingState extends StatelessWidget {
 }
 
 class ErrorState extends StatelessWidget {
-
   const ErrorState({
-    required this.title, required this.message, required this.actionText, required this.onAction, super.key,
+    required this.title,
+    required this.message,
+    required this.actionText,
+    required this.onAction,
+    super.key,
   });
   final String title;
   final String message;
@@ -166,11 +164,7 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 80, color: theme.colorScheme.error),
             const SizedBox(height: 24),
             Text(
               title,

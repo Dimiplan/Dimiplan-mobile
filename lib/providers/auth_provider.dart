@@ -123,7 +123,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
 
         if (response.statusCode == 200) {
           final String? sessionId = response.headers['x-session-id'];
-          
+
           if (sessionId != null) {
             await httpClient.setSessionId(sessionId);
           } else {
@@ -131,7 +131,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
           }
           await _fetchUserInfo();
           await _fetchTaskCount();
-                } else {
+        } else {
           throw Exception('로그인 실패: ${response.statusCode}, ${response.body}');
         }
       },

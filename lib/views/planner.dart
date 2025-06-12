@@ -83,7 +83,10 @@ class _PlannerPageState extends State<PlannerPage>
 
   void _onTabChanged() {
     if (!_tabController.indexIsChanging) {
-      final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+      final plannerProvider = Provider.of<PlannerProvider>(
+        context,
+        listen: false,
+      );
       final planners = plannerProvider.planners;
       plannerProvider.selectPlanner(planners[_tabController.index]);
     }
@@ -103,11 +106,15 @@ class _PlannerPageState extends State<PlannerPage>
           );
         }
 
-        return Selector<PlannerProvider, ({bool isLoading, List<Planner> planners})>(
-          selector: (context, planner) => (
-            isLoading: planner.isLoading,
-            planners: planner.planners,
-          ),
+        return Selector<
+          PlannerProvider,
+          ({bool isLoading, List<Planner> planners})
+        >(
+          selector:
+              (context, planner) => (
+                isLoading: planner.isLoading,
+                planners: planner.planners,
+              ),
           builder: (context, plannerData, child) {
             if (plannerData.isLoading) {
               return const TaskListSkeleton();
@@ -115,20 +122,23 @@ class _PlannerPageState extends State<PlannerPage>
 
             if (plannerData.planners.isEmpty) {
               return Consumer<PlannerProvider>(
-                builder: (context, plannerProvider, _) => EmptyState(
-                  title: '플래너가 없습니다',
-                  subtitle: '새 플래너를 추가하고 일정 관리를 시작하세요.',
-                  actionText: '새 플래너 만들기',
-                  onAction: () => _showCreatePlannerDialog(plannerProvider),
-                  icon: Icons.folder_open,
-                  secondaryActionText: '새로고침',
-                  onSecondaryAction: () => plannerProvider.loadPlanners(),
-                ),
+                builder:
+                    (context, plannerProvider, _) => EmptyState(
+                      title: '플래너가 없습니다',
+                      subtitle: '새 플래너를 추가하고 일정 관리를 시작하세요.',
+                      actionText: '새 플래너 만들기',
+                      onAction: () => _showCreatePlannerDialog(plannerProvider),
+                      icon: Icons.folder_open,
+                      secondaryActionText: '새로고침',
+                      onSecondaryAction: () => plannerProvider.loadPlanners(),
+                    ),
               );
             }
 
             return Consumer<PlannerProvider>(
-              builder: (context, plannerProvider, _) => _buildPlannerContent(plannerProvider),
+              builder:
+                  (context, plannerProvider, _) =>
+                      _buildPlannerContent(plannerProvider),
             );
           },
         );
@@ -152,27 +162,34 @@ class _PlannerPageState extends State<PlannerPage>
         if (selectedPlanner != null)
           Selector<PlannerProvider, List<Task>>(
             selector: (context, planner) => planner.tasks,
-            builder: (context, tasks, child) => SectionHeader(
-              title: selectedPlanner.name,
-              subtitle: '${tasks.where((task) => task.isCompleted == 1).length}/${tasks.length} 완료됨',
-              action: IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () => _showPlannerOptions(selectedPlanner, plannerProvider),
-              ),
-            ),
+            builder:
+                (context, tasks, child) => SectionHeader(
+                  title: selectedPlanner.name,
+                  subtitle:
+                      '${tasks.where((task) => task.isCompleted == 1).length}/${tasks.length} 완료됨',
+                  action: IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed:
+                        () => _showPlannerOptions(
+                          selectedPlanner,
+                          plannerProvider,
+                        ),
+                  ),
+                ),
           ),
 
         // 작업 목록
         Expanded(
-          child: tasks.isEmpty
-              ? EmptyState(
-                  title: '아직 작업이 없습니다',
-                  subtitle: '새 작업을 추가하고 일정을 관리하세요.',
-                  actionText: '새 작업 추가',
-                  onAction: () => _navigateToAddTask(selectedPlanner),
-                  icon: Icons.task_alt,
-                )
-              : _buildTaskList(tasks, plannerProvider),
+          child:
+              tasks.isEmpty
+                  ? EmptyState(
+                    title: '아직 작업이 없습니다',
+                    subtitle: '새 작업을 추가하고 일정을 관리하세요.',
+                    actionText: '새 작업 추가',
+                    onAction: () => _navigateToAddTask(selectedPlanner),
+                    icon: Icons.task_alt,
+                  )
+                  : _buildTaskList(tasks, plannerProvider),
         ),
       ],
     );
@@ -188,7 +205,8 @@ class _PlannerPageState extends State<PlannerPage>
           final task = tasks[index];
           return TaskListItem(
             task: task,
-            onToggleComplete: (task) => _toggleTaskCompletion(task, plannerProvider),
+            onToggleComplete:
+                (task) => _toggleTaskCompletion(task, plannerProvider),
             onEdit: (task) => _navigateToEditTask(task, plannerProvider),
             onDelete: (task) => _deleteTask(task, plannerProvider),
           );
@@ -229,14 +247,18 @@ class _PlannerPageState extends State<PlannerPage>
   Future<void> _navigateToAddTask(Planner? planner) async {
     if (planner == null) return;
 
-    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    final plannerProvider = Provider.of<PlannerProvider>(
+      context,
+      listen: false,
+    );
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTaskScreen(
-          updateTaskList: plannerProvider.loadTasks,
-          selectedPlannerId: planner.id,
-        ),
+        builder:
+            (_) => AddTaskScreen(
+              updateTaskList: plannerProvider.loadTasks,
+              selectedPlannerId: planner.id,
+            ),
       ),
     );
 
@@ -245,15 +267,19 @@ class _PlannerPageState extends State<PlannerPage>
     }
   }
 
-  Future<void> _navigateToEditTask(Task task, PlannerProvider plannerProvider) async {
+  Future<void> _navigateToEditTask(
+    Task task,
+    PlannerProvider plannerProvider,
+  ) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTaskScreen(
-          updateTaskList: plannerProvider.loadTasks,
-          task: task,
-          selectedPlannerId: task.from,
-        ),
+        builder:
+            (_) => AddTaskScreen(
+              updateTaskList: plannerProvider.loadTasks,
+              task: task,
+              selectedPlannerId: task.from,
+            ),
       ),
     );
 
@@ -262,7 +288,10 @@ class _PlannerPageState extends State<PlannerPage>
     }
   }
 
-  Future<void> _toggleTaskCompletion(Task task, PlannerProvider plannerProvider) async {
+  Future<void> _toggleTaskCompletion(
+    Task task,
+    PlannerProvider plannerProvider,
+  ) async {
     try {
       final newState = task.isCompleted == 0 ? 1 : 0;
       final updatedTask = Task(
@@ -314,7 +343,10 @@ class _PlannerPageState extends State<PlannerPage>
     }
   }
 
-  Future<void> _showRenamePlannerDialog(Planner planner, PlannerProvider plannerProvider) async {
+  Future<void> _showRenamePlannerDialog(
+    Planner planner,
+    PlannerProvider plannerProvider,
+  ) async {
     final result = await DialogUtils.showInputDialog(
       context: context,
       title: '플래너 이름 변경',
@@ -336,7 +368,10 @@ class _PlannerPageState extends State<PlannerPage>
     }
   }
 
-  Future<void> _showDeletePlannerDialog(Planner planner, PlannerProvider plannerProvider) async {
+  Future<void> _showDeletePlannerDialog(
+    Planner planner,
+    PlannerProvider plannerProvider,
+  ) async {
     final confirm = await DialogUtils.showConfirmDialog(
       context: context,
       title: '플래너 삭제',

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 메모리 효율적인 이미지 위젯
 class OptimizedImage extends StatelessWidget {
-
   const OptimizedImage({
     required this.imageUrl,
     super.key,
@@ -26,7 +25,7 @@ class OptimizedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Image.network(
       imageUrl,
       width: width,
@@ -86,7 +85,6 @@ class OptimizedImage extends StatelessWidget {
 
 /// 아바타용 최적화된 이미지
 class OptimizedAvatar extends StatelessWidget {
-
   const OptimizedAvatar({
     required this.radius,
     super.key,
@@ -102,16 +100,12 @@ class OptimizedAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (imageUrl == null || imageUrl!.isEmpty) {
       return CircleAvatar(
         radius: radius,
         backgroundColor: backgroundColor ?? theme.colorScheme.primary,
-        child: child ?? Icon(
-          Icons.person,
-          size: radius,
-          color: Colors.white,
-        ),
+        child: child ?? Icon(Icons.person, size: radius, color: Colors.white),
       );
     }
 
@@ -144,7 +138,6 @@ class OptimizedAvatar extends StatelessWidget {
 
 /// 썸네일용 최적화된 이미지
 class OptimizedThumbnail extends StatelessWidget {
-
   const OptimizedThumbnail({
     required this.imageUrl,
     required this.size,
@@ -166,10 +159,7 @@ class OptimizedThumbnail extends StatelessWidget {
     );
 
     if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: widget,
-      );
+      return GestureDetector(onTap: onTap, child: widget);
     }
 
     return widget;
@@ -183,7 +173,7 @@ class ImageCacheManager {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
   }
-  
+
   // 이미지 캐시 설정 최적화
   static void optimizeImageCache() {
     // 최대 캐시 크기 설정 (100MB)
@@ -191,7 +181,7 @@ class ImageCacheManager {
     // 최대 캐시 항목 수 설정
     PaintingBinding.instance.imageCache.maximumSize = 100;
   }
-  
+
   // 특정 이미지 캐시 제거
   static void evictImage(String imageUrl) {
     final networkImage = NetworkImage(imageUrl);

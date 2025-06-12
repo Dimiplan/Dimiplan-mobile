@@ -5,7 +5,6 @@ import 'package:dimiplan/providers/auth_provider.dart';
 import 'package:dimiplan/widgets/common_widgets.dart';
 
 class Homepage extends StatefulWidget {
-
   const Homepage({super.key, this.onTabChange});
   final Function(int)? onTabChange;
 
@@ -40,10 +39,7 @@ class _HomepageState extends State<Homepage>
       begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(
-      CurvedAnimation(
-        parent: _animationController, 
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
 
     _animationController.forward();
@@ -72,17 +68,23 @@ class _HomepageState extends State<Homepage>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Selector<AuthProvider, ({bool isAuthenticated, String? userName})>(
-                          selector: (context, auth) => (
-                            isAuthenticated: auth.isAuthenticated,
-                            userName: auth.user?.name,
-                          ),
-                          builder: (context, authData, child) => AppHeader(
-                            title: '디미플랜',
-                            subtitle: authData.isAuthenticated
-                                ? '${authData.userName ?? '사용자'}님, 환영합니다!'
-                                : null,
-                          ),
+                        Selector<
+                          AuthProvider,
+                          ({bool isAuthenticated, String? userName})
+                        >(
+                          selector:
+                              (context, auth) => (
+                                isAuthenticated: auth.isAuthenticated,
+                                userName: auth.user?.name,
+                              ),
+                          builder:
+                              (context, authData, child) => AppHeader(
+                                title: '디미플랜',
+                                subtitle:
+                                    authData.isAuthenticated
+                                        ? '${authData.userName ?? '사용자'}님, 환영합니다!'
+                                        : null,
+                              ),
                         ),
                         const SizedBox(height: 16),
                         const TypewriterText(
@@ -110,19 +112,29 @@ class _HomepageState extends State<Homepage>
                           ],
                         ),
                         const SizedBox(height: 32),
-                        Selector<AuthProvider, ({bool isAuthenticated, int taskCount})>(
-                          selector: (context, auth) => (
-                            isAuthenticated: auth.isAuthenticated,
-                            taskCount: auth.taskCount,
-                          ),
-                          builder: (context, authData, child) => StatusInfoCard(
-                            controller: _animationController,
-                            message: authData.isAuthenticated
-                                ? '현재 ${authData.taskCount}개의 일정이 있습니다'
-                                : '플래너와 AI 챗봇을 사용하려면 로그인하세요',
-                            actionText: authData.isAuthenticated ? null : '로그인하기',
-                            onActionPressed: authData.isAuthenticated ? null : () => widget.onTabChange?.call(3),
-                          ),
+                        Selector<
+                          AuthProvider,
+                          ({bool isAuthenticated, int taskCount})
+                        >(
+                          selector:
+                              (context, auth) => (
+                                isAuthenticated: auth.isAuthenticated,
+                                taskCount: auth.taskCount,
+                              ),
+                          builder:
+                              (context, authData, child) => StatusInfoCard(
+                                controller: _animationController,
+                                message:
+                                    authData.isAuthenticated
+                                        ? '현재 ${authData.taskCount}개의 일정이 있습니다'
+                                        : '플래너와 AI 챗봇을 사용하려면 로그인하세요',
+                                actionText:
+                                    authData.isAuthenticated ? null : '로그인하기',
+                                onActionPressed:
+                                    authData.isAuthenticated
+                                        ? null
+                                        : () => widget.onTabChange?.call(3),
+                              ),
                         ),
                       ],
                     ),

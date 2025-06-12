@@ -35,12 +35,7 @@ void showSuccessSnackBar(
   Duration duration = const Duration(seconds: 3),
   SnackBarAction? action,
 }) {
-  showSnackBar(
-    context,
-    message,
-    duration: duration,
-    action: action,
-  );
+  showSnackBar(context, message, duration: duration, action: action);
 }
 
 /// 오류 메시지 스낵바

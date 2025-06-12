@@ -9,9 +9,10 @@ import 'package:dimiplan/utils/snackbar_util.dart';
 import 'package:dimiplan/utils/validation_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
-
   const EditProfileScreen({
-    required this.user, required this.updateUserInfo, super.key,
+    required this.user,
+    required this.updateUserInfo,
+    super.key,
   });
   final User user;
   final Function updateUserInfo;
@@ -53,7 +54,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     bool isValid = true;
 
     // 이름 검증
-    final nameError = ValidationUtils.validateLength(_nameController.text, 2, 15, '이름');
+    final nameError = ValidationUtils.validateLength(
+      _nameController.text,
+      2,
+      15,
+      '이름',
+    );
     setState(() {
       _nameError = nameError;
     });

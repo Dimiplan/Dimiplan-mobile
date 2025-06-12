@@ -6,7 +6,6 @@ import 'package:color_shade/color_shade.dart';
 /// 앱 전체에서 사용되는 일관된 버튼 디자인
 /// 웹 버전과 동일한 디자인 시스템 적용
 class AppButton extends StatelessWidget {
-
   const AppButton({
     required this.text,
     required this.onPressed,
@@ -55,33 +54,36 @@ class AppButton extends StatelessWidget {
         width: isFullWidth ? double.infinity : null,
         height: height,
         child: ElevatedButton(
-        onPressed: (disabled || isLoading) ? null : () {
-          HapticFeedback.lightImpact();
-          onPressed();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          padding: padding,
-          textStyle: textStyle,
-          elevation: variant == ButtonVariant.text ? 0 : 2,
-          shadowColor:
-              variant == ButtonVariant.primary
-                  ? AppTheme.primaryColor.shade300
-                  : Colors.black.shade100,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(rounded ? 30.0 : 8.0),
-            side: borderSide,
+          onPressed:
+              (disabled || isLoading)
+                  ? null
+                  : () {
+                    HapticFeedback.lightImpact();
+                    onPressed();
+                  },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: backgroundColor,
+            foregroundColor: foregroundColor,
+            padding: padding,
+            textStyle: textStyle,
+            elevation: variant == ButtonVariant.text ? 0 : 2,
+            shadowColor:
+                variant == ButtonVariant.primary
+                    ? AppTheme.primaryColor.shade300
+                    : Colors.black.shade100,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(rounded ? 30.0 : 8.0),
+              side: borderSide,
+            ),
+            disabledBackgroundColor: backgroundColor.shade700,
+            disabledForegroundColor: foregroundColor.shade500,
           ),
-          disabledBackgroundColor: backgroundColor.shade700,
-          disabledForegroundColor: foregroundColor.shade500,
+          child:
+              isLoading
+                  ? _buildLoadingIndicator(foregroundColor)
+                  : _buildButtonContent(foregroundColor),
         ),
-        child:
-            isLoading
-                ? _buildLoadingIndicator(foregroundColor)
-                : _buildButtonContent(foregroundColor),
       ),
-    ),
     );
   }
 
@@ -208,7 +210,7 @@ class AppButton extends StatelessWidget {
   String _getSemanticHint() {
     if (isLoading) return '로딩 중입니다';
     if (disabled) return '비활성화된 버튼입니다';
-    
+
     switch (variant) {
       case ButtonVariant.primary:
         return '기본 버튼';

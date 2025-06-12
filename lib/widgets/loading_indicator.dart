@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 앱 전체에서 사용하는 로딩 인디케이터
 class AppLoadingIndicator extends StatelessWidget {
-
   const AppLoadingIndicator({
     super.key,
     this.size = 48.0,
@@ -47,7 +46,6 @@ class AppLoadingIndicator extends StatelessWidget {
 
 /// 스켈레톤 로딩 효과 (애니메이션 포함)
 class SkeletonLoading extends StatefulWidget {
-
   const SkeletonLoading({
     required this.width,
     required this.height,
@@ -76,13 +74,9 @@ class _SkeletonLoadingState extends State<SkeletonLoading>
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.repeat(reverse: true);
   }
 
@@ -130,7 +124,6 @@ class _SkeletonLoadingState extends State<SkeletonLoading>
 
 /// 작업 목록용 스켈레톤 로더
 class TaskListSkeleton extends StatelessWidget {
-
   const TaskListSkeleton({super.key, this.itemCount = 5});
   final int itemCount;
 
@@ -141,10 +134,7 @@ class TaskListSkeleton extends StatelessWidget {
       itemCount: itemCount,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 8.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -160,34 +150,20 @@ class TaskListSkeleton extends StatelessWidget {
             ),
             child: const Row(
               children: [
-                SkeletonLoading(
-                  width: 24,
-                  height: 24,
-                  isCircle: true,
-                ),
+                SkeletonLoading(width: 24, height: 24, isCircle: true),
                 SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SkeletonLoading(
-                        width: double.infinity,
-                        height: 16,
-                      ),
+                      SkeletonLoading(width: double.infinity, height: 16),
                       SizedBox(height: 8),
-                      SkeletonLoading(
-                        width: 120,
-                        height: 12,
-                      ),
+                      SkeletonLoading(width: 120, height: 12),
                     ],
                   ),
                 ),
                 SizedBox(width: 16),
-                SkeletonLoading(
-                  width: 60,
-                  height: 20,
-                  borderRadius: 10,
-                ),
+                SkeletonLoading(width: 60, height: 20, borderRadius: 10),
               ],
             ),
           ),

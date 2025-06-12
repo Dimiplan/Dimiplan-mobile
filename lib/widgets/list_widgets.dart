@@ -9,7 +9,6 @@ import 'package:dimiplan/widgets/loading_indicator.dart';
 import 'package:dimiplan/utils/dialog_utils.dart';
 
 class TaskListItem extends StatelessWidget {
-
   const TaskListItem({
     required this.task,
     required this.onToggleComplete,
@@ -47,9 +46,10 @@ class TaskListItem extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
         elevation: isCompleted ? 0 : 2,
-        color: isCompleted
-            ? theme.colorScheme.surface.shade700
-            : theme.colorScheme.surface,
+        color:
+            isCompleted
+                ? theme.colorScheme.surface.shade700
+                : theme.colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
           side: BorderSide(
@@ -70,33 +70,34 @@ class TaskListItem extends StatelessWidget {
               task.contents,
               style: theme.textTheme.bodyLarge?.copyWith(
                 decoration: isCompleted ? TextDecoration.lineThrough : null,
-                color: isCompleted
-                    ? theme.colorScheme.onSurface.shade500
-                    : theme.colorScheme.onSurface,
+                color:
+                    isCompleted
+                        ? theme.colorScheme.onSurface.shade500
+                        : theme.colorScheme.onSurface,
               ),
             ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PriorityIndicator(
-                priority: task.priority,
-                isCompleted: isCompleted,
-              ),
-              const SizedBox(width: 8),
-              Semantics(
-                label: isCompleted ? '작업 완료 취소' : '작업 완료 처리',
-                hint: '체크박스',
-                child: Checkbox(
-                  value: isCompleted,
-                  activeColor: theme.colorScheme.primary,
-                  onChanged: (_) {
-                    HapticFeedback.selectionClick();
-                    onToggleComplete(task);
-                  },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PriorityIndicator(
+                  priority: task.priority,
+                  isCompleted: isCompleted,
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(width: 8),
+                Semantics(
+                  label: isCompleted ? '작업 완료 취소' : '작업 완료 처리',
+                  hint: '체크박스',
+                  child: Checkbox(
+                    value: isCompleted,
+                    activeColor: theme.colorScheme.primary,
+                    onChanged: (_) {
+                      HapticFeedback.selectionClick();
+                      onToggleComplete(task);
+                    },
+                  ),
+                ),
+              ],
+            ),
             onTap: () => onEdit(task),
           ),
         ),
@@ -107,10 +108,14 @@ class TaskListItem extends StatelessWidget {
   Color _getPriorityColor(bool isCompleted, int priority, ThemeData theme) {
     if (isCompleted) return theme.disabledColor;
     switch (priority) {
-      case 0: return Colors.blue.shade500;
-      case 1: return Colors.orange.shade500;
-      case 2: return Colors.red.shade500;
-      default: return theme.disabledColor;
+      case 0:
+        return Colors.blue.shade500;
+      case 1:
+        return Colors.orange.shade500;
+      case 2:
+        return Colors.red.shade500;
+      default:
+        return theme.disabledColor;
     }
   }
 
@@ -130,7 +135,6 @@ class TaskListItem extends StatelessWidget {
 }
 
 class PriorityIndicator extends StatelessWidget {
-
   const PriorityIndicator({
     required this.priority,
     required this.isCompleted,
@@ -142,7 +146,7 @@ class PriorityIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 12,
       height: 12,
@@ -156,16 +160,19 @@ class PriorityIndicator extends StatelessWidget {
   Color _getPriorityColor(ThemeData theme) {
     if (isCompleted) return theme.disabledColor;
     switch (priority) {
-      case 0: return Colors.blue.shade500;
-      case 1: return Colors.orange.shade500;
-      case 2: return Colors.red.shade500;
-      default: return theme.disabledColor;
+      case 0:
+        return Colors.blue.shade500;
+      case 1:
+        return Colors.orange.shade500;
+      case 2:
+        return Colors.red.shade500;
+      default:
+        return theme.disabledColor;
     }
   }
 }
 
 class ChatRoomListItem extends StatelessWidget {
-
   const ChatRoomListItem({
     required this.room,
     required this.isSelected,
@@ -216,11 +223,7 @@ class ChatRoomListItem extends StatelessWidget {
 }
 
 class ChatMessageBubble extends StatelessWidget {
-
-  const ChatMessageBubble({
-    required this.message,
-    super.key,
-  });
+  const ChatMessageBubble({required this.message, super.key});
   final ChatMessage message;
 
   @override
@@ -231,7 +234,8 @@ class ChatMessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
@@ -242,34 +246,31 @@ class ChatMessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: isUser 
-                    ? theme.colorScheme.primary 
-                    : theme.colorScheme.surface,
+                color:
+                    isUser
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(16.0),
-                border: isUser 
-                    ? null 
-                    : Border.all(color: theme.dividerColor),
+                border: isUser ? null : Border.all(color: theme.dividerColor),
               ),
-              child: isUser 
-                  ? Text(
-                      message.message,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
+              child:
+                  isUser
+                      ? Text(
+                        message.message,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.white,
+                        ),
+                      )
+                      : GptMarkdown(
+                        message.message,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontFamily: 'monospace',
+                          backgroundColor: theme.colorScheme.surface.shade800,
+                        ),
                       ),
-                    )
-                  : GptMarkdown(
-                      message.message,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'monospace',
-                        backgroundColor: theme.colorScheme.surface.shade800,
-                      ),
-                    ),
             ),
           ),
-          if (isUser) ...[
-            const SizedBox(width: 8),
-            _buildAvatar(theme, true),
-          ],
+          if (isUser) ...[const SizedBox(width: 8), _buildAvatar(theme, true)],
         ],
       ),
     );
@@ -278,9 +279,8 @@ class ChatMessageBubble extends StatelessWidget {
   Widget _buildAvatar(ThemeData theme, bool isUser) {
     return CircleAvatar(
       radius: 16,
-      backgroundColor: isUser 
-          ? theme.colorScheme.primary 
-          : theme.colorScheme.secondary,
+      backgroundColor:
+          isUser ? theme.colorScheme.primary : theme.colorScheme.secondary,
       child: Icon(
         isUser ? Icons.person : Icons.smart_toy,
         size: 20,
@@ -291,7 +291,6 @@ class ChatMessageBubble extends StatelessWidget {
 }
 
 class SectionHeader extends StatelessWidget {
-
   const SectionHeader({
     required this.title,
     super.key,
@@ -314,10 +313,7 @@ class SectionHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: theme.textTheme.titleLarge,
-              ),
+              Text(title, style: theme.textTheme.titleLarge),
               if (subtitle != null)
                 Text(
                   subtitle!,
@@ -335,7 +331,6 @@ class SectionHeader extends StatelessWidget {
 }
 
 class ChatInput extends StatelessWidget {
-
   const ChatInput({
     required this.controller,
     required this.isComposing,
@@ -360,9 +355,7 @@ class ChatInput extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(
-          top: BorderSide(color: theme.dividerColor),
-        ),
+        border: Border(top: BorderSide(color: theme.dividerColor)),
       ),
       child: Row(
         children: [
@@ -397,14 +390,18 @@ class ChatInput extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.send,
-                color: isComposing 
-                    ? theme.colorScheme.primary 
-                    : theme.disabledColor,
+                color:
+                    isComposing
+                        ? theme.colorScheme.primary
+                        : theme.disabledColor,
               ),
-              onPressed: isComposing ? () {
-                HapticFeedback.lightImpact();
-                onSend();
-              } : null,
+              onPressed:
+                  isComposing
+                      ? () {
+                        HapticFeedback.lightImpact();
+                        onSend();
+                      }
+                      : null,
             ),
         ],
       ),

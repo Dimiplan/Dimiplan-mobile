@@ -1,6 +1,5 @@
 /// 채팅방 모델
 class ChatRoom {
-
   const ChatRoom({required this.id, required this.name, required this.owner});
 
   /// Map에서 ChatRoom 객체 생성
@@ -28,7 +27,6 @@ class ChatRoom {
 
 /// 채팅 메시지 모델
 class ChatMessage {
-
   const ChatMessage({
     required this.id,
     required this.message,

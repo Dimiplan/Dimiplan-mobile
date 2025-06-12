@@ -11,23 +11,25 @@ class DialogUtils {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(cancelText),
+      builder:
+          (context) => AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(cancelText),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style:
+                    confirmColor != null
+                        ? TextButton.styleFrom(foregroundColor: confirmColor)
+                        : null,
+                child: Text(confirmText),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: confirmColor != null
-                ? TextButton.styleFrom(foregroundColor: confirmColor)
-                : null,
-            child: Text(confirmText),
-          ),
-        ],
-      ),
     );
   }
 
@@ -44,41 +46,42 @@ class DialogUtils {
 
     return showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            border: const OutlineInputBorder(),
+      builder:
+          (context) => AlertDialog(
+            title: Text(title),
+            content: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                border: const OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(cancelText),
+              ),
+              TextButton(
+                onPressed: () {
+                  final text = controller.text.trim();
+                  if (validator != null) {
+                    final error = validator(text);
+                    if (error != null) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(error)));
+                      return;
+                    }
+                  }
+                  if (text.isNotEmpty) {
+                    Navigator.pop(context, text);
+                  }
+                },
+                child: Text(confirmText),
+              ),
+            ],
           ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(cancelText),
-          ),
-          TextButton(
-            onPressed: () {
-              final text = controller.text.trim();
-              if (validator != null) {
-                final error = validator(text);
-                if (error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(error)),
-                  );
-                  return;
-                }
-              }
-              if (text.isNotEmpty) {
-                Navigator.pop(context, text);
-              }
-            },
-            child: Text(confirmText),
-          ),
-        ],
-      ),
     );
   }
 
@@ -86,18 +89,19 @@ class DialogUtils {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => PopScope(
-        canPop: false,
-        child: AlertDialog(
-          content: Row(
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(width: 20),
-              Text(message ?? '처리 중...'),
-            ],
+      builder:
+          (context) => PopScope(
+            canPop: false,
+            child: AlertDialog(
+              content: Row(
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 20),
+                  Text(message ?? '처리 중...'),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 

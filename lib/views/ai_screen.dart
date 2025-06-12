@@ -164,14 +164,13 @@ class _AIScreenState extends State<AIScreen> {
                 horizontal: 20.0,
                 vertical: 10.0,
               ),
-              child: Text('AI 모델 선택', style: Theme.of(context).textTheme.titleLarge),
+              child: Text(
+                'AI 모델 선택',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
             const Divider(),
-            _buildModelOption(
-              'gpt4o-mini',
-              'GPT-4o mini',
-              '빠른 응답 속도, 기본 기능',
-            ),
+            _buildModelOption('gpt4o-mini', 'GPT-4o mini', '빠른 응답 속도, 기본 기능'),
             _buildModelOption('gpt4o', 'GPT-4o', '고급 이해력과 풍부한 답변'),
             _buildModelOption('gpt41', 'GPT-4.1', '최신 지식과 고급 기능'),
           ],
@@ -187,11 +186,7 @@ class _AIScreenState extends State<AIScreen> {
   }
 
   // 모델 옵션 UI
-  Widget _buildModelOption(
-    String id,
-    String name,
-    String description,
-  ) {
+  Widget _buildModelOption(String id, String name, String description) {
     final theme = Theme.of(context);
     final isSelected = _selectedModel == id;
 
@@ -395,7 +390,6 @@ class _AIScreenState extends State<AIScreen> {
     );
   }
 
-
   // 메시지 입력 영역
   Widget _buildMessageInputArea(ThemeData theme, bool isLoading) {
     return SafeArea(
@@ -420,9 +414,7 @@ class _AIScreenState extends State<AIScreen> {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(
-                    color: theme.colorScheme.outline.shade500,
-                  ),
+                  border: Border.all(color: theme.colorScheme.outline.shade500),
                 ),
                 child: TextField(
                   controller: _messageController,
@@ -590,7 +582,10 @@ class _AIScreenState extends State<AIScreen> {
 
   // 빈 채팅 화면
   Widget _buildEmptyChat(ThemeData theme) {
-    final AIProvider aiProvider = Provider.of<AIProvider>(context, listen: false);
+    final AIProvider aiProvider = Provider.of<AIProvider>(
+      context,
+      listen: false,
+    );
     aiProvider.refreshAll();
     return Center(
       child: SingleChildScrollView(
@@ -697,9 +692,7 @@ class _AIScreenState extends State<AIScreen> {
               bottomRight: Radius.circular(16.0),
               bottomLeft: Radius.circular(4.0),
             ),
-            side: BorderSide(
-              color: theme.colorScheme.outlineVariant,
-            ),
+            side: BorderSide(color: theme.colorScheme.outlineVariant),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           child: Padding(
@@ -747,9 +740,7 @@ class _AIScreenState extends State<AIScreen> {
             side:
                 isUser
                     ? BorderSide.none
-                    : BorderSide(
-                      color: theme.colorScheme.outlineVariant,
-                    ),
+                    : BorderSide(color: theme.colorScheme.outlineVariant),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           child: Padding(
@@ -774,4 +765,3 @@ class _AIScreenState extends State<AIScreen> {
     return GptMarkdown(message, style: theme.textTheme.bodyMedium);
   }
 }
-

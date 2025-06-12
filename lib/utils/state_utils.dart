@@ -34,7 +34,7 @@ class AsyncOperationHandler {
     String? errorContext,
   }) async {
     setLoading?.call(true);
-    
+
     try {
       return await operation();
     } catch (e) {

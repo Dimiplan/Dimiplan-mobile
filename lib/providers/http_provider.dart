@@ -5,12 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
 class CacheEntry {
-
-  CacheEntry({
-    required this.data,
-    required this.timestamp,
-    required this.ttl,
-  });
+  CacheEntry({required this.data, required this.timestamp, required this.ttl});
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
     data: json['data'],
@@ -168,10 +163,10 @@ class HttpClient {
       final prefs = await SharedPreferences.getInstance();
       final cacheKey = 'cache_$key';
       final cachedJson = prefs.getString(cacheKey);
-      
+
       if (cachedJson != null) {
         final cacheEntry = CacheEntry.fromJson(json.decode(cachedJson));
-        
+
         if (!cacheEntry.isExpired) {
           // 메모리 캐시에도 추가
           _memoryCache[key] = cacheEntry;
@@ -224,7 +219,7 @@ class HttpClient {
   // 캐시 초기화
   Future<void> clearCache() async {
     _memoryCache.clear();
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final keys = prefs.getKeys().where((key) => key.startsWith('cache_'));
@@ -240,7 +235,7 @@ class HttpClient {
   // 특정 키의 캐시 제거
   Future<void> removeCacheEntry(String key) async {
     _memoryCache.remove(key);
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('cache_$key');

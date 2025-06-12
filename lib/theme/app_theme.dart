@@ -50,9 +50,7 @@ class AppTheme {
   static ThemeData lightTheme() {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
       primaryColor: primaryColor,
       scaffoldBackgroundColor: background,
       cardTheme: const CardThemeData(
