@@ -18,7 +18,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_slidable: ^4.0.0
-  flutter_svg: ^2.1.0
+  flutter_svg: ^2.2.0
   google_sign_in: ^6.3.0
   gpt_markdown: ^1.0.20
   http: ^1.4.0
