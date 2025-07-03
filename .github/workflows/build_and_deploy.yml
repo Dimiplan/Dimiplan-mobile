@@ -14,7 +14,7 @@ on:
 jobs:
   Format_and_build:
     name: Format and Build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     permissions:
       contents: write
@@ -24,31 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Flutter SDK
-        uses: flutter-actions/setup-flutter@v4
-        with:
-          channel: beta
-          cache-sdk: true
-          cache: true
-
-      - name: Dart Analysis and Format
-        run: |
-          flutter pub get
-          dart analyze lib
-          dart fix --apply
-          dart format lib
-
-      - name: Commit Back
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Dart Fix and Format
-          commit_options: "--no-verify --signoff"
-
-      - name: Prettify code
-        uses: creyD/prettier_action@v4.3
-        with:
-          prettier_options: --write **/*.{yaml,md,yml,json,toml,lock.json,lock.toml}
 
       # 웹 클라이언트 ID 패치 적용
       - name: Apply Web Client ID Patch
@@ -68,9 +43,5 @@ jobs:
           fi
 
       - name: Deploy on Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build/web --project-name='dimiplan-mobile'
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        run: bunx wrangler pages deploy build/web --project-name='dimiplan-mobile'
+
