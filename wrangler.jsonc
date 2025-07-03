@@ -1,0 +1,8 @@
+{
+  "name": "mobile",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "directory": "./build/web/"
+  },
+  "compatibility_date": "2025-06-23"
+}
