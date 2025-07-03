@@ -37,9 +37,9 @@ jobs:
       - name: Build
         run: |
           if [ "${{ github.ref_name }}" == "dev" ]; then
-            flutter build web --wasm --release --dart-define=DEV_BUILD=true
+            $HOME/flutter/bin/flutter build web --wasm --release --dart-define=DEV_BUILD=true
           else
-            flutter build web --wasm --release
+            $HOME/flutter/bin/flutter build web --wasm --release
           fi
 
       - name: Deploy on Cloudflare Pages
