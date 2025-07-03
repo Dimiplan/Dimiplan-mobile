@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Format_and_build:
-    name: Format and Build
+  build:
+    name: Build
     runs-on: self-hosted
 
     permissions:
@@ -44,4 +44,3 @@ jobs:
 
       - name: Deploy on Cloudflare Pages
         run: bunx wrangler pages deploy build/web --project-name='dimiplan-mobile'
-
