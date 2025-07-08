@@ -20,7 +20,6 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   bool get isAuthenticated => _isAuthenticated;
   int get taskCount => _taskCount;
   bool get isDimigoStudent => _user?.email.endsWith('@dimigo.hs.kr') ?? false;
-  final google = GoogleSignIn.instance;
 
   /// 인증 상태 확인
   Future<void> checkAuth() async {
@@ -103,15 +102,15 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> login() async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        final GoogleSignInAccount googleUser =
-            await google.attemptLightweightAuthentication() ??
-            await google.authenticate();
+        final GoogleSignInAccount? googleUser =
+            await GoogleSignIn().signInSilently() ??
+            await GoogleSignIn().signIn();
 
         final body = {
-          'userId': googleUser.id,
-          'email': googleUser.email,
-          'photo': googleUser.photoUrl,
-          'name': googleUser.displayName,
+          'userId': googleUser?.id,
+          'email': googleUser?.email,
+          'photo': googleUser?.photoUrl,
+          'name': googleUser?.displayName,
         };
 
         final url = ApiUtils.buildApiUrl(ApiConstants.auth.login);
@@ -145,7 +144,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> logout() async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        await google.signOut();
+        await GoogleSignIn().signOut();
         await _clearSession();
         _setAuthenticated(false);
         _user = null;
