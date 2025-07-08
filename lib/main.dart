@@ -15,12 +15,6 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 void main() async {
   const bool isDevBuild = bool.fromEnvironment('DEV_BUILD');
 
-  // 점검모드 : 릴리즈 되었다면 무조건 리다이렉트
-  if (kReleaseMode && !isDevBuild) {
-    window.location.href = 'https://dimiplan.com/maintenance';
-    return;
-  }
-
   // 웹인 경우 모바일 기기 확인 및 리다이렉트 (dev 브랜치에서는 비활성화)
   if (kIsWeb && kReleaseMode && !isDevBuild) {
     final userAgent = window.navigator.userAgent.toLowerCase();
