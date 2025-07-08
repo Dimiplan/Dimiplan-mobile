@@ -222,143 +222,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (_isDimigoStudent) ...[
                     Text('학년 및 반', style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        // 학년 드롭다운
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 4.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(
-                                    color:
-                                        _gradeError != null
-                                            ? theme.colorScheme.error
-                                            : theme.colorScheme.outline,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: _selectedGrade,
-                                    hint: const Text('학년'),
-                                    isExpanded: true,
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: '1',
-                                        child: Text(
-                                          '1학년',
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: '2',
-                                        child: Text(
-                                          '2학년',
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: '3',
-                                        child: Text(
-                                          '3학년',
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-                                      ),
-                                    ],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedGrade = value;
-                                        _gradeError = null;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              if (_gradeError != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    top: 4.0,
-                                  ),
-                                  child: Text(
-                                    _gradeError!,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.error,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // 반 드롭다운
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 4.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(
-                                    color:
-                                        _classError != null
-                                            ? theme.colorScheme.error
-                                            : theme.colorScheme.outline,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: _selectedClass,
-                                    hint: const Text('반'),
-                                    isExpanded: true,
-                                    items: List.generate(
-                                      6,
-                                      (index) => DropdownMenuItem(
-                                        value: '${index + 1}',
-                                        child: Text(
-                                          '${index + 1}반',
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-                                      ),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedClass = value;
-                                        _classError = null;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              if (_classError != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    top: 4.0,
-                                  ),
-                                  child: Text(
-                                    _classError!,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.error,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    GradeClassDropdown(
+                      grade: _selectedGrade,
+                      classValue: _selectedClass,
+                      onGradeChanged: (value) {
+                        setState(() {
+                          _selectedGrade = value;
+                          _gradeError = null;
+                        });
+                      },
+                      onClassChanged: (value) {
+                        setState(() {
+                          _selectedClass = value;
+                          _classError = null;
+                        });
+                      },
+                      gradeError: _gradeError,
+                      classError: _classError,
                     ),
                   ],
                   const SizedBox(height: 40),

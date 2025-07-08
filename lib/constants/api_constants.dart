@@ -17,38 +17,52 @@ class ApiConstants {
   static const int serverError = 500;
 
   /// API 경로
-  static const String authPath = '/auth';
-  static const String userPath = '/api/user';
-  static const String taskPath = '/api/task';
-  static const String plannerPath = '/api/planner';
-  static const String folderPath = '/api/folder';
-  static const String aiPath = '/api/ai';
+  static const AuthPaths auth = AuthPaths();
+  static const UserPaths user = UserPaths();
+  static const TaskPaths task = TaskPaths();
+  static const PlannerPaths planner = PlannerPaths();
+  static const AiPaths ai = AiPaths();
+}
 
-  /// 로그인 API
-  static const String loginPath = '$authPath/login';
-  static const String logoutPath = '$authPath/logout';
+class AuthPaths {
+  const AuthPaths();
+  final String _base = '/auth';
+  String get login => '$_base/login';
+  String get logout => '$_base/logout';
+}
 
-  /// 사용자 API
-  static const String getUserPath = '$userPath/get';
-  static const String registeredPath = '$userPath/registered';
-  static const String updateUserPath = '$userPath/update';
+class UserPaths {
+  const UserPaths();
+  final String _base = '/api/user';
+  String get get => '$_base/get';
+  String get registered => '$_base/registered';
+  String get update => '$_base/update';
+}
 
-  // 플래너 API
-  static const String getEveryPlanners = '$plannerPath/getPlanners';
-  static const String getPlannerInfoPath = '$plannerPath/getInfo';
-  static const String addPlannerPath = '$plannerPath/add';
-  static const String renamePlannerPath = '$plannerPath/rename';
-  static const String deletePlannerPath = '$plannerPath/delete';
+class TaskPaths {
+  const TaskPaths();
+  final String _base = '/api/task';
+  String get get => '$_base/get';
+  String get add => '$_base/add';
+  String get update => '$_base/update';
+  String get delete => '$_base/delete';
+}
 
-  // 작업 API
-  static const String getTaskPath = '$taskPath/get';
-  static const String addTaskPath = '$taskPath/add';
-  static const String updateTaskPath = '$taskPath/update';
-  static const String deleteTaskPath = '$taskPath/delete';
+class PlannerPaths {
+  const PlannerPaths();
+  final String _base = '/api/planner';
+  String get getEveryPlanners => '$_base/getPlanners';
+  String get getInfo => '$_base/getInfo';
+  String get add => '$_base/add';
+  String get rename => '$_base/rename';
+  String get delete => '$_base/delete';
+}
 
-  /// AI API
-  static const String autoAIPath = '$aiPath/auto';
-  static const String getRoomListPath = '$aiPath/getRoomList';
-  static const String getChatInRoomPath = '$aiPath/getChatInRoom';
-  static const String addRoomPath = '$aiPath/addRoom';
+class AiPaths {
+  const AiPaths();
+  final String _base = '/api/ai';
+  String get auto => '$_base/auto';
+  String get getRoomList => '$_base/getRoomList';
+  String get getChatInRoom => '$_base/getChatInRoom';
+  String get addRoom => '$_base/addRoom';
 }

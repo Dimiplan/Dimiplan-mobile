@@ -60,7 +60,6 @@ class _AddTaskScreenState extends State<AddTaskScreen>
   String? _priority;
   int _from = 1;
   List<Planner> _planners = [];
-  bool _isLoadingPlanners = false;
   bool _isSubmitting = false;
   String? _titleError;
   String? _priorityError;
@@ -86,6 +85,10 @@ class _AddTaskScreenState extends State<AddTaskScreen>
       curve: Curves.easeIn,
     );
 
+    // 플래너 목록 로드
+    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    _planners = plannerProvider.planners;
+
     // 기존 작업 정보 설정 (수정 모드)
     if (widget.task != null) {
       _titleController.text = widget.task!.contents;
@@ -95,10 +98,10 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     // 선택된 플래너 ID 설정 (새 작업 모드)
     else if (widget.selectedPlannerId != null) {
       _from = widget.selectedPlannerId!;
+    } else if (_planners.isNotEmpty) {
+      // 플래너가 있고 선택된 플래너가 없는 경우 첫 번째 플래너 사용
+      _from = _planners[0].id;
     }
-
-    // 플래너 목록 로드
-    _loadPlanners();
 
     // 애니메이션 시작
     _animationController.forward();
@@ -111,42 +114,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     super.dispose();
   }
 
-  // 플래너 목록 로드
-  Future<void> _loadPlanners() async {
-    setState(() {
-      _isLoadingPlanners = true;
-    });
-
-    try {
-      final plannerProvider = Provider.of<PlannerProvider>(
-        context,
-        listen: false,
-      );
-      await plannerProvider.loadPlanners();
-
-      setState(() {
-        _planners = plannerProvider.planners;
-      });
-
-      // 플래너가 있고 선택된 플래너가 없는 경우 첫 번째 플래너 사용
-      if (_planners.isNotEmpty &&
-          widget.task == null &&
-          widget.selectedPlannerId == null) {
-        setState(() {
-          _from = _planners[0].id;
-        });
-      }
-    } catch (e) {
-      print('플래너 목록 로드 중 오류: $e');
-      if (mounted) {
-        showErrorSnackBar(context, '플래너 목록을 불러오는 중 오류가 발생했습니다.');
-      }
-    } finally {
-      setState(() {
-        _isLoadingPlanners = false;
-      });
-    }
-  }
+  
 
   // 작업 삭제
   Future<void> _delete() async {
@@ -302,7 +270,6 @@ class _AddTaskScreenState extends State<AddTaskScreen>
         listen: false,
       );
       await plannerProvider.refreshAll();
-      await _loadPlanners();
 
       if (mounted) {
         showSuccessSnackBar(context, '새 플래너가 추가되었습니다.');
@@ -313,6 +280,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final plannerProvider = Provider.of<PlannerProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -328,7 +296,7 @@ class _AddTaskScreenState extends State<AddTaskScreen>
         elevation: 0,
       ),
       body:
-          _isLoadingPlanners
+          plannerProvider.isLoading
               ? const Center(child: CircularProgressIndicator())
               : FadeTransition(
                 opacity: _fadeAnimation,

@@ -6,6 +6,9 @@ import 'package:dimiplan/models/user_model.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 import 'package:dimiplan/utils/state_utils.dart';
 import 'package:dimiplan/utils/api_utils.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   User? _user;
@@ -42,7 +45,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   /// 사용자 정보 가져오기
   Future<void> _fetchUserInfo() async {
     try {
-      final userData = await ApiUtils.fetchData(ApiConstants.getUserPath);
+      final userData = await ApiUtils.fetchData(ApiConstants.user.get);
       if (userData != null) {
         _user = User.fromMap(userData);
         _setAuthenticated(true);
@@ -52,7 +55,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
         _setAuthenticated(false);
       }
     } catch (e) {
-      print('사용자 정보 가져오기 실패: $e');
+      logger.e('사용자 정보 가져오기 실패', error: e);
       _setAuthenticated(false);
     }
   }
@@ -62,7 +65,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
     try {
       final url = Uri.https(
         ApiConstants.backendHost,
-        ApiConstants.registeredPath,
+        ApiConstants.user.registered,
       );
       final response = await httpClient.get(url);
 
@@ -78,12 +81,12 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   /// 작업 수 가져오기
   Future<void> _fetchTaskCount() async {
     try {
-      final data = await ApiUtils.fetchData(ApiConstants.getTaskPath);
+      final data = await ApiUtils.fetchData(ApiConstants.task.get);
       if (data != null && data is List) {
         _updateTaskCount(data.length);
       }
     } catch (e) {
-      print('작업 수 가져오기 실패: $e');
+      logger.e('작업 수 가져오기 실패', error: e);
     }
   }
 
@@ -111,7 +114,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
           'name': googleUser.displayName,
         };
 
-        final url = ApiUtils.buildApiUrl(ApiConstants.loginPath);
+        final url = ApiUtils.buildApiUrl(ApiConstants.auth.login);
         final response = await httpClient.post(
           url,
           headers: {'Content-Type': 'application/json'},
@@ -161,7 +164,7 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> updateUser(Map<String, dynamic> userData) async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        await ApiUtils.postData(ApiConstants.updateUserPath, data: userData);
+        await ApiUtils.postData(ApiConstants.user.update, data: userData);
         await refreshUserInfo();
       },
       setLoading: setLoading,

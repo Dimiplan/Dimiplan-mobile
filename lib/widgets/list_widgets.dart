@@ -51,7 +51,7 @@ class TaskListItem extends StatelessWidget {
                 ? theme.colorScheme.surface.shade700
                 : theme.colorScheme.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
           side: BorderSide(
             color: _getPriorityColor(isCompleted, task.priority, theme),
             width: 2.0,

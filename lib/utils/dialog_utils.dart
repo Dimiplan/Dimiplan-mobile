@@ -43,19 +43,26 @@ class DialogUtils {
     String? Function(String?)? validator,
   }) {
     final controller = TextEditingController(text: initialValue);
+    final ValueNotifier<String?> errorText = ValueNotifier(null);
 
     return showDialog<String>(
       context: context,
       builder:
           (context) => AlertDialog(
             title: Text(title),
-            content: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: const OutlineInputBorder(),
-              ),
-              autofocus: true,
+            content: ValueListenableBuilder<String?>(
+              valueListenable: errorText,
+              builder: (context, error, child) {
+                return TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    border: const OutlineInputBorder(),
+                    errorText: error,
+                  ),
+                  autofocus: true,
+                );
+              },
             ),
             actions: [
               TextButton(
@@ -68,14 +75,16 @@ class DialogUtils {
                   if (validator != null) {
                     final error = validator(text);
                     if (error != null) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(error)));
+                      errorText.value = error;
                       return;
+                    } else {
+                      errorText.value = null;
                     }
                   }
                   if (text.isNotEmpty) {
                     Navigator.pop(context, text);
+                  } else if (validator == null) {
+                    Navigator.pop(context);
                   }
                 },
                 child: Text(confirmText),
@@ -118,7 +127,7 @@ class DialogUtils {
       context: context,
       isDismissible: isDismissible,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
       builder: (context) => SafeArea(child: child),
     );

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/theme/app_theme.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ThemeProvider extends ChangeNotifier {
   ThemeProvider() {
@@ -30,7 +33,7 @@ class ThemeProvider extends ChangeNotifier {
         setTheme(brightness == Brightness.dark);
       }
     } catch (e) {
-      print('테마 설정 로드 중 오류 발생: $e');
+      logger.e('테마 설정 로드 중 오류 발생', error: e);
       // 오류 발생 시 기본값(라이트 모드) 사용
       setTheme(false);
     }
@@ -55,7 +58,7 @@ class ThemeProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_themePreferenceKey, _isDarkMode);
     } catch (e) {
-      print('테마 설정 저장 중 오류 발생: $e');
+      logger.e('테마 설정 저장 중 오류 발생', error: e);
     }
   }
 }

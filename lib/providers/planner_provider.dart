@@ -1,117 +1,62 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dimiplan/providers/http_provider.dart';
 import 'package:dimiplan/models/planner_models.dart';
+import 'package:dimiplan/utils/state_utils.dart';
+import 'package:dimiplan/utils/api_utils.dart';
 import 'package:dimiplan/constants/api_constants.dart';
 
-class PlannerProvider extends ChangeNotifier {
+class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   List<Planner> _planners = [];
   List<Task> _tasks = [];
   Planner? _selectedPlanner;
-  bool _isLoading = false;
-  bool _notificationsEnabled = true; // 상태 업데이트 알림 활성화 상태
 
   // 게터
   List<Planner> get planners => _planners;
   List<Task> get tasks => _tasks;
   Planner? get selectedPlanner => _selectedPlanner;
-  bool get isLoading => _isLoading;
-
-  /// 상태 변경 알림 제어 (빌드 중에 상태 변경 방지)
-  void _pauseNotifications() {
-    _notificationsEnabled = false;
-  }
-
-  void _resumeNotifications() {
-    _notificationsEnabled = true;
-  }
 
   /// 플래너 목록 로드
   Future<void> loadPlanners() async {
-    if (_isLoading) return;
+    if (isLoading) return;
 
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        _planners = [];
-        _setLoading(false);
-        return;
-      }
-
-      // 전체 플래너 목록 가져오기
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.getEveryPlanners,
-      );
-
-      final response = await httpClient.get(
-        url,
-        cacheTtl: const Duration(minutes: 2),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        final data = json.decode(response.body);
-        final List<Planner> loadedPlanners = [];
-
-        for (final planner in data) {
-          loadedPlanners.add(Planner.fromMap(planner));
-        }
-
-        // 상태 업데이트 알림 일시 중지
-        _pauseNotifications();
-
-        // 데이터 업데이트
-        _planners = loadedPlanners;
-
-        // 플래너가 있고 선택된 플래너가 없을 경우 첫 번째 플래너 선택
-        if (_planners.isNotEmpty && _selectedPlanner == null) {
-          _selectedPlanner = _planners[0];
-
-          // 알림 재개 후 변경 알림
-          _resumeNotifications();
-          notifyListeners();
-
-          // 별도 작업으로 태스크 로드
-          await loadTasks();
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        final isSessionValid = await httpClient.isSessionValid();
+        if (!isSessionValid) {
+          _planners = [];
           return;
         }
-        // 선택된 플래너가 더 이상 존재하지 않는 경우 다시 첫 번째 플래너 선택
-        else if (_selectedPlanner != null &&
-            !_planners.any((p) => p.id == _selectedPlanner!.id)) {
-          if (_planners.isNotEmpty) {
-            _selectedPlanner = _planners[0];
 
-            // 알림 재개 후 변경 알림
-            _resumeNotifications();
-            notifyListeners();
+        final data = await ApiUtils.fetchData(ApiConstants.planner.getEveryPlanners);
+        if (data != null) {
+          final loadedPlanners = (data as List)
+              .map((plannerData) => Planner.fromMap(plannerData))
+              .toList();
 
-            // 별도 작업으로 태스크 로드
-            await loadTasks();
-            return;
-          } else {
-            _selectedPlanner = null;
-            _tasks = [];
+          _planners = loadedPlanners;
+
+          if (_planners.isNotEmpty && _selectedPlanner == null) {
+            await selectPlanner(_planners.first);
+          } else if (_selectedPlanner != null &&
+              !_planners.any((p) => p.id == _selectedPlanner!.id)) {
+            if (_planners.isNotEmpty) {
+              await selectPlanner(_planners.first);
+            } else {
+              _selectedPlanner = null;
+              _tasks = [];
+            }
           }
+        } else {
+          _planners = [];
         }
-
-        // 알림 재개 및 변경 알림
-        _resumeNotifications();
-        notifyListeners();
-      } else {
-        print('플래너 목록 가져오기 실패: ${response.statusCode}');
+      },
+      setLoading: setLoading,
+      errorContext: '플래너 목록 로드',
+      onError: (_) {
         _planners = [];
-        notifyListeners();
-      }
-    } catch (e) {
-      print('플래너 목록 로드 중 오류 발생: $e');
-      _planners = [];
-      notifyListeners();
-    } finally {
-      _setLoading(false);
-    }
+      },
+    );
+    safeNotifyListeners();
   }
 
   /// 플래너 선택
@@ -132,52 +77,37 @@ class PlannerProvider extends ChangeNotifier {
 
   // 작업 로드 메서드 (내부용)
   Future<void> _loadTasksForPlanner(int plannerId) async {
-    if (_selectedPlanner == null || _isLoading) return;
+    if (_selectedPlanner == null || isLoading) return;
 
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        _tasks = [];
-        _setLoading(false);
-        return;
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.getTaskPath,
-        {'id': _selectedPlanner!.id.toString()},
-      );
-
-      final response = await httpClient.get(
-        url,
-        cacheTtl: const Duration(minutes: 5),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        final data = json.decode(response.body);
-        final List<Task> loadedTasks = [];
-
-        for (final task in data) {
-          loadedTasks.add(Task.fromMap(task));
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        final isSessionValid = await httpClient.isSessionValid();
+        if (!isSessionValid) {
+          _tasks = [];
+          return;
         }
 
-        _tasks = loadedTasks;
-        notifyListeners();
-      } else {
-        print('작업 목록 가져오기 실패: ${response.statusCode}');
+        final data = await ApiUtils.fetchData(
+          ApiConstants.task.get,
+          queryParams: {'id': _selectedPlanner!.id.toString()},
+        );
+        if (data != null) {
+          final loadedTasks = (data as List)
+              .map((taskData) => Task.fromMap(taskData))
+              .toList();
+
+          _tasks = loadedTasks;
+        } else {
+          _tasks = [];
+        }
+      },
+      setLoading: setLoading,
+      errorContext: '작업 목록 로드',
+      onError: (_) {
         _tasks = [];
-        notifyListeners();
-      }
-    } catch (e) {
-      print('작업 목록 로드 중 오류 발생: $e');
-      _tasks = [];
-      notifyListeners(); // 에러 발생 시에도 갱신
-    } finally {
-      _setLoading(false);
-    }
+      },
+    );
+    safeNotifyListeners();
   }
 
   // 작업 목록 로드 (공개 API)
@@ -196,228 +126,72 @@ class PlannerProvider extends ChangeNotifier {
 
   /// 플래너 생성
   Future<void> createPlanner(String name, {int isDaily = 0}) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.addPlannerPath,
-      );
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'name': name, 'isDaily': isDaily}),
-      );
-
-      if (response.statusCode == ApiConstants.created) {
-        // 플래너 목록 새로고침
-        await refreshAll();
-      } else {
-        throw Exception('플래너 생성 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('플래너 생성 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(
+        ApiConstants.planner.add,
+        data: {'name': name, 'isDaily': isDaily},
+      ),
+      errorContext: '플래너 생성',
+    );
   }
 
   /// 작업 추가
   Future<void> addTask(Task task) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.addTaskPath);
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(task.toMap()),
-      );
-
-      if (response.statusCode == ApiConstants.created) {
-        // 작업 목록 새로고침
-        await loadTasks();
-      } else {
-        throw Exception('작업 추가 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('작업 추가 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(ApiConstants.task.add, data: task.toMap()),
+      errorContext: '작업 추가',
+    );
   }
 
   /// 작업 업데이트
   Future<void> updateTask(Task task) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.updateTaskPath,
-      );
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(task.toMap()),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        // 작업 목록 새로고침
-        await loadTasks();
-      } else {
-        throw Exception('작업 업데이트 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('작업 업데이트 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(ApiConstants.task.update, data: task.toMap()),
+      errorContext: '작업 업데이트',
+    );
   }
 
   /// 작업 삭제
   Future<void> deleteTask(int id) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.deleteTaskPath,
-      );
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'id': id}),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        // 작업 목록 새로고침
-        await loadTasks();
-      } else {
-        throw Exception('작업 삭제 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('작업 삭제 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(ApiConstants.task.delete, data: {'id': id}),
+      errorContext: '작업 삭제',
+    );
   }
 
   /// 플래너 이름 변경
   Future<void> renamePlanner(int id, String newName) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.renamePlannerPath,
-      );
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'id': id, 'name': newName}),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        // 플래너 목록 새로고침
-        await refreshAll();
-      } else {
-        throw Exception('플래너 이름 변경 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('플래너 이름 변경 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(
+        ApiConstants.planner.rename,
+        data: {'id': id, 'name': newName},
+      ),
+      errorContext: '플래너 이름 변경',
+    );
   }
 
   /// 플래너 삭제
   Future<void> deletePlanner(int id) async {
-    if (_isLoading) return;
-
-    _setLoading(true);
-
-    try {
-      // 세션 유효성 검사
-      final isSessionValid = await httpClient.isSessionValid();
-      if (!isSessionValid) {
-        throw Exception('로그인이 필요합니다.');
-      }
-
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.deletePlannerPath,
-      );
-      final response = await httpClient.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'id': id}),
-      );
-
-      if (response.statusCode == ApiConstants.success) {
-        // 플래너 목록 새로고침
-        await refreshAll();
-      } else {
-        throw Exception('플래너 삭제 실패: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('플래너 삭제 중 오류 발생: $e');
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
+    await _performPlannerOperation(
+      () => ApiUtils.postData(ApiConstants.planner.delete, data: {'id': id}),
+      errorContext: '플래너 삭제',
+    );
   }
 
-  /// 로딩 상태 설정
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    if (_notificationsEnabled) {
-      notifyListeners();
-    }
+  /// API 작업을 수행하고 성공 시 데이터를 새로고침하는 헬퍼 메소드
+  Future<void> _performPlannerOperation(
+    Future<dynamic> Function() operation, {
+    String? errorContext,
+  }) async {
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        final isSessionValid = await httpClient.isSessionValid();
+        if (!isSessionValid) throw Exception('로그인이 필요합니다.');
+        await operation();
+        await refreshAll(); // 작업 성공 후 항상 데이터 새로고침
+      },
+      setLoading: setLoading,
+      errorContext: errorContext,
+    );
   }
 }

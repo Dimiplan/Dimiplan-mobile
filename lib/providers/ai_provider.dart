@@ -34,7 +34,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> loadChatRooms() async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        final data = await ApiUtils.fetchData(ApiConstants.getRoomListPath);
+        final data = await ApiUtils.fetchData(ApiConstants.ai.getRoomList);
         if (data != null) {
           final rooms = <ChatRoom>[];
           for (final room in data['roomData']) {
@@ -67,7 +67,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> createChatRoom(String name) async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        await ApiUtils.postData(ApiConstants.addRoomPath, data: {'name': name});
+        await ApiUtils.postData(ApiConstants.ai.addRoom, data: {'name': name});
         await refreshAll();
       },
       setLoading: setLoading,
@@ -95,7 +95,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
     await AsyncOperationHandler.execute(
       operation: () async {
         final data = await ApiUtils.fetchData(
-          ApiConstants.getChatInRoomPath,
+          ApiConstants.ai.getChatInRoom,
           queryParams: {'from': _selectedRoom!.id.toString()},
         );
         if (data != null) {
@@ -144,7 +144,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         // API에 따라 AI 모델 엔드포인트 선택
         final url = Uri.https(
           ApiConstants.backendHost,
-          ApiConstants.autoAIPath,
+          ApiConstants.ai.auto,
         );
 
         final response = await httpClient.post(

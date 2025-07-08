@@ -57,7 +57,7 @@ class AppTheme {
         color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -78,7 +78,7 @@ class AppTheme {
       ),
       dialogTheme: const DialogThemeData(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
       disabledColor: Colors.blueGrey.shade400,
@@ -86,16 +86,16 @@ class AppTheme {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(color: borderColor, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
           borderSide: const BorderSide(color: primaryColor, width: 2.0),
         ),
         floatingLabelStyle: const TextStyle(color: primaryColor),
@@ -189,7 +189,7 @@ class AppTheme {
             fontSize: 16,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: BorderRadius.circular(16.0),
           ),
         ),
       ),
@@ -210,7 +210,7 @@ class AppTheme {
         color: Color(0xFF242424),
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
       appBarTheme: const AppBarTheme(
@@ -232,7 +232,7 @@ class AppTheme {
       dialogTheme: const DialogThemeData(
         backgroundColor: Color(0xFF242424),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
       disabledColor: Colors.blueGrey.shade600,
@@ -240,18 +240,18 @@ class AppTheme {
         backgroundColor: primaryLight,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: const Color(0xFF2C2C2C),
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
           borderSide: const BorderSide(color: Color(0xFF444444), width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
           borderSide: const BorderSide(color: primaryLight, width: 2.0),
         ),
         floatingLabelStyle: const TextStyle(color: primaryLight),
@@ -345,7 +345,7 @@ class AppTheme {
             fontSize: 16,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: BorderRadius.circular(16.0),
           ),
         ),
       ),

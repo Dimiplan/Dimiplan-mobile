@@ -23,6 +23,7 @@ dependencies:
   gpt_markdown: ^1.1.2
   http: ^1.4.0
   intl: ^0.20.2
+  logger: ^2.6.0
   path_provider: ^2.1.5
   provider: ^6.1.4
   shared_preferences: ^2.5.3

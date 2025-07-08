@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:dimiplan/providers/http_provider.dart';
 import 'package:dimiplan/constants/api_constants.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ApiUtils {
   static Future<T?> performApiCall<T>({
@@ -18,7 +21,7 @@ class ApiUtils {
 
       return await apiCall();
     } catch (e) {
-      print('${errorMessage ?? 'API 호출'} 중 오류 발생: $e');
+      logger.e('${errorMessage ?? 'API 호출'} 중 오류 발생', error: e);
       rethrow;
     }
   }

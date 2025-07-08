@@ -1,8 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dimiplan/constants/api_constants.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class CacheEntry {
   CacheEntry({required this.data, required this.timestamp, required this.ttl});
@@ -131,15 +133,14 @@ class HttpClient {
     if (sid == null) return false;
 
     try {
-      final url = Uri.https(ApiConstants.backendHost, ApiConstants.getUserPath);
+      final url = Uri.https(ApiConstants.backendHost, ApiConstants.user.get);
       final response = await httpClient.get(url);
 
       if (response.statusCode == 200) {
         return true;
       }
     } catch (e) {
-      // TODO: 로깅 프레임워크로 교체
-      debugPrint('세션 검증 중 오류: $e');
+      logger.e('세션 검증 중 오류', error: e);
     }
 
     return false;
@@ -177,8 +178,7 @@ class HttpClient {
         }
       }
     } catch (e) {
-      // TODO: 로깅 프레임워크로 교체
-      debugPrint('캐시 읽기 오류: $e');
+      logger.e('캐시 읽기 오류', error: e);
     }
 
     return null;
@@ -211,8 +211,7 @@ class HttpClient {
       final cacheKey = 'cache_$key';
       await prefs.setString(cacheKey, json.encode(cacheEntry.toJson()));
     } catch (e) {
-      // TODO: 로깅 프레임워크로 교체
-      debugPrint('캐시 저장 오류: $e');
+      logger.e('캐시 저장 오류', error: e);
     }
   }
 
@@ -227,8 +226,7 @@ class HttpClient {
         await prefs.remove(key);
       }
     } catch (e) {
-      // TODO: 로깅 프레임워크로 교체
-      debugPrint('캐시 초기화 오류: $e');
+      logger.e('캐시 초기화 오류', error: e);
     }
   }
 
@@ -240,8 +238,7 @@ class HttpClient {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('cache_$key');
     } catch (e) {
-      // TODO: 로깅 프레임워크로 교체
-      debugPrint('캐시 항목 제거 오류: $e');
+      logger.e('캐시 항목 제거 오류', error: e);
     }
   }
 }

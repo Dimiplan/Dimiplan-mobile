@@ -15,7 +15,9 @@ analyzer:
     - "**/*.freezed.dart"
     - "**/generated_plugin_registrant.dart"
   errors:
+    always_put_required_named_parameters_first: ignore
     invalid_annotation_target: ignore
+    unused_field: ignore
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false

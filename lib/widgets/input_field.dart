@@ -114,7 +114,7 @@ class _AppTextFieldState extends State<AppTextField> {
         // 입력 필드
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(12.0),
             boxShadow: _isFocused ? AppTheme.lightShadow : null,
           ),
           child: TextFormField(
@@ -142,32 +142,32 @@ class _AppTextFieldState extends State<AppTextField> {
                   widget.contentPadding ??
                   const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.outline,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.outline.shade800,
                   width: 2.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.error,
                   width: 2.0,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.error,
                   width: 2.0,
@@ -230,7 +230,7 @@ class AppDropdownField<T> extends StatelessWidget {
         // 드롭다운 필드
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(12.0),
             boxShadow: AppTheme.lightShadow,
           ),
           child: DropdownButtonFormField<T>(
@@ -253,32 +253,32 @@ class AppDropdownField<T> extends StatelessWidget {
                 horizontal: 12.0,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.outline,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.outline.shade800,
                   width: 2.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(color: theme.primaryColor, width: 2.0),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.error,
                   width: 2.0,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   color: theme.colorScheme.error,
                   width: 2.0,
@@ -292,7 +292,7 @@ class AppDropdownField<T> extends StatelessWidget {
             ),
             isExpanded: true,
             dropdownColor: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(12.0),
             menuMaxHeight: 300,
           ),
         ),
