@@ -113,7 +113,9 @@ class AccountAuthenticatedState extends StatelessWidget {
                           text: '회원정보 수정',
                           icon: Icons.edit,
                           isFullWidth: true,
-                          onPressed: () => _navigateToEditProfile(context, authProvider),
+                          onPressed:
+                              () =>
+                                  _navigateToEditProfile(context, authProvider),
                         ),
 
                         const SizedBox(height: 16),

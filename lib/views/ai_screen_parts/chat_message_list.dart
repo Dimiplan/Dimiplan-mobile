@@ -72,7 +72,11 @@ class ChatMessageList extends StatelessWidget {
   }
 
   // 채팅 버블
-  Widget _buildChatBubble(BuildContext context, ChatMessage message, ThemeData theme) {
+  Widget _buildChatBubble(
+    BuildContext context,
+    ChatMessage message,
+    ThemeData theme,
+  ) {
     final isUser = message.sender == 'user';
 
     return Align(

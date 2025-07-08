@@ -27,11 +27,14 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
           return;
         }
 
-        final data = await ApiUtils.fetchData(ApiConstants.planner.getEveryPlanners);
+        final data = await ApiUtils.fetchData(
+          ApiConstants.planner.getEveryPlanners,
+        );
         if (data != null) {
-          final loadedPlanners = (data as List)
-              .map((plannerData) => Planner.fromMap(plannerData))
-              .toList();
+          final loadedPlanners =
+              (data as List)
+                  .map((plannerData) => Planner.fromMap(plannerData))
+                  .toList();
 
           _planners = loadedPlanners;
 
@@ -92,9 +95,8 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
           queryParams: {'id': _selectedPlanner!.id.toString()},
         );
         if (data != null) {
-          final loadedTasks = (data as List)
-              .map((taskData) => Task.fromMap(taskData))
-              .toList();
+          final loadedTasks =
+              (data as List).map((taskData) => Task.fromMap(taskData)).toList();
 
           _tasks = loadedTasks;
         } else {

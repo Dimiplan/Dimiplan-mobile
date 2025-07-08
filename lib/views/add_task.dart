@@ -86,7 +86,10 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     );
 
     // 플래너 목록 로드
-    final plannerProvider = Provider.of<PlannerProvider>(context, listen: false);
+    final plannerProvider = Provider.of<PlannerProvider>(
+      context,
+      listen: false,
+    );
     _planners = plannerProvider.planners;
 
     // 기존 작업 정보 설정 (수정 모드)
@@ -113,8 +116,6 @@ class _AddTaskScreenState extends State<AddTaskScreen>
     _animationController.dispose();
     super.dispose();
   }
-
-  
 
   // 작업 삭제
   Future<void> _delete() async {

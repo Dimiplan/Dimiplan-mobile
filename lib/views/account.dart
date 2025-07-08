@@ -91,8 +91,6 @@ class _AccountState extends State<Account> with SingleTickerProviderStateMixin {
     );
   }
 
-  
-
   // 로그인 처리
   Future<void> _handleLogin(AuthProvider authProvider) async {
     try {

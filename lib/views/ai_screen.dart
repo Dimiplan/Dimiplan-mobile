@@ -167,8 +167,6 @@ class _AIScreenState extends State<AIScreen> {
     );
   }
 
-  
-
   // 모델 표시 이름 반환
   String _getModelDisplayName() {
     switch (_selectedModel) {
@@ -241,12 +239,18 @@ class _AIScreenState extends State<AIScreen> {
                 isLoading
                     ? const Center(child: AppLoadingIndicator())
                     : chatRooms.isEmpty
-                    ? EmptyChatRoomsList(onCreateNewChatRoom: _createNewChatRoom)
+                    ? EmptyChatRoomsList(
+                      onCreateNewChatRoom: _createNewChatRoom,
+                    )
                     : ListView.builder(
                       itemCount: chatRooms.length,
                       itemBuilder: (context, index) {
                         final room = chatRooms[index];
-                        return ChatRoomItem(room: room, isSelected: selectedRoom?.id == room.id, onTap: () => _selectChatRoom(room));
+                        return ChatRoomItem(
+                          room: room,
+                          isSelected: selectedRoom?.id == room.id,
+                          onTap: () => _selectChatRoom(room),
+                        );
                       },
                     ),
           ),
@@ -312,19 +316,19 @@ class _AIScreenState extends State<AIScreen> {
             child:
                 messages.isEmpty
                     ? EmptyChatScreen(
-                        onSuggestionSelected: (suggestion) {
-                          _messageController.text = suggestion;
-                          setState(() {
-                            _isComposing = true;
-                          });
-                          _inputFocusNode.requestFocus();
-                        },
-                      )
+                      onSuggestionSelected: (suggestion) {
+                        _messageController.text = suggestion;
+                        setState(() {
+                          _isComposing = true;
+                        });
+                        _inputFocusNode.requestFocus();
+                      },
+                    )
                     : ChatMessageList(
-                        messages: messages,
-                        isLoading: isLoading,
-                        scrollController: _scrollController,
-                      ),
+                      messages: messages,
+                      isLoading: isLoading,
+                      scrollController: _scrollController,
+                    ),
           ),
 
           // 메시지 입력 영역
