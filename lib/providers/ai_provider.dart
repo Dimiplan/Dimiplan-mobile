@@ -34,7 +34,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> loadChatRooms() async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        final data = await ApiUtils.fetchData(ApiConstants.ai.getRoomList);
+        final data = await ApiUtils.fetchData(ApiConstants.ai.rooms);
         if (data != null) {
           final rooms = <ChatRoom>[];
           for (final room in data['roomData']) {
@@ -67,7 +67,10 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> createChatRoom(String name) async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        await ApiUtils.postData(ApiConstants.ai.addRoom, data: {'name': name});
+        await ApiUtils.postData(
+          ApiConstants.ai.createRoom,
+          data: {'name': name},
+        );
         await refreshAll();
       },
       setLoading: setLoading,
@@ -95,8 +98,7 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
     await AsyncOperationHandler.execute(
       operation: () async {
         final data = await ApiUtils.fetchData(
-          ApiConstants.ai.getChatInRoom,
-          queryParams: {'from': _selectedRoom!.id.toString()},
+          ApiConstants.ai.roomMessages(_selectedRoom!.id.toString()),
         );
         if (data != null) {
           final messages = <ChatMessage>[];
@@ -141,13 +143,15 @@ class AIProvider extends ChangeNotifier with LoadingStateMixin {
         _messages.add(userMessage);
         safeNotifyListeners();
 
-        // API에 따라 AI 모델 엔드포인트 선택
-        final url = Uri.https(ApiConstants.backendHost, ApiConstants.ai.auto);
-
+        // API 문서에 따라 적절한 엔드포인트 선택
         final response = await httpClient.post(
-          url,
+          Uri.https(ApiConstants.backendHost, ApiConstants.ai.auto),
           headers: {'Content-Type': 'application/json'},
-          body: json.encode({'prompt': message, 'room': _selectedRoom!.id}),
+          body: json.encode({
+            'prompt': message,
+            'room': _selectedRoom!.id.toString(),
+            'search': false,
+          }),
         );
 
         if (response.statusCode == 200) {

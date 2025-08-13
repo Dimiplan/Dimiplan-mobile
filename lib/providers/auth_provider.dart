@@ -48,7 +48,6 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
       if (userData != null) {
         _user = User.fromMap(userData);
         _setAuthenticated(true);
-        await _checkUserRegistered();
       } else {
         await _clearSession();
         _setAuthenticated(false);
@@ -59,30 +58,25 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
     }
   }
 
-  /// 유저 등록 상태 확인
-  Future<void> _checkUserRegistered() async {
-    try {
-      final url = Uri.https(
-        ApiConstants.backendHost,
-        ApiConstants.user.registered,
-      );
-      final response = await httpClient.get(url);
-
-      if (response.statusCode != 200) {
-        // 등록되지 않은 사용자는 프로필 수정 화면으로 이동해야 함
-        // 이 부분은 UI 측에서 처리
-      }
-    } catch (e) {
-      print('사용자 등록 상태 확인 실패: $e');
-    }
-  }
-
-  /// 작업 수 가져오기
+  /// 작업 수 가져오기 - 플래너별 작업 개수를 계산
   Future<void> _fetchTaskCount() async {
     try {
-      final data = await ApiUtils.fetchData(ApiConstants.task.get);
-      if (data != null && data is List) {
-        _updateTaskCount(data.length);
+      // 플래너 목록을 가져와서 각 플래너의 작업 수를 합산
+      final plannersData = await ApiUtils.fetchData(ApiConstants.planner.list);
+      if (plannersData != null && plannersData is List) {
+        int totalTasks = 0;
+        for (final planner in plannersData as List) {
+          if (planner['id'] != null) {
+            final tasksData = await ApiUtils.fetchData(
+              ApiConstants.planner.tasks(planner['id'].toString()),
+              queryParams: {'isCompleted': 'false'},
+            );
+            if (tasksData != null && tasksData is List) {
+              totalTasks += tasksData.length;
+            }
+          }
+        }
+        _updateTaskCount(totalTasks);
       }
     } catch (e) {
       logger.e('작업 수 가져오기 실패', error: e);
@@ -163,11 +157,23 @@ class AuthProvider extends ChangeNotifier with LoadingStateMixin {
   Future<void> updateUser(Map<String, dynamic> userData) async {
     await AsyncOperationHandler.execute(
       operation: () async {
-        await ApiUtils.postData(ApiConstants.user.update, data: userData);
+        await ApiUtils.patchData(ApiConstants.user.update, data: userData);
         await refreshUserInfo();
       },
       setLoading: setLoading,
       errorContext: '사용자 정보 업데이트',
+    );
+  }
+
+  /// 사용자 등록 (첫 가입 시)
+  Future<void> registerUser(Map<String, dynamic> userData) async {
+    await AsyncOperationHandler.execute(
+      operation: () async {
+        await ApiUtils.postData(ApiConstants.user.register, data: userData);
+        await refreshUserInfo();
+      },
+      setLoading: setLoading,
+      errorContext: '사용자 등록',
     );
   }
 

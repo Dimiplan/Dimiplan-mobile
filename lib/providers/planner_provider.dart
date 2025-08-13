@@ -28,7 +28,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
         }
 
         final data = await ApiUtils.fetchData(
-          ApiConstants.planner.getEveryPlanners,
+          ApiConstants.planner.list,
         );
         if (data != null) {
           final loadedPlanners =
@@ -91,8 +91,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
         }
 
         final data = await ApiUtils.fetchData(
-          ApiConstants.task.get,
-          queryParams: {'id': _selectedPlanner!.id.toString()},
+          ApiConstants.planner.tasks(_selectedPlanner!.id.toString()),
         );
         if (data != null) {
           final loadedTasks =
@@ -127,10 +126,10 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   }
 
   /// 플래너 생성
-  Future<void> createPlanner(String name, {int isDaily = 0}) async {
+  Future<void> createPlanner(String name, {bool isDaily = false}) async {
     await _performPlannerOperation(
       () => ApiUtils.postData(
-        ApiConstants.planner.add,
+        ApiConstants.planner.create,
         data: {'name': name, 'isDaily': isDaily},
       ),
       errorContext: '플래너 생성',
@@ -140,7 +139,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   /// 작업 추가
   Future<void> addTask(Task task) async {
     await _performPlannerOperation(
-      () => ApiUtils.postData(ApiConstants.task.add, data: task.toMap()),
+      () => ApiUtils.postData(ApiConstants.task.create, data: task.toMap()),
       errorContext: '작업 추가',
     );
   }
@@ -148,7 +147,10 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   /// 작업 업데이트
   Future<void> updateTask(Task task) async {
     await _performPlannerOperation(
-      () => ApiUtils.postData(ApiConstants.task.update, data: task.toMap()),
+      () => ApiUtils.patchData(
+        ApiConstants.task.update(task.id.toString()),
+        data: task.toMap(),
+      ),
       errorContext: '작업 업데이트',
     );
   }
@@ -156,7 +158,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   /// 작업 삭제
   Future<void> deleteTask(int id) async {
     await _performPlannerOperation(
-      () => ApiUtils.postData(ApiConstants.task.delete, data: {'id': id}),
+      () => ApiUtils.deleteData(ApiConstants.task.delete(id.toString())),
       errorContext: '작업 삭제',
     );
   }
@@ -164,9 +166,9 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   /// 플래너 이름 변경
   Future<void> renamePlanner(int id, String newName) async {
     await _performPlannerOperation(
-      () => ApiUtils.postData(
-        ApiConstants.planner.rename,
-        data: {'id': id, 'name': newName},
+      () => ApiUtils.patchData(
+        ApiConstants.planner.update(id.toString()),
+        data: {'name': newName},
       ),
       errorContext: '플래너 이름 변경',
     );
@@ -175,7 +177,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
   /// 플래너 삭제
   Future<void> deletePlanner(int id) async {
     await _performPlannerOperation(
-      () => ApiUtils.postData(ApiConstants.planner.delete, data: {'id': id}),
+      () => ApiUtils.deleteData(ApiConstants.planner.delete(id.toString())),
       errorContext: '플래너 삭제',
     );
   }

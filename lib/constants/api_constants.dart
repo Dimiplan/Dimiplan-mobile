@@ -34,35 +34,39 @@ class AuthPaths {
 class UserPaths {
   const UserPaths();
   final String _base = '/api/user';
-  String get get => '$_base/get';
-  String get registered => '$_base/registered';
-  String get update => '$_base/update';
+  String get get => _base;
+  String get update => _base;
+  String get register => '/auth/register';
 }
 
 class TaskPaths {
   const TaskPaths();
-  final String _base = '/api/task';
-  String get get => '$_base/get';
-  String get add => '$_base/add';
-  String get update => '$_base/update';
-  String get delete => '$_base/delete';
+  final String _base = '/api/tasks';
+  String get create => _base;
+  String update(String taskId) => '$_base/$taskId';
+  String delete(String taskId) => '$_base/$taskId';
 }
 
 class PlannerPaths {
   const PlannerPaths();
-  final String _base = '/api/planner';
-  String get getEveryPlanners => '$_base/getPlanners';
-  String get getInfo => '$_base/getInfo';
-  String get add => '$_base/add';
-  String get rename => '$_base/rename';
-  String get delete => '$_base/delete';
+  final String _base = '/api/planners';
+  String get list => _base;
+  String get create => _base;
+  String info(String plannerId) => '$_base/$plannerId/info';
+  String tasks(String plannerId) => '$_base/$plannerId/tasks';
+  String update(String plannerId) => '$_base/$plannerId';
+  String delete(String plannerId) => '$_base/$plannerId';
 }
 
 class AiPaths {
   const AiPaths();
   final String _base = '/api/ai';
+  String get models => _base;
   String get auto => '$_base/auto';
-  String get getRoomList => '$_base/getRoomList';
-  String get getChatInRoom => '$_base/getChatInRoom';
-  String get addRoom => '$_base/addRoom';
+  String get custom => '$_base/custom';
+  String get rooms => '$_base/rooms';
+  String get createRoom => '$_base/rooms';
+  String roomMessages(String roomId) => '$_base/rooms/$roomId';
+  String updateRoom(String roomId) => '$_base/rooms/$roomId';
+  String deleteRoom(String roomId) => '$_base/rooms/$roomId';
 }

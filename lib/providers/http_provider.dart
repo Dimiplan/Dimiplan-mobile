@@ -117,6 +117,16 @@ class HttpClient {
     return _client.put(url, headers: finalHeaders, body: body);
   }
 
+  // HTTP PATCH 요청
+  Future<http.Response> patch(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
+    final finalHeaders = await _getHeaders(headers);
+    return _client.patch(url, headers: finalHeaders, body: body);
+  }
+
   // HTTP DELETE 요청
   Future<http.Response> delete(
     Uri url, {
