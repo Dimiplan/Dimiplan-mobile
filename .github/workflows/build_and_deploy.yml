@@ -3,12 +3,6 @@ name: Build and Deploy
 on:
   push:
     branches: [main, dev]
-    paths:
-      - "lib/**"
-      - "assets/**"
-      - "web/**"
-      - "pubspec.yaml"
-      - ".github/workflows/build_and_deploy.yml"
   workflow_dispatch:
 
 jobs:
@@ -25,7 +19,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 웹 클라이언트 ID 패치 적용
+      - name: Dart Analysis and Format
+        run: |
+          flutter pub get
+          dart analyze lib
+          dart fix --apply
+          dart format lib
+
+      - name: Commit Back
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Dart Fix and Format
+          commit_options: "--no-verify --signoff"
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{yaml,md,yml,json,toml,lock.json,lock.toml}
+
       - name: Apply Web Client ID Patch
         run: |
           echo "${{ secrets.WEB_CLIENT_ID_PATCH_BASE64 }}" | base64 --decode > web_patch.patch
