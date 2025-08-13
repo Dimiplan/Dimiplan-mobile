@@ -27,9 +27,7 @@ class PlannerProvider extends ChangeNotifier with LoadingStateMixin {
           return;
         }
 
-        final data = await ApiUtils.fetchData(
-          ApiConstants.planner.list,
-        );
+        final data = await ApiUtils.fetchData(ApiConstants.planner.list);
         if (data != null) {
           final loadedPlanners =
               (data as List)

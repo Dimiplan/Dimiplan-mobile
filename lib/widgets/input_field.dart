@@ -234,7 +234,7 @@ class AppDropdownField<T> extends StatelessWidget {
             boxShadow: AppTheme.lightShadow,
           ),
           child: DropdownButtonFormField<T>(
-            value: value,
+            initialValue: value,
             items: items,
             onChanged: enabled ? onChanged : null,
             decoration: InputDecoration(
